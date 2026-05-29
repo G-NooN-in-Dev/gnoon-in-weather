@@ -1,0 +1,18 @@
+# dependencies
+/node_modules
+
+# build
+/storybook-static
+
+# debug
+*storybook.log
+debug-storybook.log
+
+# misc
+.DS_Store
+
+# env
+.env*
+
+# typescript
+*.tsbuildinfo

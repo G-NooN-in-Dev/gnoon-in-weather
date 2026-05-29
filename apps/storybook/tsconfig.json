@@ -1,0 +1,8 @@
+{
+	"extends": "@shared/typescript-config/react-internal.json",
+	"compilerOptions": {
+		"strictNullChecks": true
+	},
+	"include": [".storybook/**/*.ts", ".storybook/**/*.tsx", "stories/**/*.ts", "stories/**/*.tsx", "global.d.ts"],
+	"exclude": ["node_modules", "storybook-static"]
+}

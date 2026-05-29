@@ -1,0 +1,34 @@
+{
+	"name": "storybook",
+	"version": "0.1.0",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"dev": "storybook dev -p 6006",
+		"build": "storybook build",
+		"lint": "eslint . --max-warnings 0",
+		"check-types": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@shared/ui": "workspace:*",
+		"react": "19.2.4",
+		"react-dom": "19.2.4"
+	},
+	"devDependencies": {
+		"@chromatic-com/storybook": "^5.2.1",
+		"@shared/eslint-config": "workspace:*",
+		"@shared/tailwind-config": "workspace:*",
+		"@shared/typescript-config": "workspace:*",
+		"@storybook/addon-a11y": "^10.4.1",
+		"@storybook/addon-docs": "^10.4.1",
+		"@storybook/react-vite": "^10.4.1",
+		"@types/node": "^25.6.0",
+		"@types/react": "19.2.14",
+		"@types/react-dom": "19.2.3",
+		"eslint": "^9.39.4",
+		"eslint-plugin-storybook": "^10.4.1",
+		"storybook": "^10.4.1",
+		"tailwindcss": "^4.2.2",
+		"typescript": "6.0.3"
+	}
+}
