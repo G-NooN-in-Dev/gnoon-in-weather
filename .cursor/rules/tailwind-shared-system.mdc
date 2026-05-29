@@ -1,0 +1,17 @@
+---
+description: Tailwind 공통 토큰과 스타일 시스템 규칙
+globs: "**/*.{css,ts,tsx,mjs,md,mdx}"
+alwaysApply: false
+---
+
+# Tailwind 규칙
+
+- 공통 Tailwind 설정은 `packages/tailwind-config`를 단일 소스로 사용한다.
+- 앱 단위 `tailwind.config.mjs`는 공유 설정을 import 해서 확장한다.
+- 새 색상/토큰 추가 시 기존 네이밍 규칙(`grayscale`, `success` 등)과 스케일 체계를 유지한다.
+- 토큰이 변경되면 `packages/tailwind-config/README.md`와 `packages/tailwind-config/CONFIG_REFERENCE.md`를 함께 갱신한다.
+
+# 폰트 규칙
+
+- 기본 폰트는 Pretendard 우선 스택을 유지한다.
+- `font-sans`는 Pretendard 기반 스택을 가리키도록 유지한다.

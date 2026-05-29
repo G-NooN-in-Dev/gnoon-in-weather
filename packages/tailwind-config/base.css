@@ -1,0 +1,11 @@
+@layer base {
+	body {
+		font-family:
+			Pretendard,
+			Inter,
+			system-ui,
+			-apple-system,
+			'Segoe UI',
+			sans-serif;
+	}
+}

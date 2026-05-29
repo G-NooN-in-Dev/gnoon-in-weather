@@ -1,0 +1,36 @@
+{
+	"name": "@shared/ui",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./utils": "./src/lib/utils.ts",
+		"./*": "./src/*.tsx"
+	},
+	"scripts": {
+		"lint": "eslint . --max-warnings 0",
+		"generate:component": "turbo gen react-component",
+		"check-types": "tsc --noEmit"
+	},
+	"peerDependencies": {
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0"
+	},
+	"devDependencies": {
+		"@shared/eslint-config": "workspace:*",
+		"@shared/typescript-config": "workspace:*",
+		"@types/node": "^25.6.0",
+		"@types/react": "19.2.14",
+		"@types/react-dom": "19.2.3",
+		"eslint": "^9.39.4",
+		"tailwindcss": "^4.2.2",
+		"typescript": "6.0.3"
+	},
+	"dependencies": {
+		"@shared/tailwind-config": "workspace:*",
+		"@base-ui-components/react": "^1.0.0-beta.4",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"tailwind-merge": "^3.3.1"
+	}
+}
