@@ -17,7 +17,8 @@
 
 ## 스타일/디자인 시스템 규칙
 
-- Tailwind 설정은 `packages/tailwind-config`를 기준으로 사용합니다.
+- Tailwind v4 설정은 `packages/tailwind-config`를 기준으로 사용합니다. 디자인 토큰은 `theme.css`(`@theme`)만 수정합니다.
+- 앱 `global.css`는 `@import 'tailwindcss'` 후 `@shared/tailwind-config/base.css`를 import합니다. `tailwind.config.mjs`는 사용하지 않습니다.
 - 새 색상/토큰 추가 시 기존 토큰 네이밍 규칙(`grayscale`, `success` 등)을 따릅니다.
 - 반응형 구현 우선순위는 데스크탑 먼저, 모바일/태블릿 보완 순서로 진행합니다.
 - 최종 코드 작성 시에는 mobile-first Tailwind 문법을 유지하고, `xxs -> xs -> md -> lg` 순으로 확장합니다.

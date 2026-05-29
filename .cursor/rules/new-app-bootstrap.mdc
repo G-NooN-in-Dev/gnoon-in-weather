@@ -1,6 +1,6 @@
 ---
 description: apps 신규 프로젝트 초기 세팅 체크리스트
-globs: "apps/**/{package.json,postcss.config.mjs,tailwind.config.mjs,global.css,app/layout.tsx,README.md}"
+globs: "apps/**/{package.json,postcss.config.mjs,global.css,app/layout.tsx,README.md}"
 alwaysApply: false
 ---
 

@@ -1,8 +1,8 @@
 # @shared/tailwind-config
 
-레포에서 공통으로 사용하는 Tailwind 설정 패키지입니다.
+레포에서 공통으로 사용하는 Tailwind CSS v4 설정 패키지입니다.
 
-자세한 설정 설명은 `CONFIG_REFERENCE.md`를 참고하세요.
+디자인 토큰의 단일 소스는 `theme.css`(`@theme`)이며, 상세 사용법은 `CONFIG_REFERENCE.md`를 참고하세요.
 
 ## 앱 연동 템플릿
 
@@ -14,39 +14,33 @@
 export { default } from '@shared/tailwind-config/postcss'
 ```
 
-### 2) `tailwind.config.mjs`
-
-```js
-import sharedTailwindConfig from '@shared/tailwind-config/config'
-
-/** @type {import('tailwindcss').Config} */
-const config = {
-	...sharedTailwindConfig,
-	content: [
-		'./app/**/*.{js,ts,jsx,tsx,mdx}',
-		'./pages/**/*.{js,ts,jsx,tsx,mdx}',
-		'./components/**/*.{js,ts,jsx,tsx,mdx}',
-		'./src/**/*.{js,ts,jsx,tsx,mdx}',
-		'../../packages/ui/src/**/*.{js,ts,jsx,tsx,mdx}'
-	]
-}
-
-export default config
-```
-
-### 3) `global.css`
+### 2) `global.css`
 
 ```css
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 @import 'tailwindcss';
 @import '@shared/tailwind-config/base.css';
+
+/* @shared/ui 등 워크스페이스 패키지를 쓰는 경우 (앱 global.css 기준 상대 경로) */
+@source '../../packages/ui/src/**/*.{js,ts,jsx,tsx,mdx}';
 ```
 
-### 4) `app/layout.tsx`
+- `tailwind.config.mjs`는 **v4에서 사용하지 않습니다.** 토큰은 `@shared/tailwind-config/theme.css`만 수정합니다.
+- `@source`는 앱/스토리북의 `global.css`(또는 `preview.css`) 위치에 맞게 상대 경로를 조정합니다.
+
+### 3) `app/layout.tsx`
 
 - 전역 스타일을 한 번만 import:
   - `import '@/global.css'`
-- 기본 폰트를 `global.css`에서 관리할 때는 `next/font/google`을 중복 사용하지 않습니다.
+- 기본 폰트는 `global.css` / `theme.css`에서 관리하므로 `next/font/google` 중복 적용은 피합니다.
+
+## 패키지 export
+
+| 경로                                | 용도                                  |
+| ----------------------------------- | ------------------------------------- |
+| `@shared/tailwind-config/postcss`   | PostCSS (`@tailwindcss/postcss`)      |
+| `@shared/tailwind-config/theme.css` | 공통 `@theme` 토큰 (직접 import 가능) |
+| `@shared/tailwind-config/base.css`  | `theme.css` + `body` 기본 스타일      |
 
 ## 디자인 토큰 사용 가이드
 
@@ -71,3 +65,9 @@ export default config
 - 모바일 브라우저 높이 변화 대응이 필요하면 `min-h-screen` 대신 `min-h-screen-safe`를 사용합니다.
 - 권장 간격 패턴 예시:
   - `px-3 xxs:px-4 md:px-6 xl:px-8 py-10 md:py-16`
+
+## 다른 레포로 복제할 때
+
+1. `packages/tailwind-config` 패키지 전체를 복사합니다.
+2. 앱 `global.css` / `postcss.config.mjs` 템플릿을 적용합니다.
+3. `@source` 경로만 해당 레포 구조에 맞게 수정합니다.

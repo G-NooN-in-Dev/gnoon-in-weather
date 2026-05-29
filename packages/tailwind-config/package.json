@@ -5,8 +5,8 @@
 	"private": true,
 	"exports": {
 		"./postcss": "./postcss.config.mjs",
-		"./base.css": "./base.css",
-		"./config": "./tailwind.config.mjs"
+		"./theme.css": "./theme.css",
+		"./base.css": "./base.css"
 	},
 	"dependencies": {
 		"@tailwindcss/postcss": "^4.2.2",

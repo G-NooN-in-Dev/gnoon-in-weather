@@ -7,7 +7,9 @@ alwaysApply: false
 # Tailwind 규칙
 
 - 공통 Tailwind 설정은 `packages/tailwind-config`를 단일 소스로 사용한다.
-- 앱 단위 `tailwind.config.mjs`는 공유 설정을 import 해서 확장한다.
+- 디자인 토큰은 `packages/tailwind-config/theme.css`의 `@theme`만 수정한다. `tailwind.config.mjs`는 v4에서 사용하지 않는다.
+- 앱 `global.css`는 `@import 'tailwindcss'` 후 `@import '@shared/tailwind-config/base.css'` 순서를 유지한다.
+- `@shared/ui` 등 워크스페이스 패키지 클래스는 앱 `global.css`에 `@source`로 스캔 경로를 추가한다.
 - 새 색상/토큰 추가 시 기존 네이밍 규칙(`grayscale`, `success` 등)과 스케일 체계를 유지한다.
 - 토큰이 변경되면 `packages/tailwind-config/README.md`와 `packages/tailwind-config/CONFIG_REFERENCE.md`를 함께 갱신한다.
 

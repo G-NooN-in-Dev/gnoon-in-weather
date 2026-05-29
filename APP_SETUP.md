@@ -21,7 +21,7 @@ pnpm dlx create-next-app@latest apps/my-app --ts --app --eslint
 - `@shared/typescript-config`
 - 필요 시 `@shared/ui`
 
-## 3) Tailwind/PostCSS 공통화
+## 3) Tailwind/PostCSS 공통화 (v4)
 
 `apps/<app-name>/postcss.config.mjs`
 
@@ -29,35 +29,22 @@ pnpm dlx create-next-app@latest apps/my-app --ts --app --eslint
 export { default } from '@shared/tailwind-config/postcss'
 ```
 
-`apps/<app-name>/tailwind.config.mjs`
-
-```js
-import sharedTailwindConfig from '@shared/tailwind-config/config'
-
-/** @type {import('tailwindcss').Config} */
-const config = {
-	...sharedTailwindConfig,
-	content: [
-		'./app/**/*.{js,ts,jsx,tsx,mdx}',
-		'./pages/**/*.{js,ts,jsx,tsx,mdx}',
-		'./components/**/*.{js,ts,jsx,tsx,mdx}',
-		'./src/**/*.{js,ts,jsx,tsx,mdx}',
-		'../../packages/ui/src/**/*.{js,ts,jsx,tsx,mdx}'
-	]
-}
-
-export default config
-```
-
-## 4) 전역 스타일/폰트 세팅
-
 `apps/<app-name>/global.css`
 
 ```css
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 @import 'tailwindcss';
 @import '@shared/tailwind-config/base.css';
+
+/* @shared/ui 등 워크스페이스 패키지를 쓰는 경우 */
+@source '../../packages/ui/src/**/*.{js,ts,jsx,tsx,mdx}';
 ```
+
+- Tailwind v4에서는 `tailwind.config.mjs`를 두지 않습니다.
+- 디자인 토큰은 `@shared/tailwind-config/theme.css`만 수정합니다.
+- `@source`는 `global.css` 파일 위치 기준 상대 경로로 조정합니다.
+
+## 4) 전역 스타일/폰트 세팅
 
 `apps/<app-name>/app/layout.tsx`
 

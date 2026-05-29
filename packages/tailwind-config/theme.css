@@ -1,0 +1,224 @@
+/**
+ * Tailwind CSS v4 공통 디자인 토큰 (@theme)
+ * 새 토큰 추가·수정은 이 파일을 단일 소스로 관리합니다.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@keyframes accordion-down {
+	from {
+		height: 0;
+	}
+	to {
+		height: var(--radix-accordion-content-height);
+	}
+}
+
+@keyframes accordion-up {
+	from {
+		height: var(--radix-accordion-content-height);
+	}
+	to {
+		height: 0;
+	}
+}
+
+@theme {
+	--breakpoint-xxs: 320px;
+	--breakpoint-xs: 480px;
+	--breakpoint-sm: 640px;
+	--breakpoint-md: 768px;
+	--breakpoint-lg: 1024px;
+	--breakpoint-xl: 1280px;
+	--breakpoint-2xl: 1536px;
+
+	--container-center: true;
+	--container-padding: 0.875rem;
+	--container-padding-xxs: 0.875rem;
+	--container-padding-xs: 1rem;
+	--container-padding-sm: 1.25rem;
+	--container-padding-md: 1.5rem;
+	--container-padding-lg: 1.5rem;
+	--container-padding-xl: 2rem;
+	--container-padding-2xl: 2.5rem;
+
+	--font-sans: Pretendard, Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--font-mono: 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
+
+	--color-red: #ff87c2;
+	--color-red-50: #fff7fb;
+	--color-red-100: #ffeaf4;
+	--color-red-200: #ffd7ea;
+	--color-red-300: #ffbddf;
+	--color-red-400: #ffa0d1;
+	--color-red-500: #ff87c2;
+	--color-red-600: #f06fb0;
+	--color-red-700: #d95a9a;
+	--color-red-800: #be4b83;
+	--color-red-900: #9f3f6d;
+	--color-red-950: #6a2a48;
+
+	--color-orange: #ffb784;
+	--color-orange-50: #fff9f3;
+	--color-orange-100: #fff0e2;
+	--color-orange-200: #ffe2cc;
+	--color-orange-300: #ffd1ad;
+	--color-orange-400: #ffc08f;
+	--color-orange-500: #ffb784;
+	--color-orange-600: #f2a16c;
+	--color-orange-700: #d98958;
+	--color-orange-800: #b8724b;
+	--color-orange-900: #955d3f;
+	--color-orange-950: #613b29;
+
+	--color-yellow: #ffe38a;
+	--color-yellow-50: #fffdf3;
+	--color-yellow-100: #fff8df;
+	--color-yellow-200: #ffefbf;
+	--color-yellow-300: #ffe79f;
+	--color-yellow-400: #ffdf90;
+	--color-yellow-500: #ffe38a;
+	--color-yellow-600: #f1cf72;
+	--color-yellow-700: #d7b45e;
+	--color-yellow-800: #b7964f;
+	--color-yellow-900: #947a42;
+	--color-yellow-950: #62512c;
+
+	--color-green: #93e57f;
+	--color-green-50: #f7fff5;
+	--color-green-100: #e9ffe1;
+	--color-green-200: #d7ffcb;
+	--color-green-300: #c0f7b0;
+	--color-green-400: #a6ef92;
+	--color-green-500: #93e57f;
+	--color-green-600: #7fd56a;
+	--color-green-700: #6cbd58;
+	--color-green-800: #5b9f4b;
+	--color-green-900: #4c843f;
+	--color-green-950: #305528;
+
+	--color-blue: #84caff;
+	--color-blue-50: #f3fbff;
+	--color-blue-100: #e5f5ff;
+	--color-blue-200: #d2ecff;
+	--color-blue-300: #b9e2ff;
+	--color-blue-400: #9ad5ff;
+	--color-blue-500: #84caff;
+	--color-blue-600: #6eb8f2;
+	--color-blue-700: #5b9fd4;
+	--color-blue-800: #4d85b2;
+	--color-blue-900: #426e93;
+	--color-blue-950: #2a4660;
+
+	--color-purple: #c6a7ff;
+	--color-purple-50: #faf6ff;
+	--color-purple-100: #f2eaff;
+	--color-purple-200: #e5d7ff;
+	--color-purple-300: #d7c1ff;
+	--color-purple-400: #cdb0ff;
+	--color-purple-500: #c6a7ff;
+	--color-purple-600: #b08eea;
+	--color-purple-700: #9674cd;
+	--color-purple-800: #7d60ab;
+	--color-purple-900: #664e8a;
+	--color-purple-950: #42325a;
+
+	--color-grayscale-50: #f8fafc;
+	--color-grayscale-100: #f1f5f9;
+	--color-grayscale-200: #e2e8f0;
+	--color-grayscale-300: #cbd5e1;
+	--color-grayscale-400: #94a3b8;
+	--color-grayscale-500: #64748b;
+	--color-grayscale-600: #475569;
+	--color-grayscale-700: #334155;
+	--color-grayscale-800: #1e293b;
+	--color-grayscale-900: #0f172a;
+	--color-grayscale-950: #020617;
+
+	--color-success: #22c55e;
+	--color-success-50: #f0fdf4;
+	--color-success-100: #dcfce7;
+	--color-success-500: #22c55e;
+	--color-success-700: #15803d;
+
+	--color-warning: #f59e0b;
+	--color-warning-50: #fffbeb;
+	--color-warning-100: #fef3c7;
+	--color-warning-500: #f59e0b;
+	--color-warning-700: #b45309;
+
+	--color-danger: #ef4444;
+	--color-danger-50: #fef2f2;
+	--color-danger-100: #fee2e2;
+	--color-danger-500: #ef4444;
+	--color-danger-700: #b91c1c;
+
+	--color-info: #7eaefe;
+	--color-info-50: #f3fbff;
+	--color-info-100: #e5f5ff;
+	--color-info-500: #7eaefe;
+	--color-info-700: #5b9fd4;
+
+	--text-xs: 0.75rem;
+	--text-xs--line-height: 1rem;
+	--text-sm: 0.875rem;
+	--text-sm--line-height: 1.25rem;
+	--text-base: 1rem;
+	--text-base--line-height: 1.5rem;
+	--text-lg: 1.125rem;
+	--text-lg--line-height: 1.75rem;
+	--text-xl: 1.25rem;
+	--text-xl--line-height: 1.75rem;
+	--text-2xl: 1.5rem;
+	--text-2xl--line-height: 2rem;
+	--text-3xl: 1.875rem;
+	--text-3xl--line-height: 2.25rem;
+
+	--radius-md: 0.5rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1rem;
+	--radius-2xl: 1.25rem;
+	--radius-3xl: 1.5rem;
+	--radius-4xl: 2rem;
+	--radius-pill: 9999px;
+
+	--spacing-18: 4.5rem;
+	--spacing-22: 5.5rem;
+	--spacing-26: 6.5rem;
+	--spacing-30: 7.5rem;
+	--spacing-34: 8.5rem;
+
+	--shadow-soft: 0 2px 12px rgb(15 23 42 / 0.08);
+	--shadow-card: 0 8px 30px rgb(15 23 42 / 0.12);
+
+	--max-width-prose: 70ch;
+	--max-width-content: 72rem;
+	--max-width-reading: 65ch;
+
+	--min-height-screen-safe: 100dvh;
+
+	--z-index-dropdown: 1000;
+	--z-index-sticky: 1100;
+	--z-index-modal: 1200;
+	--z-index-toast: 1300;
+
+	--ease-emphasized-in: cubic-bezier(0.3, 0, 1, 1);
+	--ease-emphasized-out: cubic-bezier(0, 0, 0, 1);
+	--ease-standard-productive: cubic-bezier(0.2, 0, 0, 1);
+
+	--transition-duration-0: 0ms;
+	--transition-duration-400: 400ms;
+
+	--background-image-radial-blue: radial-gradient(circle at top, rgb(132 202 255 / 0.2), transparent 45%);
+	--background-image-radial-pink: radial-gradient(circle at top, rgb(255 135 194 / 0.22), transparent 45%);
+	--background-image-radial-purple: radial-gradient(circle at top, rgb(198 167 255 / 0.22), transparent 45%);
+	--background-image-linear-sky: linear-gradient(135deg, rgb(243 251 255), rgb(229 245 255), rgb(210 236 255));
+	--background-image-linear-sunrise: linear-gradient(135deg, rgb(255 247 251), rgb(255 240 226), rgb(255 253 243));
+	--background-image-linear-mint: linear-gradient(135deg, rgb(247 255 245), rgb(233 255 225), rgb(210 236 255));
+	--background-image-mesh-soft:
+		radial-gradient(circle at 20% 20%, rgb(255 135 194 / 0.18), transparent 40%),
+		radial-gradient(circle at 80% 0%, rgb(132 202 255 / 0.18), transparent 42%),
+		radial-gradient(circle at 50% 80%, rgb(147 229 127 / 0.16), transparent 42%);
+
+	--animate-accordion-down: accordion-down 0.2s ease-out;
+	--animate-accordion-up: accordion-up 0.2s ease-out;
+}

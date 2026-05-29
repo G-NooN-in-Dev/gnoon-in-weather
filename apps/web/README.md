@@ -18,12 +18,11 @@ pnpm dev
 
 - `app/page.tsx`: 메인 페이지
 - `app/layout.tsx`: 루트 레이아웃
-- `global.css`: 전역 스타일
-- `tailwind.config.mjs`: 앱 단위 Tailwind 설정(공통 설정 상속)
+- `global.css`: 전역 스타일 (`tailwindcss` + `@shared/tailwind-config`)
 
 ## 스타일 시스템
 
-- 공통 Tailwind 설정: `@shared/tailwind-config`
+- 공통 Tailwind v4 토큰: `@shared/tailwind-config` (`theme.css` / `base.css`)
 - 폰트: Pretendard 우선 스택
 
 ## 참고

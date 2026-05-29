@@ -10,7 +10,7 @@ import pluginReactHooks from 'eslint-plugin-react-hooks'
 import unicornPlugin from 'eslint-plugin-unicorn'
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss'
 
-const sharedTailwindConfigPath = fileURLToPath(new URL('../tailwind-config/base.css', import.meta.url))
+const sharedTailwindConfigPath = fileURLToPath(new URL('../tailwind-config/theme.css', import.meta.url))
 
 /**
  * A shared ESLint configuration for the repository.
