@@ -36,3 +36,4 @@ pnpm turbo build --filter=@shared/tailwind-config
 - [Next.js 문서](https://nextjs.org/docs)
 - `APP_SETUP.md` (새 앱 공통 초기 세팅 가이드)
 - `COMMIT_MESSAGE_GUIDE.md` (커밋 메시지 규칙 가이드)
+- `.github/JIRA_SETUP.md` (GitHub Actions ↔ Jira 연동·Secrets 설정)

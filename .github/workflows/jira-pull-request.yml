@@ -1,0 +1,32 @@
+name: Jira transition on pull request
+
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches: [main]
+
+jobs:
+  transition-to-pr-wait:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract Jira issue key
+        id: jira_key
+        uses: ./.github/actions/extract-jira-key
+        with:
+          title: ${{ github.event.pull_request.title }}
+          branch: ${{ github.head_ref }}
+
+      - name: Transition to PR 대기
+        if: steps.jira_key.outputs.issue_key != ''
+        uses: ./.github/actions/jira-transition
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        with:
+          issue: ${{ steps.jira_key.outputs.issue_key }}
+          transition: ${{ vars.JIRA_TRANSITION_TO_PR_WAIT || 'PR 대기' }}
+          comment: |
+            GitHub PR이 생성되었습니다.
+            ${{ github.event.pull_request.html_url }}

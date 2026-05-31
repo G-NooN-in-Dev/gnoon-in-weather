@@ -1,0 +1,34 @@
+name: Jira transition
+description: Jira Cloud 이슈 상태 전환
+
+inputs:
+  issue:
+    description: Jira 이슈 키 (예 WEATHER-1)
+    required: true
+  transition:
+    description: 전환 이름 또는 ID
+    required: true
+  comment:
+    description: 이슈에 남길 코멘트 (선택)
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Login to Jira
+      uses: frieder/gha-jira-login@v1
+      with:
+        baseUrl: ${{ env.JIRA_BASE_URL }}
+        email: ${{ env.JIRA_USER_EMAIL }}
+        token: ${{ env.JIRA_API_TOKEN }}
+
+    - name: Transition issue
+      uses: frieder/jira-issue-transition@v1
+      with:
+        issue: ${{ inputs.issue }}
+        transition: ${{ inputs.transition }}
+        comment: ${{ inputs.comment }}
+        retries: 2
+        retryDelay: 5
+        failOnError: true

@@ -1,0 +1,33 @@
+name: Jira transition on pull request merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  transition-to-done:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract Jira issue key
+        id: jira_key
+        uses: ./.github/actions/extract-jira-key
+        with:
+          title: ${{ github.event.pull_request.title }}
+          branch: ${{ github.head_ref }}
+
+      - name: Transition to 완료
+        if: steps.jira_key.outputs.issue_key != ''
+        uses: ./.github/actions/jira-transition
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        with:
+          issue: ${{ steps.jira_key.outputs.issue_key }}
+          transition: ${{ vars.JIRA_TRANSITION_TO_DONE || '완료' }}
+          comment: |
+            GitHub PR이 머지되었습니다.
+            ${{ github.event.pull_request.html_url }}
