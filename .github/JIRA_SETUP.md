@@ -12,9 +12,7 @@ PR 생성·머지 시 Jira 카드 상태를 자동으로 변경합니다.
 
 - Jira Cloud REST API 연동: [`frieder/gha-jira-login`](https://github.com/frieder/gha-jira-login) · [`frieder/jira-issue-transition`](https://github.com/frieder/jira-issue-transition)
 - 이슈 키는 PR **제목**과 **소스 브랜치**에서 `WEATHER-1` 형식으로 추출합니다.
-- 공통 로직:
-  - `.github/actions/extract-jira-key`
-  - `.github/actions/jira-transition`
+- Jira 워크플로는 레포 checkout 없이 동작합니다 (로컬 composite action 미사용).
 
 ## 사전 조건
 
@@ -45,7 +43,6 @@ PR 생성·머지 시 Jira 카드 상태를 자동으로 변경합니다.
 
 ## 트러블슈팅
 
-- **`Can't find 'action.yml' ... extract-jira-key`**: 로컬 composite action 사용 전에 `actions/checkout`이 필요합니다. Jira 워크플로 첫 step에 checkout이 있는지 확인하세요.
 - **키를 못 찾음**: PR 제목·브랜치에 `WEATHER-1` 형식이 있는지 확인
 - **전환 실패**: 현재 상태에서 해당 전환이 가능한지, Variable/전환 이름이 맞는지 확인
 - **권한 오류**: API 토큰 사용자가 해당 이슈를 전환할 수 있는지 확인
