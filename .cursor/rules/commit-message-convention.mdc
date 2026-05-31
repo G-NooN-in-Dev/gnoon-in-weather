@@ -6,8 +6,10 @@ alwaysApply: true
 # 커밋 메시지 형식
 
 - 기본 형식(프로젝트 작업): `[프로젝트명] type: 대표 내용`
+- JIRA 연동 형식: `JIRA-KEY type: 대표 내용` (예: `WEATHER-16 feat: 헤더 UI 컴포넌트 추가`)
 - 공통 작업 형식: `type: 대표 내용`
 - 예시: `[my-app] feat: tailwind 공통 설정 추가`
+- 예시: `WEATHER-16 feat: 헤더 UI 컴포넌트 추가`
 - 예시: `feat: 공통 설정 정리`
 - 제목은 한글/영문 모두 허용한다.
 - 부연 설명(본문)은 선택 사항이다.
