@@ -11,14 +11,14 @@ PR 생성·머지 시 Jira 카드 상태를 자동으로 변경합니다.
 ## 구성
 
 - Jira Cloud REST API 연동: [`frieder/gha-jira-login`](https://github.com/frieder/gha-jira-login) · [`frieder/jira-issue-transition`](https://github.com/frieder/jira-issue-transition)
-- 이슈 키는 PR **제목**과 **소스 브랜치**에서 `WEATHER-16` 형식으로 추출합니다.
+- 이슈 키는 PR **제목**과 **소스 브랜치**에서 `WEATHER-1` 형식으로 추출합니다.
 - 공통 로직:
   - `.github/actions/extract-jira-key`
   - `.github/actions/jira-transition`
 
 ## 사전 조건
 
-- PR **제목** 또는 **소스 브랜치**에 Jira 키 포함 (예: `WEATHER-16 feat: ...`, `WEATHER-16/header`)
+- PR **제목** 또는 **소스 브랜치**에 Jira 키 포함 (예: `WEATHER-1 feat: ...`, `WEATHER-1/header`)
 - Jira 워크플로에 `진행 중` → `PR 대기`, `PR 대기` → `완료` 전환이 존재
 - **Jira Automation**에서 동일한 PR 전환 규칙이 있으면 **비활성화** (중복 전환 방지)
 
@@ -45,7 +45,8 @@ PR 생성·머지 시 Jira 카드 상태를 자동으로 변경합니다.
 
 ## 트러블슈팅
 
-- **키를 못 찾음**: PR 제목·브랜치에 `WEATHER-16` 형식이 있는지 확인
+- **`Can't find 'action.yml' ... extract-jira-key`**: 로컬 composite action 사용 전에 `actions/checkout`이 필요합니다. Jira 워크플로 첫 step에 checkout이 있는지 확인하세요.
+- **키를 못 찾음**: PR 제목·브랜치에 `WEATHER-1` 형식이 있는지 확인
 - **전환 실패**: 현재 상태에서 해당 전환이 가능한지, Variable/전환 이름이 맞는지 확인
 - **권한 오류**: API 토큰 사용자가 해당 이슈를 전환할 수 있는지 확인
 - **Actions 실패**: Secrets·전환 이름·Jira Automation 중복 여부 확인

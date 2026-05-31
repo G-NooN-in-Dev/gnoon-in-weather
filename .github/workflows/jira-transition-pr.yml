@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v5
+
       - name: Extract Jira issue key
         id: jira_key
         uses: ./.github/actions/extract-jira-key
