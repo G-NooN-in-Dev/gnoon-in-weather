@@ -27,8 +27,8 @@
 		"typescript": "6.0.3"
 	},
 	"dependencies": {
+		"@base-ui/react": "^1.5.0",
 		"@shared/tailwind-config": "workspace:*",
-		"@base-ui-components/react": "^1.0.0-beta.4",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"tailwind-merge": "^3.3.1"
