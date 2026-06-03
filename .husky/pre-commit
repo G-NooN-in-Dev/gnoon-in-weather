@@ -1,6 +1,6 @@
 echo "🔎 Checking Lint Before Commit..."
 
-pnpm format && \
+pnpm exec lint-staged && \
 pnpm lint && \
 pnpm check-types
 
