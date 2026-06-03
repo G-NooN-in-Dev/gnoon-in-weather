@@ -30,6 +30,14 @@
 - 새 설정이나 토큰을 추가하면 관련 문서(`README.md`, `CONFIG_REFERENCE.md`)도 함께 업데이트합니다.
 - 신규 앱 온보딩은 루트 `APP_SETUP.md`를 기준으로 진행합니다.
 
+## React 컴포넌트 템플릿
+
+- 새 UI 컴포넌트는 `function` 선언 + 파일 하단 `export default` 패턴을 사용합니다.
+- 파일명은 kebab-case이며, 섹션 컴포넌트는 `example.section.tsx`처럼 역할 접미사를 붙일 수 있습니다.
+- 컴포넌트명은 파일명의 `-`, `.` 단위를 PascalCase로 합칩니다. (예: `example.section.tsx` → `ExampleSection`)
+- 상세 템플릿·예시는 `.cursor/rules/react-component-template.mdc`를 참고합니다.
+- `page.tsx`, `layout.tsx` 등 Next.js 라우트 파일은 프레임워크 규칙을 우선합니다.
+
 ## 변경 안전 규칙
 
 - 비밀값, 토큰, 인증정보는 커밋/문서화하지 않습니다.
