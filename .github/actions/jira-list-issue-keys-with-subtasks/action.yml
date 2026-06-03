@@ -1,0 +1,60 @@
+name: List parent and subtask issue keys
+description: Jira API로 상위 이슈와 연결된 하위 작업(subtask) 키 목록을 JSON 배열로 반환합니다.
+
+inputs:
+  parent_key:
+    description: '상위 이슈 키 (예 WEATHER-17)'
+    required: true
+  base_url:
+    description: Jira base URL
+    required: true
+  email:
+    description: Jira 사용자 이메일
+    required: true
+  token:
+    description: Jira API 토큰
+    required: true
+
+outputs:
+  keys:
+    description: 'JSON 배열 (예 ["WEATHER-17","WEATHER-18"])'
+    value: ${{ steps.list.outputs.keys }}
+
+runs:
+  using: composite
+  steps:
+    - id: list
+      shell: bash
+      env:
+        PARENT_KEY: ${{ inputs.parent_key }}
+        BASE_URL: ${{ inputs.base_url }}
+        EMAIL: ${{ inputs.email }}
+        TOKEN: ${{ inputs.token }}
+      run: |
+        set -euo pipefail
+
+        base_url="${BASE_URL%/}"
+        auth="${EMAIL}:${TOKEN}"
+
+        subtask_keys=$(curl -fsSL -u "$auth" \
+          -H "Accept: application/json" \
+          "${base_url}/rest/api/3/issue/${PARENT_KEY}?fields=subtasks" \
+          | jq -r '.fields.subtasks[]?.key // empty' || true)
+
+        if [ -z "$subtask_keys" ]; then
+          subtask_keys=$(curl -fsSL -u "$auth" \
+            -G -H "Accept: application/json" \
+            --data-urlencode "jql=parent = ${PARENT_KEY}" \
+            --data-urlencode "maxResults=100" \
+            --data-urlencode "fields=key" \
+            "${base_url}/rest/api/3/search/jql" \
+            | jq -r '.issues[]?.key // empty' || true)
+        fi
+
+        keys_json=$(printf '%s\n%s\n' "$PARENT_KEY" "$subtask_keys" \
+          | grep -v '^$' \
+          | sort -u \
+          | jq -R -s -c 'split("\n") | map(select(length > 0))')
+
+        echo "keys=${keys_json}" >> "$GITHUB_OUTPUT"
+        echo "Issues to complete: ${keys_json}"

@@ -1,0 +1,45 @@
+name: Extract Jira keys from push
+description: push 이벤트의 브랜치 이름과 커밋 메시지에서 Jira 이슈 키 목록을 추출합니다.
+
+outputs:
+  keys:
+    description: 'JSON 배열 (예: ["WEATHER-17","WEATHER-18"])'
+    value: ${{ steps.extract.outputs.keys }}
+
+runs:
+  using: composite
+  steps:
+    - id: extract
+      shell: bash
+      env:
+        BRANCH: ${{ github.ref_name }}
+        COMMITS_JSON: ${{ toJSON(github.event.commits) }}
+        HEAD_MESSAGE: ${{ github.event.head_commit.message }}
+      run: |
+        set -euo pipefail
+
+        collect_keys() {
+          printf '%s\n' "$@" | grep -oiE '[a-z][a-z0-9]+-[0-9]+' | tr '[:lower:]' '[:upper:]' || true
+        }
+
+        keys=""
+
+        branch_key=$(printf '%s' "$BRANCH" | grep -oiE '^weather-[0-9]+$' | tr '[:lower:]' '[:upper:]' || true)
+        if [ -n "$branch_key" ]; then
+          keys="$branch_key"
+        fi
+
+        if [ "$COMMITS_JSON" != "null" ] && [ "$COMMITS_JSON" != "[]" ]; then
+          while IFS= read -r line; do
+            first_line="${line%%$'\n'*}"
+            keys=$(printf '%s\n%s' "$keys" "$(collect_keys "$first_line")")
+          done < <(echo "$COMMITS_JSON" | jq -r '.[].message')
+        elif [ -n "$HEAD_MESSAGE" ] && [ "$HEAD_MESSAGE" != "null" ]; then
+          first_line="${HEAD_MESSAGE%%$'\n'*}"
+          keys=$(printf '%s\n%s' "$keys" "$(collect_keys "$first_line")")
+        fi
+
+        keys_json=$(printf '%s\n' "$keys" | grep -v '^$' | sort -u | jq -R -s -c 'split("\n") | map(select(length > 0))')
+
+        echo "keys=${keys_json}" >> "$GITHUB_OUTPUT"
+        echo "Extracted Jira keys: ${keys_json}"

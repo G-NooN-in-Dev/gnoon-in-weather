@@ -6,27 +6,31 @@ on:
       - 'weather-*'
 
 jobs:
-  transition-to-in-progress:
+  extract-keys:
     runs-on: ubuntu-latest
-
+    outputs:
+      keys: ${{ steps.extract.outputs.keys }}
     steps:
       - uses: actions/checkout@v4
+      - id: extract
+        uses: ./.github/actions/jira-extract-keys-from-push
 
-      - name: Extract Jira issue key from branch
-        id: jira_key
-        env:
-          BRANCH: ${{ github.ref_name }}
-        run: |
-          issue_key=$(printf '%s' "$BRANCH" | grep -oiE '^weather-[0-9]+$' | tr '[:lower:]' '[:upper:]')
-          echo "issue_key=${issue_key}" >> "$GITHUB_OUTPUT"
-          echo "Extracted Jira key: ${issue_key:-none}"
+  transition-on-push:
+    needs: extract-keys
+    if: needs.extract-keys.outputs.keys != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        issue_key: ${{ fromJSON(needs.extract-keys.outputs.keys) }}
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Compute Start Date from push commits
         id: start_date
         uses: ./.github/actions/jira-push-start-date
 
       - name: Login to Jira
-        if: steps.jira_key.outputs.issue_key != ''
         uses: frieder/gha-jira-login@v1
         with:
           baseUrl: ${{ secrets.JIRA_BASE_URL }}
@@ -34,11 +38,11 @@ jobs:
           token: ${{ secrets.JIRA_API_TOKEN }}
 
       - name: Set Start Date (first push only)
-        if: steps.jira_key.outputs.issue_key != '' && vars.JIRA_FIELD_START_DATE != ''
+        if: vars.JIRA_FIELD_START_DATE != ''
         continue-on-error: true
         uses: ./.github/actions/jira-set-date-field
         with:
-          issue_key: ${{ steps.jira_key.outputs.issue_key }}
+          issue_key: ${{ matrix.issue_key }}
           field_id: ${{ vars.JIRA_FIELD_START_DATE }}
           date: ${{ steps.start_date.outputs.date }}
           only_if_empty: 'true'
@@ -47,14 +51,14 @@ jobs:
           token: ${{ secrets.JIRA_API_TOKEN }}
 
       - name: Transition to 진행 중
-        if: steps.jira_key.outputs.issue_key != ''
         uses: frieder/jira-issue-transition@v1
         with:
-          issue: ${{ steps.jira_key.outputs.issue_key }}
+          issue: ${{ matrix.issue_key }}
           transition: ${{ vars.JIRA_TRANSITION_TO_IN_PROGRESS || '진행 중' }}
           comment: |
             브랜치에 push되었습니다.
             브랜치: ${{ github.ref_name }}
+            이슈: ${{ matrix.issue_key }}
             커밋: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
           retries: 2
           retryDelay: 5

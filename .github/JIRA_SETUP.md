@@ -6,15 +6,16 @@
 | ------------------------------- | -------------------------- | ------------------------------------------------------ |
 | 브랜치 push (`weather-*`)       | `jira-transition-push.yml` | **해야 할 일** → **진행 중**, **시작 날짜** (최초 1회) |
 | PR 생성 (`opened` / `reopened`) | `jira-pull-request.yml`    | 진행 중 → **PR 대기**                                  |
-| PR 머지 (`merged`)              | `jira-transition-pr.yml`   | PR 대기 → **완료**, **End Date**                       |
+| PR 머지 (`merged`)              | `jira-transition-pr.yml`   | 상위·**하위 subtask 전부** → **완료**, **End Date**    |
 | PR 열림/업데이트                | `test-pull-request.yml`    | lint · typecheck · build                               |
 
 ## 구성
 
 - Jira Cloud REST API: [`frieder/gha-jira-login`](https://github.com/frieder/gha-jira-login) · [`frieder/jira-issue-transition`](https://github.com/frieder/jira-issue-transition)
-- 이슈 키는 `weather-1`, `weather-2` … **브랜치 이름**에서 추출합니다 (Jira API 호출 시 `WEATHER-1`로 정규화).
+- push 시 이슈 키는 **브랜치 이름**(`weather-17` → `WEATHER-17`)과 **이번 push에 포함된 커밋 메시지 첫 줄**(`WEATHER-18 feat: ...` → `WEATHER-18`)에서 모두 추출합니다. 하위 작업(subtask)만 커밋 메시지에 적어도 해당 카드가 갱신됩니다.
 - **시작 날짜**: push 시 해당 push 커밋 중 가장 이른 시각 → KST `yyyy-MM-dd`. 값이 있으면 덮어쓰지 않음.
-- **End Date**: PR 머지 시 `merged_at` → KST `yyyy-MM-dd`.
+- **End Date (PR 머지)**: **상위 이슈**는 머지일(KST)로 설정. **하위 subtask**는 End Date가 **비어 있을 때만** 머지일로 설정 (수동 입력값 유지).
+- PR 머지 시 브랜치(`weather-17`)로 상위 키를 찾고, Jira API로 `subtasks`·`parent` 관계의 하위 이슈를 조회한 뒤 **각각** 완료 전환합니다.
 
 ### gnoon-in-dev (WEATHER) 예시 필드 ID
 
@@ -25,7 +26,8 @@
 
 ## 사전 조건
 
-- 작업 브랜치 이름은 `weather-1`, `weather-2` 형식
+- 작업 브랜치 이름은 `weather-1`, `weather-2` 형식 (`weather-17-feature`처럼 suffix가 있으면 브랜치 키 추출 안 됨 → 커밋 메시지에 Jira 키 필수)
+- subtask 작업 시 커밋 메시지에 **하위 이슈 키** 포함 (예: `WEATHER-18 feat: ...`). 브랜치는 상위(`weather-17`)여도 하위 카드가 **진행 중**·**시작 날짜** 대상이 됨
 - PR 소스 브랜치도 동일 형식 (`weather-*` → `main` 머지)
 - Jira 워크플로에 **해야 할 일** → `진행 중`, `진행 중` → `PR 대기`, `PR 대기` → `완료` 전환이 존재
 - **시작 날짜** 필드가 Jira에서 **잠겨 있으면** API로 수정 불가 → 필드 설정에서 편집 허용 필요
@@ -86,7 +88,9 @@ curl -sL -u "${EMAIL}:${TOKEN}" -H "Accept: application/json" \
 
 ## 트러블슈팅
 
-- **키를 못 찾음**: 브랜치·PR 소스가 `weather-xxx` 형식인지 확인
+- **키를 못 찾음**: 브랜치가 `weather-17` 형식인지, 커밋 첫 줄에 `WEATHER-18 feat: ...` 형식인지 확인. Actions 로그 `Extracted Jira keys` 확인
+- **subtask만 반영 안 됨**: 예전 워크플로는 브랜치만 봄 → 커밋 메시지 추출이 포함된 최신 워크플로가 **main**에 머지됐는지 확인
 - **시작 날짜 미반영**: `JIRA_FIELD_START_DATE` 설정·필드 **잠금** 해제·API 계정 권한 확인 (실패해도 push 워크플로 전체는 `continue-on-error`로 진행)
 - **Start Date가 안 바뀜**: 이미 값이 있으면 의도적으로 스킵 (첫 push 날짜 유지)
 - **End Date 미반영**: `JIRA_FIELD_END_DATE`·권한 확인
+- **subtask가 완료 안 됨**: Jira에서 해당 항목이 **하위 작업(subtask)** 으로 연결돼 있는지 확인. Actions 로그 `Issues to complete` 배열 확인. 이미 완료된 subtask는 전환 실패할 수 있음 (`failOnError: false`로 나머지는 계속 처리)

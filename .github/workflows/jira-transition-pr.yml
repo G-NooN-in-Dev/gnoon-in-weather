@@ -6,24 +6,67 @@ on:
     branches: [main]
 
 jobs:
-  transition-to-done:
+  extract-keys:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-
+    outputs:
+      keys: ${{ steps.resolve.outputs.keys }}
+      parent_key: ${{ steps.parent_key.outputs.issue_key }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract Jira issue key from PR branch
-        id: jira_key
+      - name: Extract parent Jira key from PR branch
+        id: parent_key
         env:
           BRANCH: ${{ github.head_ref }}
         run: |
           issue_key=$(printf '%s' "$BRANCH" | grep -oiE '^weather-[0-9]+$' | tr '[:lower:]' '[:upper:]')
           echo "issue_key=${issue_key}" >> "$GITHUB_OUTPUT"
-          echo "Extracted Jira key: ${issue_key:-none}"
+          echo "Parent Jira key: ${issue_key:-none}"
+
+      - name: List parent and subtask keys
+        id: list
+        if: steps.parent_key.outputs.issue_key != ''
+        uses: ./.github/actions/jira-list-issue-keys-with-subtasks
+        with:
+          parent_key: ${{ steps.parent_key.outputs.issue_key }}
+          base_url: ${{ secrets.JIRA_BASE_URL }}
+          email: ${{ secrets.JIRA_USER_EMAIL }}
+          token: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Resolve issue keys to complete
+        id: resolve
+        env:
+          PARENT: ${{ steps.parent_key.outputs.issue_key }}
+          LIST_KEYS: ${{ steps.list.outputs.keys }}
+        run: |
+          if [ -z "$PARENT" ]; then
+            echo 'keys=[]' >> "$GITHUB_OUTPUT"
+            echo "No parent key from branch; skipping."
+          else
+            echo "keys=${LIST_KEYS}" >> "$GITHUB_OUTPUT"
+          fi
+
+  complete-on-merge:
+    needs: extract-keys
+    if: needs.extract-keys.outputs.keys != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        issue_key: ${{ fromJSON(needs.extract-keys.outputs.keys) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute End Date from PR merge
+        id: end_date
+        run: |
+          merged_at="${{ github.event.pull_request.merged_at }}"
+          date_value=$(TZ=Asia/Seoul date -d "$merged_at" +%Y-%m-%d)
+          echo "date=${date_value}" >> "$GITHUB_OUTPUT"
+          echo "End date: ${date_value} (KST)"
 
       - name: Login to Jira
-        if: steps.jira_key.outputs.issue_key != ''
         uses: frieder/gha-jira-login@v1
         with:
           baseUrl: ${{ secrets.JIRA_BASE_URL }}
@@ -31,35 +74,28 @@ jobs:
           token: ${{ secrets.JIRA_API_TOKEN }}
 
       - name: Transition to 완료
-        if: steps.jira_key.outputs.issue_key != ''
         uses: frieder/jira-issue-transition@v1
         with:
-          issue: ${{ steps.jira_key.outputs.issue_key }}
+          issue: ${{ matrix.issue_key }}
           transition: ${{ vars.JIRA_TRANSITION_TO_DONE || '완료' }}
           comment: |
             GitHub PR이 머지되었습니다.
-            ${{ github.event.pull_request.html_url }}
+            PR: ${{ github.event.pull_request.html_url }}
+            상위 브랜치: ${{ github.head_ref }}
+            처리 이슈: ${{ matrix.issue_key }}
           retries: 2
           retryDelay: 5
-          failOnError: true
-
-      - name: Compute End Date from PR merge
-        id: end_date
-        if: steps.jira_key.outputs.issue_key != ''
-        run: |
-          merged_at="${{ github.event.pull_request.merged_at }}"
-          date_value=$(TZ=Asia/Seoul date -d "$merged_at" +%Y-%m-%d)
-          echo "date=${date_value}" >> "$GITHUB_OUTPUT"
-          echo "End date: ${date_value} (KST)"
+          failOnError: false
 
       - name: Set End Date
-        if: steps.jira_key.outputs.issue_key != '' && vars.JIRA_FIELD_END_DATE != ''
+        if: vars.JIRA_FIELD_END_DATE != ''
+        continue-on-error: true
         uses: ./.github/actions/jira-set-date-field
         with:
-          issue_key: ${{ steps.jira_key.outputs.issue_key }}
+          issue_key: ${{ matrix.issue_key }}
           field_id: ${{ vars.JIRA_FIELD_END_DATE }}
           date: ${{ steps.end_date.outputs.date }}
-          only_if_empty: 'false'
+          only_if_empty: ${{ matrix.issue_key == needs.extract-keys.outputs.parent_key && 'false' || 'true' }}
           base_url: ${{ secrets.JIRA_BASE_URL }}
           email: ${{ secrets.JIRA_USER_EMAIL }}
           token: ${{ secrets.JIRA_API_TOKEN }}
