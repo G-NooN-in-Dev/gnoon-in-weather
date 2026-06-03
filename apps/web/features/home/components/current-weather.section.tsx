@@ -1,10 +1,11 @@
 import CurrentLocation from './current-location'
+import CurrentWeather from './current-weather'
 
 function CurrentWeatherSection() {
 	return (
-		<section className="flex flex-col">
+		<section className="flex flex-col gap-3">
 			<CurrentLocation />
-			<div>실시간 날씨 섹션</div>
+			<CurrentWeather />
 		</section>
 	)
 }
