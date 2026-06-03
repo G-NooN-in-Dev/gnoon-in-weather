@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 const NAV_ITEMS = [
 	{ href: '/', label: '홈' },
 	{ href: '/weather-news', label: '날씨뉴스' },
-	{ href: '/theme-map', label: '테마지도' },
+	{ href: '/theme-maps', label: '테마지도' },
 	{ href: '/my', label: 'MY' }
 ] as const
 
