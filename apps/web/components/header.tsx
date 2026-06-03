@@ -7,7 +7,7 @@ import Nav from './nav'
 function Header() {
 	return (
 		<header className="shadow-soft z-sticky fixed inset-x-0 top-0 bg-white">
-			<div className="container mx-auto flex h-20 w-full max-w-[1200px] items-center justify-between">
+			<div className="max-w-content container mx-auto flex h-20 w-full items-center justify-between">
 				<div className="flex items-center gap-10">
 					<Logo />
 					<Nav />
