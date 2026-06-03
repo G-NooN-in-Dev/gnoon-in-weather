@@ -1,0 +1,42 @@
+name: Jira transition on branch push
+
+on:
+  push:
+    branches:
+      - 'weather-*'
+
+jobs:
+  transition-to-in-progress:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract Jira issue key from branch
+        id: jira_key
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          issue_key=$(printf '%s' "$BRANCH" | grep -oiE '^weather-[0-9]+$' | tr '[:lower:]' '[:upper:]')
+          echo "issue_key=${issue_key}" >> "$GITHUB_OUTPUT"
+          echo "Extracted Jira key: ${issue_key:-none}"
+
+      - name: Login to Jira
+        if: steps.jira_key.outputs.issue_key != ''
+        uses: frieder/gha-jira-login@v1
+        with:
+          baseUrl: ${{ secrets.JIRA_BASE_URL }}
+          email: ${{ secrets.JIRA_USER_EMAIL }}
+          token: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Transition to 진행 중
+        if: steps.jira_key.outputs.issue_key != ''
+        uses: frieder/jira-issue-transition@v1
+        with:
+          issue: ${{ steps.jira_key.outputs.issue_key }}
+          transition: ${{ vars.JIRA_TRANSITION_TO_IN_PROGRESS || '진행 중' }}
+          comment: |
+            브랜치에 push되었습니다.
+            브랜치: ${{ github.ref_name }}
+            커밋: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+          retries: 2
+          retryDelay: 5
+          failOnError: false
