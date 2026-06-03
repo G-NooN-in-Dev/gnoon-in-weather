@@ -20,7 +20,7 @@ function Nav() {
 	const pathname = usePathname()
 
 	return (
-		<nav className="text-grayscale-500 flex items-center gap-10 pt-1 text-2xl font-medium">
+		<nav className="text-grayscale-500 flex items-center gap-6 text-xl font-medium">
 			{NAV_ITEMS.map((item) => {
 				const { href, label } = item
 				const active = isNavActive(pathname, href)

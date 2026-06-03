@@ -4,12 +4,12 @@ function Logo() {
 	return (
 		<div className="flex items-baseline gap-3">
 			<Link href="/" className="inline-block" aria-label="G-NooN 메인으로 이동">
-				<span className="inline-block translate-y-0.5 bg-linear-to-r from-(--color-red) via-(--color-green) to-(--color-blue-700) bg-clip-text text-4xl leading-none font-bold text-transparent">
+				<span className="inline-block translate-y-0.5 bg-linear-to-r from-(--color-red) via-(--color-green) to-(--color-blue-700) bg-clip-text text-3xl leading-none font-bold text-transparent">
 					G
 				</span>
 			</Link>
 			<Link href="/" className="inline-block" aria-label="날씨 메인으로 이동">
-				<span className="text-3xl font-bold tracking-wider">날씨</span>
+				<span className="text-2xl font-bold tracking-wider">날씨</span>
 			</Link>
 		</div>
 	)
