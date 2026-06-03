@@ -1,10 +1,14 @@
+import CurrentWeatherSection from './components/current-weather.section'
+import DailyWeatherSection from './components/daily-weather.section'
+import HourlyWeatherSection from './components/hourly-weather.section'
+
 function HomepageContainer() {
 	return (
 		<div className="flex">
 			<div className="w-2/3">
-				<section>실시간 날씨</section>
-				<section>시간별 날씨</section>
-				<section>3일 예보</section>
+				<CurrentWeatherSection />
+				<HourlyWeatherSection />
+				<DailyWeatherSection />
 			</div>
 			<div className="w-1/3">
 				<section>검색</section>
