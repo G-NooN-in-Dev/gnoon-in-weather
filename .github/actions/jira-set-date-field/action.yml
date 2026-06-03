@@ -1,0 +1,69 @@
+name: Jira set date field
+description: Jira 이슈의 날짜 커스텀 필드를 REST API로 설정합니다.
+
+inputs:
+  issue_key:
+    description: 'Jira 이슈 키 (예 WEATHER-1)'
+    required: true
+  field_id:
+    description: '날짜 필드 ID (예 customfield_10015)'
+    required: true
+  date:
+    description: 설정할 날짜 (yyyy-MM-dd)
+    required: true
+  only_if_empty:
+    description: 'true이면 필드가 비어 있을 때만 설정'
+    required: false
+    default: 'false'
+  base_url:
+    description: Jira base URL
+    required: true
+  email:
+    description: Jira 사용자 이메일
+    required: true
+  token:
+    description: Jira API 토큰
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set Jira date field
+      shell: bash
+      env:
+        ISSUE_KEY: ${{ inputs.issue_key }}
+        FIELD_ID: ${{ inputs.field_id }}
+        DATE_VALUE: ${{ inputs.date }}
+        ONLY_IF_EMPTY: ${{ inputs.only_if_empty }}
+        BASE_URL: ${{ inputs.base_url }}
+        EMAIL: ${{ inputs.email }}
+        TOKEN: ${{ inputs.token }}
+      run: |
+        set -euo pipefail
+
+        base_url="${BASE_URL%/}"
+        auth="${EMAIL}:${TOKEN}"
+
+        echo "Setting ${FIELD_ID} on ${ISSUE_KEY} to ${DATE_VALUE} (only_if_empty=${ONLY_IF_EMPTY})"
+
+        issue_json=$(curl -fsSL -u "$auth" \
+          -H "Accept: application/json" \
+          "${base_url}/rest/api/3/issue/${ISSUE_KEY}?fields=${FIELD_ID}")
+
+        current=$(echo "$issue_json" | jq -r --arg f "$FIELD_ID" '.fields[$f] // empty')
+
+        if [ "$ONLY_IF_EMPTY" = "true" ] && [ -n "$current" ] && [ "$current" != "null" ]; then
+          echo "Field already set (${current}), skipping."
+          exit 0
+        fi
+
+        payload=$(jq -n --arg f "$FIELD_ID" --arg d "$DATE_VALUE" '{fields: {($f): $d}}')
+
+        curl -fsSL -u "$auth" \
+          -X PUT \
+          -H "Accept: application/json" \
+          -H "Content-Type: application/json" \
+          --data "$payload" \
+          "${base_url}/rest/api/3/issue/${ISSUE_KEY}"
+
+        echo "Date field updated successfully."

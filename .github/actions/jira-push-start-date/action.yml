@@ -1,0 +1,40 @@
+name: Compute push start date
+description: push 이벤트 커밋 목록에서 시작 날짜용 yyyy-MM-dd를 KST(Asia/Seoul) 기준으로 계산합니다.
+
+outputs:
+  date:
+    description: yyyy-MM-dd 형식 날짜
+    value: ${{ steps.compute.outputs.date }}
+
+runs:
+  using: composite
+  steps:
+    - id: compute
+      shell: bash
+      env:
+        COMMITS_JSON: ${{ toJSON(github.event.commits) }}
+        HEAD_TIMESTAMP: ${{ github.event.head_commit.timestamp }}
+      run: |
+        set -euo pipefail
+
+        ts=""
+
+        if [ "$COMMITS_JSON" != "null" ] && [ "$COMMITS_JSON" != "[]" ]; then
+          ts=$(echo "$COMMITS_JSON" | jq -r '[.[].timestamp] | min')
+        fi
+
+        if [ -z "$ts" ] || [ "$ts" = "null" ]; then
+          ts="$HEAD_TIMESTAMP"
+        fi
+
+        if [ -z "$ts" ] || [ "$ts" = "null" ]; then
+          echo "Could not determine commit timestamp, using workflow run date (KST)."
+          date_value=$(TZ=Asia/Seoul date +%Y-%m-%d)
+          echo "date=${date_value}" >> "$GITHUB_OUTPUT"
+          echo "Start date candidate: ${date_value} (KST, workflow run)"
+          exit 0
+        fi
+
+        date_value=$(TZ=Asia/Seoul date -d "$ts" +%Y-%m-%d)
+        echo "date=${date_value}" >> "$GITHUB_OUTPUT"
+        echo "Start date candidate: ${date_value} KST (from ${ts})"

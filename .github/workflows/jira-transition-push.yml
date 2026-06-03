@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Extract Jira issue key from branch
         id: jira_key
         env:
@@ -19,11 +21,28 @@ jobs:
           echo "issue_key=${issue_key}" >> "$GITHUB_OUTPUT"
           echo "Extracted Jira key: ${issue_key:-none}"
 
+      - name: Compute Start Date from push commits
+        id: start_date
+        uses: ./.github/actions/jira-push-start-date
+
       - name: Login to Jira
         if: steps.jira_key.outputs.issue_key != ''
         uses: frieder/gha-jira-login@v1
         with:
           baseUrl: ${{ secrets.JIRA_BASE_URL }}
+          email: ${{ secrets.JIRA_USER_EMAIL }}
+          token: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Set Start Date (first push only)
+        if: steps.jira_key.outputs.issue_key != '' && vars.JIRA_FIELD_START_DATE != ''
+        continue-on-error: true
+        uses: ./.github/actions/jira-set-date-field
+        with:
+          issue_key: ${{ steps.jira_key.outputs.issue_key }}
+          field_id: ${{ vars.JIRA_FIELD_START_DATE }}
+          date: ${{ steps.start_date.outputs.date }}
+          only_if_empty: 'true'
+          base_url: ${{ secrets.JIRA_BASE_URL }}
           email: ${{ secrets.JIRA_USER_EMAIL }}
           token: ${{ secrets.JIRA_API_TOKEN }}
 
