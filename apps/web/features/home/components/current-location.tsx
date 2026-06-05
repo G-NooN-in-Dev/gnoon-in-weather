@@ -9,7 +9,7 @@ function CurrentLocation() {
 				</span>
 				<h2>경기도 수원시 권선구 서둔동</h2>
 				<span>
-					<Crosshair stroke="var(--color-blue-600)" />
+					<Crosshair stroke="var(--color-pastel-blue-600)" />
 				</span>
 			</div>
 		</div>

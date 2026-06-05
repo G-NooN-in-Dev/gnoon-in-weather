@@ -55,7 +55,7 @@ function CurrentWeather() {
 						href="https://www.weatherapi.com/"
 						target="_blank"
 						rel="noopener noreferrer"
-						className="text-blue-700 hover:underline"
+						className="text-pastel-blue-700 hover:underline"
 					>
 						WeatherAPI
 					</Link>

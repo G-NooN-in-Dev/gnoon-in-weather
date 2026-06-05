@@ -45,7 +45,7 @@ export { default } from '@shared/tailwind-config/postcss'
 ## 디자인 토큰 사용 가이드
 
 - 기본 텍스트/보더는 `grayscale-*`를 우선 사용합니다.
-- 파스텔 배경은 `100` 또는 `200` 단계 사용을 권장합니다.
+- 파스텔 배경은 `pastel-*` 팔레트의 `100` 또는 `200` 단계 사용을 권장합니다.
 - 파스텔 배경 위 텍스트는 `grayscale-700` 이상(더 진한 톤) 사용을 권장합니다.
 - 상태색은 `DEFAULT` + 축약 스케일을 제공합니다.
   - `success|warning|danger|info`: `50`, `100`, `500`, `700`
