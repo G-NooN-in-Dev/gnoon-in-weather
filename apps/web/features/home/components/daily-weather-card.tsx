@@ -26,20 +26,20 @@ function DailyWeatherCard() {
 				</div>
 				{/* 하단 */}
 				<div className="flex flex-col gap-3 px-2 text-xl font-semibold">
-					<p className="flex items-center justify-between">
+					<div className="flex items-center justify-between">
 						<span>강수</span>
 						<div className="flex items-baseline gap-1">
 							<span>60</span>
 							<span className="text-muted-foreground text-base">%</span>
 						</div>
-					</p>
-					<p className="flex items-center justify-between">
+					</div>
+					<div className="flex items-center justify-between">
 						<span>자외선</span>
 						<div className="flex items-baseline gap-1">
 							<span>5</span>
 							<span className="text-muted-foreground text-base">보통</span>
 						</div>
-					</p>
+					</div>
 				</div>
 			</CardContent>
 		</Card>
