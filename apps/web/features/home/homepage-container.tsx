@@ -1,6 +1,4 @@
-import CurrentWeatherSection from './components/current-weather.section'
-import DailyWeatherSection from './components/daily-weather.section'
-import HourlyWeatherSection from './components/hourly-weather.section'
+import { CurrentWeatherSection, DailyWeatherSection, HourlyWeatherSection } from './sections'
 
 function HomepageContainer() {
 	return (

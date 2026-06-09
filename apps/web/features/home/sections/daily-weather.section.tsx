@@ -1,4 +1,4 @@
-import DailyWeatherCard from './daily-weather-card'
+import DailyWeatherCard from '../components/daily-weather-card'
 
 function DailyWeatherSection() {
 	return (

@@ -1,5 +1,5 @@
-import CurrentLocation from './current-location'
-import CurrentWeather from './current-weather'
+import CurrentLocation from '../components/current-location'
+import CurrentWeather from '../components/current-weather'
 
 function CurrentWeatherSection() {
 	return (
