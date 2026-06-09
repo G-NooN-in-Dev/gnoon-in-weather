@@ -37,8 +37,18 @@ jobs:
           email: ${{ secrets.JIRA_USER_EMAIL }}
           token: ${{ secrets.JIRA_API_TOKEN }}
 
+      - name: Check issue status is 해야 할 일
+        id: status_check
+        uses: ./.github/actions/jira-issue-matches-status
+        with:
+          issue_key: ${{ matrix.issue_key }}
+          expected_status: ${{ vars.JIRA_STATUS_TODO || '해야 할 일' }}
+          base_url: ${{ secrets.JIRA_BASE_URL }}
+          email: ${{ secrets.JIRA_USER_EMAIL }}
+          token: ${{ secrets.JIRA_API_TOKEN }}
+
       - name: Set Start Date (first push only)
-        if: vars.JIRA_FIELD_START_DATE != ''
+        if: steps.status_check.outputs.matches == 'true' && vars.JIRA_FIELD_START_DATE != ''
         continue-on-error: true
         uses: ./.github/actions/jira-set-date-field
         with:
@@ -51,6 +61,7 @@ jobs:
           token: ${{ secrets.JIRA_API_TOKEN }}
 
       - name: Transition to 진행 중
+        if: steps.status_check.outputs.matches == 'true'
         uses: frieder/jira-issue-transition@v1
         with:
           issue: ${{ matrix.issue_key }}

@@ -1,0 +1,67 @@
+name: Jira issue matches status
+description: Jira 이슈의 현재 상태가 기대값과 일치하는지 확인합니다.
+
+inputs:
+  issue_key:
+    description: 'Jira 이슈 키 (예 WEATHER-1)'
+    required: true
+  expected_status:
+    description: '비교할 상태 이름 (예 해야 할 일)'
+    required: true
+  base_url:
+    description: Jira base URL
+    required: true
+  email:
+    description: Jira 사용자 이메일
+    required: true
+  token:
+    description: Jira API 토큰
+    required: true
+
+outputs:
+  matches:
+    description: '현재 상태가 expected_status와 일치하면 true'
+    value: ${{ steps.fetch.outputs.matches }}
+  status:
+    description: '현재 상태 이름'
+    value: ${{ steps.fetch.outputs.status }}
+
+runs:
+  using: composite
+  steps:
+    - id: fetch
+      shell: bash
+      env:
+        ISSUE_KEY: ${{ inputs.issue_key }}
+        EXPECTED_STATUS: ${{ inputs.expected_status }}
+        BASE_URL: ${{ inputs.base_url }}
+        EMAIL: ${{ inputs.email }}
+        TOKEN: ${{ inputs.token }}
+      run: |
+        set -euo pipefail
+
+        base_url="${BASE_URL%/}"
+        auth="${EMAIL}:${TOKEN}"
+
+        issue_json=$(curl -fsSL -u "$auth" \
+          -H "Accept: application/json" \
+          "${base_url}/rest/api/3/issue/${ISSUE_KEY}?fields=status")
+
+        current_status=$(echo "$issue_json" | jq -r '.fields.status.name // empty')
+
+        if [ -z "$current_status" ]; then
+          echo "Could not read status for ${ISSUE_KEY}"
+          echo "matches=false" >> "$GITHUB_OUTPUT"
+          echo "status=" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        if [ "$current_status" = "$EXPECTED_STATUS" ]; then
+          matches=true
+        else
+          matches=false
+        fi
+
+        echo "matches=${matches}" >> "$GITHUB_OUTPUT"
+        echo "status=${current_status}" >> "$GITHUB_OUTPUT"
+        echo "${ISSUE_KEY} status: ${current_status} (expected: ${EXPECTED_STATUS}, matches: ${matches})"

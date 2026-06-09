@@ -2,12 +2,12 @@
 
 브랜치 push·PR 생성·머지 시 Jira 카드 상태를 자동으로 변경합니다. 날짜 필드는 **KST(Asia/Seoul)** 기준입니다.
 
-| 이벤트                          | 워크플로                   | 기대 동작                                              |
-| ------------------------------- | -------------------------- | ------------------------------------------------------ |
-| 브랜치 push (`weather-*`)       | `jira-transition-push.yml` | **해야 할 일** → **진행 중**, **시작 날짜** (최초 1회) |
-| PR 생성 (`opened` / `reopened`) | `jira-pull-request.yml`    | 진행 중 → **PR 대기**                                  |
-| PR 머지 (`merged`)              | `jira-transition-pr.yml`   | 상위·**하위 subtask 전부** → **완료**, **End Date**    |
-| PR 열림/업데이트                | `test-pull-request.yml`    | lint · typecheck · build                               |
+| 이벤트                          | 워크플로                   | 기대 동작                                                            |
+| ------------------------------- | -------------------------- | -------------------------------------------------------------------- |
+| 브랜치 push (`weather-*`)       | `jira-transition-push.yml` | 상태가 **해야 할 일**일 때만 → **진행 중**, **시작 날짜** (최초 1회) |
+| PR 생성 (`opened` / `reopened`) | `jira-pull-request.yml`    | 진행 중 → **PR 대기**                                                |
+| PR 머지 (`merged`)              | `jira-transition-pr.yml`   | 상위·**하위 subtask 전부** → **완료**, **End Date**                  |
+| PR 열림/업데이트                | `test-pull-request.yml`    | lint · typecheck · build                                             |
 
 ## 구성
 
@@ -63,11 +63,14 @@ Variable이 없으면 해당 날짜 단계만 건너뜁니다.
 
 ### 상태 전환 이름 (기본값과 다를 때만)
 
-| Variable Name                    | 기본값    |
-| -------------------------------- | --------- |
-| `JIRA_TRANSITION_TO_IN_PROGRESS` | `진행 중` |
-| `JIRA_TRANSITION_TO_PR_WAIT`     | `PR 대기` |
-| `JIRA_TRANSITION_TO_DONE`        | `완료`    |
+| Variable Name                    | 기본값       |
+| -------------------------------- | ------------ |
+| `JIRA_STATUS_TODO`               | `해야 할 일` |
+| `JIRA_TRANSITION_TO_IN_PROGRESS` | `진행 중`    |
+| `JIRA_TRANSITION_TO_PR_WAIT`     | `PR 대기`    |
+| `JIRA_TRANSITION_TO_DONE`        | `완료`       |
+
+push 시 **진행 중** 전환·**시작 날짜** 설정은 현재 상태가 `JIRA_STATUS_TODO`(기본 `해야 할 일`)일 때만 실행됩니다. 이미 **진행 중**·**PR 대기**·**완료** 등이면 push해도 상태가 바뀌지 않습니다.
 
 ---
 
@@ -89,6 +92,7 @@ curl -sL -u "${EMAIL}:${TOKEN}" -H "Accept: application/json" \
 
 ## 트러블슈팅
 
+- **push했는데 상태가 안 바뀜**: 의도된 동작일 수 있음. 현재 상태가 **해야 할 일**이 아니면 **진행 중** 전환을 건너뜁니다. Actions 로그 `matches: false` 확인
 - **키를 못 찾음**: 브랜치가 `weather-17` 형식인지, 커밋 첫 줄에 `WEATHER-18 feat: ...` 형식인지 확인. Actions 로그 `Extracted Jira keys` 확인
 - **subtask만 반영 안 됨**: 예전 워크플로는 브랜치만 봄 → 커밋 메시지 추출이 포함된 최신 워크플로가 **main**에 머지됐는지 확인
 - **시작 날짜 미반영**: `JIRA_FIELD_START_DATE` 설정·필드 **잠금** 해제·API 계정 권한 확인 (실패해도 push 워크플로 전체는 `continue-on-error`로 진행)
