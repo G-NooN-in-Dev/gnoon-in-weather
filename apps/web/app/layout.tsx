@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 function RootLayout({ children }: PropsWithChildren) {
 	return (
 		<html lang="ko" className="h-full antialiased">
-			<body className="bg-grayscale-100 flex min-h-full w-full flex-col pt-20">
+			<body className="bg-grayscale-100 flex min-h-full w-full flex-col pt-14">
 				<Header />
 				{children}
 				<Footer />

@@ -30,11 +30,15 @@
 
 ## colors (`--color-*`)
 
-- 파스텔 팔레트: `red`, `orange`, `yellow`, `green`, `blue`, `purple`
-  - 각 팔레트는 기본값(`--color-red` 등)과 `50..950` 스케일 제공
+- 파스텔 팔레트: `pastel-red`, `pastel-orange`, `pastel-yellow`, `pastel-green`, `pastel-blue`, `pastel-purple`
+  - Tailwind 기본 색상명(`red`, `blue` 등)과 충돌하지 않도록 `pastel-` 접두사 사용
+  - 각 팔레트는 기본값(`--color-pastel-red` 등)과 `50..950` 스케일 제공
 - 기본 텍스트/보더: `grayscale`
 - 상태색: `success`, `warning`, `danger`, `info`
   - `50`, `100`, `500`, `700` 및 기본값 제공
+- 원색: `pure-red`, `pure-green`, `pure-blue`, `pure-yellow`, `pure-cyan`, `pure-magenta`
+  - RGB·CMY 순색 (`#ff0000`, `#00ff00`, `#0000ff` 등). Tailwind 기본·`pastel-*`·상태색과 겹치지 않음
+  - 예: `text-pure-red`, `bg-pure-blue`
 
 ## fontSize (`--text-*`)
 
@@ -86,7 +90,7 @@
 
 ## backgroundImage (`--background-image-*`)
 
-- Radial: `bg-radial-blue`, `bg-radial-pink`, `bg-radial-purple`
+- Radial: `bg-radial-pastel-blue`, `bg-radial-pastel-red`, `bg-radial-pastel-purple`
 - Linear: `bg-linear-sky`, `bg-linear-sunrise`, `bg-linear-mint`
 - Multi-layer: `bg-mesh-soft`
 
