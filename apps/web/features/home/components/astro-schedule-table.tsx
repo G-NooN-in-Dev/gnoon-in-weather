@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@shared/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table'
-import type { ReactNode } from 'react'
+// import type { ReactNode } from 'react'
 
 export type AstroScheduleTableRow = {
 	date: string
@@ -13,7 +13,7 @@ type AstroScheduleTableProps = {
 	leftHeader: string
 	rightHeader: string
 	/** 가운데 열 커스텀 렌더 (음력 날짜 등). 미지정 시 양력 오늘/내일/모레 표시 */
-	renderCenter?: (row: AstroScheduleTableRow, index: number) => ReactNode
+	// renderCenter?: (row: AstroScheduleTableRow, index: number) => ReactNode
 }
 
 function getDefaultCenterLabel(row: AstroScheduleTableRow, index: number) {
@@ -26,7 +26,7 @@ function getDefaultCenterLabel(row: AstroScheduleTableRow, index: number) {
 	)
 }
 
-function AstroScheduleTable({ data, leftHeader, rightHeader, renderCenter }: AstroScheduleTableProps) {
+function AstroScheduleTable({ data, leftHeader, rightHeader }: AstroScheduleTableProps) {
 	return (
 		<Table className="border-separate border-spacing-x-0 border-spacing-y-2">
 			<TableHeader className="text-xl [&_tr]:border-0">
@@ -43,7 +43,8 @@ function AstroScheduleTable({ data, leftHeader, rightHeader, renderCenter }: Ast
 							<Card className="bg-grayscale-50 border-grayscale-200 py-2">
 								<CardContent className="grid grid-cols-3 items-center px-4 py-0">
 									<span className="text-left text-lg font-medium">{row.left}</span>
-									{renderCenter ? renderCenter(row, index) : getDefaultCenterLabel(row, index)}
+									{/* {renderCenter ? renderCenter(row, index) : getDefaultCenterLabel(row, index)} */}
+									{getDefaultCenterLabel(row, index)}
 									<span className="text-right text-lg font-medium">{row.right}</span>
 								</CardContent>
 							</Card>
