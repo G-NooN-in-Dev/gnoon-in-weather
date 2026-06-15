@@ -1,13 +1,13 @@
 'use client'
 
 import { ScrollArea as ScrollAreaPrimitive } from '@base-ui/react/scroll-area'
-import * as React from 'react'
+import { type Ref } from 'react'
 
 import { cn } from './lib/utils'
 
 type ScrollAreaProps = ScrollAreaPrimitive.Root.Props & {
 	scrollbar?: 'none' | 'vertical' | 'horizontal' | 'both'
-	viewportRef?: React.Ref<HTMLDivElement>
+	viewportRef?: Ref<HTMLDivElement>
 	viewportClassName?: string
 }
 

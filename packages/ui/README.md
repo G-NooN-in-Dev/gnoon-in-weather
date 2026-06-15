@@ -26,6 +26,17 @@ export function Example() {
 
 - 컴포넌트는 shadcn command로 추가하고, 생성 파일은 `src/` 아래에 유지한다.
 - 개별 import는 `@shared/ui/<component>`를 기본으로 사용한다.
-- `cn` 함수는 `src/lib/utils.ts`에 두고, UI 컴포넌트에서는 `@/src/lib/utils`에서 import 한다.
+- `cn` 함수는 `src/lib/utils.ts`에 두고, 패키지 **내부** import는 `./lib/utils` 같은 **상대 경로**를 사용한다. (`@/` alias는 앱 번들러에 없어 소스 직접 참조 시 해석되지 않는다.)
+- shadcn CLI 추가 시에도 `components.json`의 `utils`/`ui` alias가 상대 경로(`.`, `./lib/utils`)로 맞춰져 있어 동일 규칙으로 생성된다.
+- React는 `import * as React from 'react'` 대신 필요한 API만 named import 한다. (예: `useState`, `useEffect`, `type ComponentProps`)
 - 앱에서 `cn`이 필요하면 `@shared/ui/utils`를 import해서 공통 함수 하나만 사용한다.
 - `components.json`의 `tailwind.css`는 `src/styles.css`를 사용해 특정 앱(`web`)과 결합하지 않는다.
+
+## Tailwind v4 className 정규화
+
+shadcn/Tailwind IntelliSense가 제안하는 v4 canonical 문법을 따른다. (상세 규칙은 `.cursor/rules/tailwind-shared-system.mdc` 참고)
+
+- `w-[var(--x)]` → `w-(--x)`
+- `left-[calc(var(--x)*-1)]` → `-left-(--x)`
+- `calc(var(--x)+…)` → `calc((--x)+…)`
+- 컴포넌트 추가·수정 후 IDE warning이 남으면 위 규칙으로 맞춘다.
