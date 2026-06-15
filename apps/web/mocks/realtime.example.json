@@ -1,0 +1,51 @@
+{
+	"location": {
+		"name": "Seodun",
+		"region": "",
+		"country": "South Korea",
+		"lat": 37.267,
+		"lon": 126.983,
+		"tz_id": "Asia/Seoul",
+		"localtime_epoch": 1780568003,
+		"localtime": "2026-06-04 19:13"
+	},
+	"current": {
+		"last_updated_epoch": 1780567200,
+		"last_updated": "2026-06-04 19:00",
+		"temp_c": 23.7,
+		"temp_f": 74.7,
+		"is_day": 1,
+		"condition": {
+			"text": "안개",
+			"icon": "//cdn.weatherapi.com/weather/64x64/day/143.png",
+			"code": 1030
+		},
+		"wind_mph": 9.2,
+		"wind_kph": 14.8,
+		"wind_degree": 273,
+		"wind_dir": "W",
+		"pressure_mb": 1000,
+		"pressure_in": 29.54,
+		"precip_mm": 0,
+		"precip_in": 0,
+		"humidity": 78,
+		"cloud": 100,
+		"feelslike_c": 25.7,
+		"feelslike_f": 78.3,
+		"windchill_c": 21.3,
+		"windchill_f": 70.3,
+		"heatindex_c": 24.3,
+		"heatindex_f": 75.7,
+		"dewpoint_c": 18.2,
+		"dewpoint_f": 64.8,
+		"vis_km": 9.7,
+		"vis_miles": 6,
+		"uv": 0.1,
+		"gust_mph": 13.3,
+		"gust_kph": 21.5,
+		"will_it_rain": 0,
+		"chance_of_rain": 16,
+		"will_it_snow": 0,
+		"chance_of_snow": 0
+	}
+}

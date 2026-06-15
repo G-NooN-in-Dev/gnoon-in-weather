@@ -1,6 +1,12 @@
-import CurrentWeatherSection from './components/current-weather.section'
-import DailyWeatherSection from './components/daily-weather.section'
-import HourlyWeatherSection from './components/hourly-weather.section'
+import {
+	CurrentWeatherSection,
+	DailyWeatherSection,
+	HourlyWeatherSection,
+	MoonriseMoonsetSection,
+	SunriseSunsetSection,
+	UvIndexSection,
+	WeatherRadarSection
+} from './sections'
 
 function HomepageContainer() {
 	return (
@@ -12,10 +18,10 @@ function HomepageContainer() {
 			</div>
 			<div className="flex w-1/3 flex-col gap-6">
 				<section>검색</section>
-				<section>자외선 정보</section>
-				<section>일출/일몰</section>
-				<section>월출/월몰</section>
-				<section>기상 레이더</section>
+				<UvIndexSection />
+				<SunriseSunsetSection />
+				<MoonriseMoonsetSection />
+				<WeatherRadarSection />
 			</div>
 		</div>
 	)

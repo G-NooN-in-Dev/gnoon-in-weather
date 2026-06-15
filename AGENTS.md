@@ -38,6 +38,12 @@
 - 상세 템플릿·예시는 `.cursor/rules/react-component-template.mdc`를 참고합니다.
 - `page.tsx`, `layout.tsx` 등 Next.js 라우트 파일은 프레임워크 규칙을 우선합니다.
 
+## Cursor rules 작업 규칙
+
+- `.cursor/rules/` 변경은 **기능 브랜치가 아닌 `main` 브랜치**에서 추가·수정합니다.
+- 작업 중 다른 브랜치에 있다면, 변경 사항을 stash한 뒤 `main`으로 전환해 rule을 반영합니다.
+- rule 반영 후에는 `main`에 커밋하고, 작업 브랜치에서는 `main`을 merge 또는 rebase해 최신 rule을 가져옵니다.
+
 ## 변경 안전 규칙
 
 - 비밀값, 토큰, 인증정보는 커밋/문서화하지 않습니다.
