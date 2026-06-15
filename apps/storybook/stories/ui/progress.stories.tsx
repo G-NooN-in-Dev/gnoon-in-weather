@@ -33,3 +33,11 @@ export const Default: Story = {
 		label: '진행률'
 	}
 }
+
+export const Empty: Story = {
+	args: { ...Default.args, value: 0 }
+}
+
+export const Complete: Story = {
+	args: { ...Default.args, value: 100 }
+}

@@ -1,5 +1,6 @@
 import {
 	Sidebar,
+	sidebarCollapsibleOptions,
 	SidebarContent,
 	SidebarGroup,
 	SidebarGroupContent,
@@ -10,13 +11,18 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarProvider,
-	SidebarTrigger
+	sidebarSideOptions,
+	SidebarTrigger,
+	sidebarVariantOptions
 } from '@shared/ui/sidebar'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { textArgType } from './_arg-types'
+import { selectArgType, textArgType } from './_arg-types'
 
 type SidebarStoryArgs = {
+	side: 'left' | 'right'
+	variant: 'sidebar' | 'floating' | 'inset'
+	collapsible: 'offcanvas' | 'icon' | 'none'
 	appTitle: string
 	groupLabel: string
 	activeItem: string
@@ -30,6 +36,9 @@ const meta = {
 	tags: ['autodocs'],
 	parameters: { layout: 'fullscreen' },
 	argTypes: {
+		side: selectArgType(sidebarSideOptions, '사이드바 위치'),
+		variant: selectArgType(sidebarVariantOptions, '사이드바 variant'),
+		collapsible: selectArgType(sidebarCollapsibleOptions, '접기 동작'),
 		appTitle: textArgType('사이드바 헤더 제목'),
 		groupLabel: textArgType('메뉴 그룹 라벨'),
 		activeItem: textArgType('활성 메뉴 텍스트'),
@@ -37,9 +46,19 @@ const meta = {
 		contentTitle: textArgType('메인 영역 제목'),
 		contentBody: textArgType('메인 영역 본문')
 	},
-	render: ({ appTitle, groupLabel, activeItem, inactiveItem, contentTitle, contentBody }) => (
+	render: ({
+		side,
+		variant,
+		collapsible,
+		appTitle,
+		groupLabel,
+		activeItem,
+		inactiveItem,
+		contentTitle,
+		contentBody
+	}) => (
 		<SidebarProvider>
-			<Sidebar>
+			<Sidebar side={side} variant={variant} collapsible={collapsible}>
 				<SidebarHeader className="border-b p-4 text-sm font-medium">{appTitle}</SidebarHeader>
 				<SidebarContent>
 					<SidebarGroup>
@@ -73,6 +92,9 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
 	args: {
+		side: 'left',
+		variant: 'sidebar',
+		collapsible: 'offcanvas',
 		appTitle: '앱',
 		groupLabel: '메뉴',
 		activeItem: '홈',
@@ -80,4 +102,16 @@ export const Default: Story = {
 		contentTitle: '콘텐츠',
 		contentBody: '메인 영역입니다.'
 	}
+}
+
+export const Floating: Story = {
+	args: { ...Default.args, variant: 'floating', appTitle: 'Floating' }
+}
+
+export const Inset: Story = {
+	args: { ...Default.args, variant: 'inset', appTitle: 'Inset' }
+}
+
+export const IconCollapsible: Story = {
+	args: { ...Default.args, collapsible: 'icon', appTitle: 'Icon 접기' }
 }

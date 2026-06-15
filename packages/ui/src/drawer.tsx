@@ -5,20 +5,25 @@ import { Drawer as DrawerPrimitive } from 'vaul'
 
 import { cn } from './lib/utils'
 
+/** vaul Drawer.Root direction prop */
+export const drawerDirectionOptions = ['top', 'bottom', 'left', 'right'] as const
+
+export type DrawerDirection = (typeof drawerDirectionOptions)[number]
+
 function Drawer({ ...props }: ComponentProps<typeof DrawerPrimitive.Root>) {
 	return <DrawerPrimitive.Root data-slot="drawer" {...props} />
 }
 
-function DrawerTrigger({ ...props }: ComponentProps<typeof DrawerPrimitive.Trigger>) {
-	return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />
+function DrawerTrigger({ className, ...props }: ComponentProps<typeof DrawerPrimitive.Trigger>) {
+	return <DrawerPrimitive.Trigger data-slot="drawer-trigger" className={cn('cursor-pointer', className)} {...props} />
 }
 
 function DrawerPortal({ ...props }: ComponentProps<typeof DrawerPrimitive.Portal>) {
 	return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />
 }
 
-function DrawerClose({ ...props }: ComponentProps<typeof DrawerPrimitive.Close>) {
-	return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />
+function DrawerClose({ className, ...props }: ComponentProps<typeof DrawerPrimitive.Close>) {
+	return <DrawerPrimitive.Close data-slot="drawer-close" className={cn('cursor-pointer', className)} {...props} />
 }
 
 function DrawerOverlay({ className, ...props }: ComponentProps<typeof DrawerPrimitive.Overlay>) {

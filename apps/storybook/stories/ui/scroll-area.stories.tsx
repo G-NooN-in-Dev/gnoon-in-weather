@@ -43,3 +43,7 @@ export const Default: Story = {
 		heading: '태그'
 	}
 }
+
+export const Compact: Story = {
+	args: { ...Default.args, height: 120, itemCount: 10 }
+}

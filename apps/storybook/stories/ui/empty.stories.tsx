@@ -1,5 +1,13 @@
 import { Button } from '@shared/ui/button'
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@shared/ui/empty'
+import {
+	Empty,
+	EmptyContent,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	emptyMediaVariantOptions,
+	EmptyTitle
+} from '@shared/ui/empty'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { InboxIcon } from 'lucide-react'
 
@@ -19,7 +27,7 @@ const meta = {
 		title: textArgType('빈 상태 제목'),
 		description: textArgType('빈 상태 설명'),
 		actionLabel: textArgType('액션 버튼 텍스트'),
-		mediaVariant: selectArgType(['default', 'icon'], '미디어 영역 스타일')
+		mediaVariant: selectArgType(emptyMediaVariantOptions, '미디어 영역 스타일')
 	},
 	render: ({ title, description, actionLabel, mediaVariant }) => (
 		<Empty className="max-w-md border">
@@ -41,6 +49,15 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+	args: {
+		title: '데이터가 없습니다',
+		description: '새 항목을 추가해 보세요.',
+		actionLabel: '항목 추가',
+		mediaVariant: 'default'
+	}
+}
+
+export const Icon: Story = {
 	args: {
 		title: '데이터가 없습니다',
 		description: '새 항목을 추가해 보세요.',

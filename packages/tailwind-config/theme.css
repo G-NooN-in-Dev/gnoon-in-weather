@@ -213,6 +213,24 @@
 	--color-input: var(--color-grayscale-200);
 	--color-ring: var(--color-grayscale-900);
 
+	/* @shared/ui 오버레이·플로팅 표면 (Dialog, Popover, Select 등) */
+	--color-popover: #ffffff;
+	--color-popover-foreground: var(--color-grayscale-900);
+	--color-card: #ffffff;
+	--color-card-foreground: var(--color-grayscale-900);
+	--color-accent: var(--color-grayscale-100);
+	--color-accent-foreground: var(--color-grayscale-900);
+
+	/* @shared/ui Sidebar 전용 시맨틱 색상 */
+	--color-sidebar: var(--color-grayscale-50);
+	--color-sidebar-foreground: var(--color-grayscale-900);
+	--color-sidebar-primary: var(--color-grayscale-900);
+	--color-sidebar-primary-foreground: #ffffff;
+	--color-sidebar-accent: var(--color-grayscale-100);
+	--color-sidebar-accent-foreground: var(--color-grayscale-900);
+	--color-sidebar-border: var(--color-grayscale-200);
+	--color-sidebar-ring: var(--color-grayscale-900);
+
 	--max-width-prose: 70ch;
 	--max-width-content: 72rem;
 	--max-width-reading: 65ch;

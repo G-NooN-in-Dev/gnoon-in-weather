@@ -7,6 +7,11 @@ import { type DayButton, DayPicker, getDefaultClassNames, type Locale } from 're
 import { Button, buttonVariants } from './button'
 import { cn } from './lib/utils'
 
+/** react-day-picker captionLayout 옵션 */
+export const calendarCaptionLayoutOptions = ['label', 'dropdown', 'dropdown-months', 'dropdown-years'] as const
+
+export type CalendarCaptionLayout = (typeof calendarCaptionLayoutOptions)[number]
+
 function Calendar({
 	className,
 	classNames,

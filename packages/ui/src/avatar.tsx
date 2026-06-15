@@ -5,19 +5,23 @@ import { type ComponentProps } from 'react'
 
 import { cn } from './lib/utils'
 
+export const avatarSizeOptions = ['default', 'sm', 'lg'] as const
+
+export type AvatarSize = (typeof avatarSizeOptions)[number]
+
 function Avatar({
 	className,
 	size = 'default',
 	...props
 }: AvatarPrimitive.Root.Props & {
-	size?: 'default' | 'sm' | 'lg'
+	size?: AvatarSize
 }) {
 	return (
 		<AvatarPrimitive.Root
 			data-slot="avatar"
 			data-size={size}
 			className={cn(
-				'group/avatar after:border-border relative flex size-8 shrink-0 rounded-full select-none after:absolute after:inset-0 after:rounded-full after:border after:mix-blend-darken data-[size=lg]:size-10 data-[size=sm]:size-6 dark:after:mix-blend-lighten',
+				'group/avatar after:border-border relative flex size-8 shrink-0 cursor-pointer rounded-full select-none after:absolute after:inset-0 after:rounded-full after:border after:mix-blend-darken data-[size=lg]:size-10 data-[size=sm]:size-6 dark:after:mix-blend-lighten',
 				className
 			)}
 			{...props}

@@ -1,6 +1,6 @@
 import { Button } from '@shared/ui/button'
+import { toast } from '@shared/ui/sonner'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { toast } from 'sonner'
 
 import { selectArgType, textArgType } from './_arg-types'
 import { withToaster } from './_decorators'
@@ -8,7 +8,7 @@ import { withToaster } from './_decorators'
 type SonnerStoryArgs = {
 	buttonLabel: string
 	message: string
-	variant: 'default' | 'success' | 'error'
+	variant: 'default' | 'success' | 'error' | 'info' | 'warning' | 'loading'
 }
 
 const meta = {
@@ -18,13 +18,19 @@ const meta = {
 	argTypes: {
 		buttonLabel: textArgType('버튼 텍스트'),
 		message: textArgType('토스트 메시지'),
-		variant: selectArgType(['default', 'success', 'error'], '토스트 유형')
+		variant: selectArgType(
+			['default', 'success', 'error', 'info', 'warning', 'loading'],
+			'토스트 유형 (@shared/ui/sonner 아이콘 기준)'
+		)
 	},
 	render: ({ buttonLabel, message, variant }) => (
 		<Button
 			onClick={() => {
 				if (variant === 'success') toast.success(message)
 				else if (variant === 'error') toast.error(message)
+				else if (variant === 'info') toast.info(message)
+				else if (variant === 'warning') toast.warning(message)
+				else if (variant === 'loading') toast.loading(message)
 				else toast(message)
 			}}
 		>
@@ -57,5 +63,29 @@ export const Error: Story = {
 		buttonLabel: '오류 토스트',
 		message: '요청을 처리하지 못했습니다',
 		variant: 'error'
+	}
+}
+
+export const Info: Story = {
+	args: {
+		buttonLabel: '정보 토스트',
+		message: '새 업데이트가 있습니다',
+		variant: 'info'
+	}
+}
+
+export const Warning: Story = {
+	args: {
+		buttonLabel: '경고 토스트',
+		message: '저장되지 않은 변경 사항이 있습니다',
+		variant: 'warning'
+	}
+}
+
+export const Loading: Story = {
+	args: {
+		buttonLabel: '로딩 토스트',
+		message: '처리 중입니다',
+		variant: 'loading'
 	}
 }

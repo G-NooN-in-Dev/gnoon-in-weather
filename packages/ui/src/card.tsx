@@ -2,7 +2,11 @@ import { type ComponentProps } from 'react'
 
 import { cn } from './lib/utils'
 
-function Card({ className, size = 'default', ...props }: ComponentProps<'div'> & { size?: 'default' | 'sm' }) {
+export const cardSizeOptions = ['default', 'sm'] as const
+
+export type CardSize = (typeof cardSizeOptions)[number]
+
+function Card({ className, size = 'default', ...props }: ComponentProps<'div'> & { size?: CardSize }) {
 	return (
 		<div
 			data-slot="card"

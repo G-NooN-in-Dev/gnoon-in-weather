@@ -12,9 +12,9 @@ const buttonVariants = cva(
 				outline:
 					'border-border bg-background shadow-xs hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50',
 				secondary:
-					'bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground',
+					'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground',
 				ghost:
-					'hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50',
+					'bg-transparent text-foreground hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50',
 				destructive:
 					'bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40',
 				link: 'text-primary underline-offset-4 hover:underline'
@@ -47,5 +47,29 @@ function Button({
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
 	return <ButtonPrimitive data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props} />
 }
+
+type ButtonVariant = NonNullable<VariantProps<typeof buttonVariants>['variant']>
+type ButtonSize = NonNullable<VariantProps<typeof buttonVariants>['size']>
+
+/** Storybook Controls·앱에서 variant 목록을 공유할 때 사용 */
+export const buttonVariantOptions = [
+	'default',
+	'outline',
+	'secondary',
+	'ghost',
+	'destructive',
+	'link'
+] as const satisfies readonly ButtonVariant[]
+
+export const buttonSizeOptions = [
+	'default',
+	'xs',
+	'sm',
+	'lg',
+	'icon',
+	'icon-xs',
+	'icon-sm',
+	'icon-lg'
+] as const satisfies readonly ButtonSize[]
 
 export { Button, buttonVariants }

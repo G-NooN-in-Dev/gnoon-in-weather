@@ -14,7 +14,7 @@ function InputGroup({ className, ...props }: ComponentProps<'div'>) {
 			data-slot="input-group"
 			role="group"
 			className={cn(
-				'group/input-group border-input has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot][aria-invalid=true]]:ring-destructive/20 dark:bg-input/30 dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 relative flex h-9 w-full min-w-0 items-center rounded-md border shadow-xs transition-[color,box-shadow] outline-none in-data-[slot=combobox-content]:focus-within:border-inherit in-data-[slot=combobox-content]:focus-within:ring-0 has-[[data-slot=input-group-control]:focus-visible]:ring-3 has-[[data-slot][aria-invalid=true]]:ring-3 has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto has-[>[data-align=block-end]]:[&>input]:pt-3 has-[>[data-align=block-start]]:[&>input]:pb-3 has-[>[data-align=inline-end]]:[&>input]:pr-1.5 has-[>[data-align=inline-start]]:[&>input]:pl-1.5',
+				'group/input-group border-input bg-background has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot][aria-invalid=true]]:ring-destructive/20 dark:bg-input/30 dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 relative flex h-9 w-full min-w-0 items-center rounded-md border shadow-xs transition-[color,box-shadow] outline-none in-data-[slot=combobox-content]:focus-within:border-inherit in-data-[slot=combobox-content]:focus-within:ring-0 has-[[data-slot=input-group-control]:focus-visible]:ring-3 has-[[data-slot][aria-invalid=true]]:ring-3 has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto has-[>[data-align=block-end]]:[&>input]:pt-3 has-[>[data-align=block-start]]:[&>input]:pb-3 has-[>[data-align=inline-end]]:[&>input]:pr-1.5 has-[>[data-align=inline-start]]:[&>input]:pl-1.5',
 				className
 			)}
 			{...props}
@@ -135,4 +135,30 @@ function InputGroupTextarea({ className, ...props }: ComponentProps<'textarea'>)
 	)
 }
 
-export { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea }
+type InputGroupAddonAlign = NonNullable<VariantProps<typeof inputGroupAddonVariants>['align']>
+type InputGroupButtonSize = NonNullable<VariantProps<typeof inputGroupButtonVariants>['size']>
+
+export const inputGroupAddonAlignOptions = [
+	'inline-start',
+	'inline-end',
+	'block-start',
+	'block-end'
+] as const satisfies readonly InputGroupAddonAlign[]
+
+export const inputGroupButtonSizeOptions = [
+	'xs',
+	'sm',
+	'icon-xs',
+	'icon-sm'
+] as const satisfies readonly InputGroupButtonSize[]
+
+export {
+	InputGroup,
+	InputGroupAddon,
+	inputGroupAddonVariants,
+	InputGroupButton,
+	inputGroupButtonVariants,
+	InputGroupInput,
+	InputGroupText,
+	InputGroupTextarea
+}

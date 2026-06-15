@@ -1,19 +1,21 @@
 import { Spinner } from '@shared/ui/spinner'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { selectArgType } from './_arg-types'
+import { textArgType } from './_arg-types'
 
 type SpinnerStoryArgs = {
-	size: 'sm' | 'default' | 'lg'
+	className: string
 }
 
 const meta = {
 	title: 'UI/Spinner',
+	component: Spinner,
 	tags: ['autodocs'],
 	argTypes: {
-		size: selectArgType(['sm', 'default', 'lg'], '스피너 크기')
+		// Spinner는 size prop이 없고 className으로 크기를 조절합니다.
+		className: textArgType('추가 className (기본 size-4)')
 	},
-	render: ({ size }) => <Spinner className={size === 'sm' ? 'size-3' : size === 'lg' ? 'size-8' : 'size-4'} />
+	render: ({ className }) => <Spinner className={className} />
 } satisfies Meta<SpinnerStoryArgs>
 
 export default meta
@@ -21,6 +23,18 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
 	args: {
-		size: 'default'
+		className: 'size-4'
+	}
+}
+
+export const Small: Story = {
+	args: {
+		className: 'size-3'
+	}
+}
+
+export const Large: Story = {
+	args: {
+		className: 'size-8'
 	}
 }

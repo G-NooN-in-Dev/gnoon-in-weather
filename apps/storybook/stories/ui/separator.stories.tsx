@@ -1,3 +1,4 @@
+import { orientationOptions } from '@shared/ui/lib/layout-options'
 import { Separator } from '@shared/ui/separator'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
@@ -8,7 +9,7 @@ const meta = {
 	component: Separator,
 	tags: ['autodocs'],
 	argTypes: {
-		orientation: radioArgType(['horizontal', 'vertical'], '구분선 방향')
+		orientation: radioArgType(orientationOptions, '구분선 방향')
 	},
 	render: ({ orientation }) => (
 		<div
@@ -29,5 +30,11 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
 	args: {
 		orientation: 'horizontal'
+	}
+}
+
+export const Vertical: Story = {
+	args: {
+		orientation: 'vertical'
 	}
 }

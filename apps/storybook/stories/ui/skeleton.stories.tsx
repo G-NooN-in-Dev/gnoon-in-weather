@@ -38,3 +38,16 @@ export const Default: Story = {
 		line2Width: 160
 	}
 }
+
+export const Card: Story = {
+	args: Default.args,
+	render: () => (
+		<div className="flex w-full max-w-sm flex-col gap-4">
+			<Skeleton className="h-[125px] w-full rounded-xl" />
+			<div className="space-y-2">
+				<Skeleton className="h-4 w-4/5" />
+				<Skeleton className="h-4 w-3/5" />
+			</div>
+		</div>
+	)
+}

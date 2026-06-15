@@ -204,6 +204,14 @@ function FieldError({
 	)
 }
 
+type FieldOrientation = NonNullable<VariantProps<typeof fieldVariants>['orientation']>
+
+export const fieldOrientationOptions = [
+	'vertical',
+	'horizontal',
+	'responsive'
+] as const satisfies readonly FieldOrientation[]
+
 export {
 	Field,
 	FieldContent,
@@ -214,5 +222,6 @@ export {
 	FieldLegend,
 	FieldSeparator,
 	FieldSet,
-	FieldTitle
+	FieldTitle,
+	fieldVariants
 }

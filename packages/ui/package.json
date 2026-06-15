@@ -4,7 +4,9 @@
 	"private": true,
 	"type": "module",
 	"exports": {
+		"./package.json": "./package.json",
 		"./utils": "./src/lib/utils.ts",
+		"./lib/*": "./src/lib/*.ts",
 		"./*": "./src/*.tsx"
 	},
 	"scripts": {

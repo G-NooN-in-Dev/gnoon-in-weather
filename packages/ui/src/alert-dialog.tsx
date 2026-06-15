@@ -6,6 +6,10 @@ import { type ComponentProps } from 'react'
 import { Button } from './button'
 import { cn } from './lib/utils'
 
+export const alertDialogSizeOptions = ['default', 'sm'] as const
+
+export type AlertDialogSize = (typeof alertDialogSizeOptions)[number]
+
 function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {
 	return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
 }
@@ -36,7 +40,7 @@ function AlertDialogContent({
 	size = 'default',
 	...props
 }: AlertDialogPrimitive.Popup.Props & {
-	size?: 'default' | 'sm'
+	size?: AlertDialogSize
 }) {
 	return (
 		<AlertDialogPortal>

@@ -7,6 +7,10 @@ import { type ComponentProps } from 'react'
 import { Button } from './button'
 import { cn } from './lib/utils'
 
+export const sheetSideOptions = ['top', 'right', 'bottom', 'left'] as const
+
+export type SheetSide = (typeof sheetSideOptions)[number]
+
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
 	return <SheetPrimitive.Root data-slot="sheet" {...props} />
 }
@@ -43,7 +47,7 @@ function SheetContent({
 	showCloseButton = true,
 	...props
 }: SheetPrimitive.Popup.Props & {
-	side?: 'top' | 'right' | 'bottom' | 'left'
+	side?: SheetSide
 	showCloseButton?: boolean
 }) {
 	return (

@@ -1,4 +1,4 @@
-import { Button } from '@shared/ui/button'
+import { Button, buttonSizeOptions, buttonVariantOptions } from '@shared/ui/button'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { booleanArgType, selectArgType, textArgType } from './_arg-types'
@@ -9,8 +9,8 @@ const meta = {
 	tags: ['autodocs'],
 	argTypes: {
 		children: textArgType('버튼 텍스트'),
-		variant: selectArgType(['default', 'outline', 'secondary', 'ghost', 'destructive', 'link'], '버튼 스타일 변형'),
-		size: selectArgType(['default', 'xs', 'sm', 'lg', 'icon', 'icon-xs', 'icon-sm', 'icon-lg'], '버튼 크기'),
+		variant: selectArgType(buttonVariantOptions, '버튼 스타일 변형'),
+		size: selectArgType(buttonSizeOptions, '버튼 크기'),
 		disabled: booleanArgType('비활성화 여부')
 	}
 } satisfies Meta<typeof Button>
@@ -59,4 +59,16 @@ export const Disabled: Story = {
 		children: 'Disabled',
 		disabled: true
 	}
+}
+
+export const Xs: Story = {
+	args: { children: 'Extra Small', size: 'xs' }
+}
+
+export const Small: Story = {
+	args: { children: 'Small', size: 'sm' }
+}
+
+export const Large: Story = {
+	args: { children: 'Large', size: 'lg' }
 }

@@ -21,4 +21,15 @@
 	--color-border: var(--color-grayscale-700);
 	--color-input: var(--color-grayscale-700);
 	--color-ring: var(--color-grayscale-300);
+	--color-popover: var(--color-grayscale-800);
+	--color-popover-foreground: var(--color-grayscale-50);
+	--color-card: var(--color-grayscale-800);
+	--color-card-foreground: var(--color-grayscale-50);
+	--color-accent: var(--color-grayscale-700);
+	--color-accent-foreground: var(--color-grayscale-50);
+	--color-sidebar: var(--color-grayscale-900);
+	--color-sidebar-foreground: var(--color-grayscale-50);
+	--color-sidebar-accent: var(--color-grayscale-800);
+	--color-sidebar-accent-foreground: var(--color-grayscale-50);
+	--color-sidebar-border: var(--color-grayscale-700);
 }

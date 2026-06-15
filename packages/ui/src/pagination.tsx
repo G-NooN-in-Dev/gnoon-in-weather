@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from 'lucide-react'
-import { type ComponentProps } from 'react'
+import { type ComponentProps, type MouseEventHandler } from 'react'
 
 import { Button } from './button'
 import { cn } from './lib/utils'
@@ -29,13 +29,21 @@ type PaginationLinkProps = {
 } & Pick<ComponentProps<typeof Button>, 'size'> &
 	ComponentProps<'a'>
 
-function PaginationLink({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) {
+function PaginationLink({ className, isActive, size = 'icon', onClick, ...props }: PaginationLinkProps) {
+	// Base UI Button은 render로 <a>를 합성하므로 onClick은 Button에 연결해야 클릭이 동작합니다.
+	const handleClick: ComponentProps<typeof Button>['onClick'] = onClick
+		? (event) => {
+				onClick(event as unknown as Parameters<MouseEventHandler<HTMLAnchorElement>>[0])
+			}
+		: undefined
+
 	return (
 		<Button
 			variant={isActive ? 'outline' : 'ghost'}
 			size={size}
 			className={cn(className)}
 			nativeButton={false}
+			onClick={handleClick}
 			render={
 				<a aria-current={isActive ? 'page' : undefined} data-slot="pagination-link" data-active={isActive} {...props} />
 			}

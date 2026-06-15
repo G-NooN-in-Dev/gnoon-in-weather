@@ -52,4 +52,8 @@ function AlertAction({ className, ...props }: ComponentProps<'div'>) {
 	return <div data-slot="alert-action" className={cn('absolute top-2.5 right-3', className)} {...props} />
 }
 
-export { Alert, AlertAction, AlertDescription, AlertTitle }
+type AlertVariant = NonNullable<VariantProps<typeof alertVariants>['variant']>
+
+export const alertVariantOptions = ['default', 'destructive'] as const satisfies readonly AlertVariant[]
+
+export { Alert, AlertAction, AlertDescription, AlertTitle, alertVariants }

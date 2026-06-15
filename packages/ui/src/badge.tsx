@@ -46,4 +46,15 @@ function Badge({
 	})
 }
 
+type BadgeVariant = NonNullable<VariantProps<typeof badgeVariants>['variant']>
+
+export const badgeVariantOptions = [
+	'default',
+	'secondary',
+	'destructive',
+	'outline',
+	'ghost',
+	'link'
+] as const satisfies readonly BadgeVariant[]
+
 export { Badge, badgeVariants }

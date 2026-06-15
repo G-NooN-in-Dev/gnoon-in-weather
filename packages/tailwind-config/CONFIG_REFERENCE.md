@@ -36,6 +36,10 @@
 - 기본 텍스트/보더: `grayscale`
 - 상태색: `success`, `warning`, `danger`, `info`
   - `50`, `100`, `500`, `700` 및 기본값 제공
+- `@shared/ui` 시맨틱 색상: `background`, `foreground`, `primary`, `secondary`, `muted`, `destructive`, `border`, `input`, `ring`
+- `@shared/ui` 플로팅·오버레이: `popover`, `popover-foreground`, `card`, `card-foreground`, `accent`, `accent-foreground`
+  - Dialog, Popover, Select, Combobox 등 `bg-popover` 사용 컴포넌트에 필요
+- `@shared/ui` Sidebar: `sidebar`, `sidebar-foreground`, `sidebar-accent`, `sidebar-accent-foreground`, `sidebar-border`, `sidebar-ring` 등
 - 원색: `pure-red`, `pure-green`, `pure-blue`, `pure-yellow`, `pure-cyan`, `pure-magenta`
   - RGB·CMY 순색 (`#ff0000`, `#00ff00`, `#0000ff` 등). Tailwind 기본·`pastel-*`·상태색과 겹치지 않음
   - 예: `text-pure-red`, `bg-pure-blue`

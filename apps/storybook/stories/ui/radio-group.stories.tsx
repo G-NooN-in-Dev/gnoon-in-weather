@@ -3,9 +3,10 @@ import { RadioGroup, RadioGroupItem } from '@shared/ui/radio-group'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { booleanArgType, selectArgType } from './_arg-types'
+import { useArgSync } from './_synced-args'
 
 type RadioGroupStoryArgs = {
-	defaultValue: string
+	value: string
 	disabled: boolean
 }
 
@@ -20,22 +21,33 @@ const meta = {
 	component: RadioGroup,
 	tags: ['autodocs'],
 	argTypes: {
-		defaultValue: selectArgType(
+		value: selectArgType(
 			options.map((option) => option.value),
-			'초기 선택 값'
+			'선택 값'
 		),
 		disabled: booleanArgType('비활성화 여부')
 	},
-	render: ({ defaultValue, disabled }) => (
-		<RadioGroup defaultValue={defaultValue} disabled={disabled} className="max-w-sm">
-			{options.map((option) => (
-				<div key={option.value} className="flex items-center gap-2">
-					<RadioGroupItem value={option.value} id={option.id} />
-					<Label htmlFor={option.id}>{option.label}</Label>
-				</div>
-			))}
-		</RadioGroup>
-	)
+	render: function Render({ value, disabled }: RadioGroupStoryArgs) {
+		const { setArg } = useArgSync<RadioGroupStoryArgs>()
+
+		return (
+			<RadioGroup
+				value={value}
+				onValueChange={(next) => {
+					if (next) setArg('value', next)
+				}}
+				disabled={disabled}
+				className="max-w-sm"
+			>
+				{options.map((option) => (
+					<div key={option.value} className="flex items-center gap-2">
+						<RadioGroupItem value={option.value} id={option.id} />
+						<Label htmlFor={option.id}>{option.label}</Label>
+					</div>
+				))}
+			</RadioGroup>
+		)
+	}
 } satisfies Meta<RadioGroupStoryArgs>
 
 export default meta
@@ -43,7 +55,11 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
 	args: {
-		defaultValue: 'comfortable',
+		value: 'comfortable',
 		disabled: false
 	}
+}
+
+export const Disabled: Story = {
+	args: { ...Default.args, disabled: true }
 }

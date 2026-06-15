@@ -79,4 +79,8 @@ function EmptyContent({ className, ...props }: ComponentProps<'div'>) {
 	)
 }
 
-export { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle }
+type EmptyMediaVariant = NonNullable<VariantProps<typeof emptyMediaVariants>['variant']>
+
+export const emptyMediaVariantOptions = ['default', 'icon'] as const satisfies readonly EmptyMediaVariant[]
+
+export { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, emptyMediaVariants, EmptyTitle }
