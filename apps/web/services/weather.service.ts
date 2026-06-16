@@ -1,0 +1,65 @@
+import { FORECAST_REVALIDATE_SECONDS, REALTIME_REVALIDATE_SECONDS } from '@/libs/weather'
+import type {
+	WeatherApiForecastResponse,
+	WeatherApiRealtimeResponse,
+	WeatherFetchParams
+} from '@/types/weather-api.type'
+import { normalizeWeatherApiError, type WeatherApiErrorPayload } from '@/utils/weather-error'
+
+/**
+ * WeatherAPI 공통 요청 URL을 조립합니다.
+ * 베이스 URL은 `.env`의 `WEATHER_API_BASE_URL`을 사용합니다.
+ */
+function buildWeatherApiUrl(pathname: string, params: WeatherFetchParams): URL {
+	const baseUrl = process.env.WEATHER_API_BASE_URL
+	const apiKey = process.env.WEATHER_API_KEY
+
+	if (!baseUrl || !apiKey) {
+		throw new Error('WeatherAPI 환경 변수가 설정되지 않았습니다.')
+	}
+
+	const url = new URL(`${baseUrl}/${pathname}`)
+
+	url.searchParams.set('key', apiKey)
+	url.searchParams.set('q', `${params.lat},${params.lng}`)
+	url.searchParams.set('lang', params.lang ?? 'ko')
+
+	return url
+}
+
+/** WeatherAPI 응답 실패 시 weather-error 규칙으로 변환해 throw합니다. */
+async function parseWeatherApiResponse<T>(res: Response): Promise<T> {
+	const payload = (await res.json()) as WeatherApiErrorPayload
+
+	if (!res.ok || payload.error) {
+		throw normalizeWeatherApiError(payload)
+	}
+
+	return payload as T
+}
+
+/** Next.js Data Cache에 좌표·엔드포인트별로 응답을 저장합니다. */
+async function fetchWeatherApi<T>(url: URL, revalidateSeconds: number): Promise<T> {
+	const res = await fetch(url, {
+		next: { revalidate: revalidateSeconds }
+	})
+
+	return parseWeatherApiResponse<T>(res)
+}
+
+/** 현재 날씨를 조회합니다. */
+async function getRealtimeWeather(params: WeatherFetchParams): Promise<WeatherApiRealtimeResponse> {
+	const url = buildWeatherApiUrl('current.json', params)
+
+	return fetchWeatherApi<WeatherApiRealtimeResponse>(url, REALTIME_REVALIDATE_SECONDS)
+}
+
+/** 3일 예보를 조회합니다. */
+async function getForecastWeather(params: WeatherFetchParams): Promise<WeatherApiForecastResponse> {
+	const url = buildWeatherApiUrl('forecast.json', params)
+	url.searchParams.set('days', String(params.days ?? 3))
+
+	return fetchWeatherApi<WeatherApiForecastResponse>(url, FORECAST_REVALIDATE_SECONDS)
+}
+
+export { getForecastWeather, getRealtimeWeather }
