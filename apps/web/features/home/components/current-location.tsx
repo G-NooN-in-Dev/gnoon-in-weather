@@ -1,17 +1,41 @@
+'use client'
+
+import { Button } from '@shared/ui/button'
+import { cn } from '@shared/ui/utils'
 import { Crosshair, Star } from 'lucide-react'
 
-function CurrentLocation() {
+import type { LocationControlProps } from '@/features/home/types/home-component.type'
+
+function CurrentLocation({ location, loading, isLocating, error, onRequestCurrentPosition }: LocationControlProps) {
+	// FIXME - label 수정 예정
+	const label = isLocating
+		? '현재 위치 확인 중...'
+		: loading && !location.label
+			? '날씨 정보 불러오는 중...'
+			: location.label || '위치 정보 없음'
+
 	return (
-		<div className="flex items-center gap-3 text-xl font-bold">
-			<div className="flex items-center gap-2">
-				<span>
-					<Star fill="var(--color-grayscale-300)" stroke="var(--color-grayscale-300)" />
-				</span>
-				<h2>경기도 수원시 권선구 서둔동</h2>
-				<span>
-					<Crosshair stroke="var(--color-pastel-blue-600)" />
-				</span>
+		<div className="flex flex-col gap-1">
+			<div className="flex items-center gap-3 text-xl font-bold">
+				<div className="flex items-center gap-2">
+					<span>
+						<Star fill="var(--color-grayscale-300)" stroke="var(--color-grayscale-300)" />
+					</span>
+					<h2>{label}</h2>
+					<Button
+						type="button"
+						variant="ghost"
+						aria-label="현재 위치로 날씨 조회"
+						aria-busy={isLocating}
+						disabled={isLocating || loading}
+						onClick={onRequestCurrentPosition}
+						className="p-0"
+					>
+						<Crosshair className={cn('text-pastel-blue-600', isLocating && 'animate-spin')} />
+					</Button>
+				</div>
 			</div>
+			{error ? <p className="text-grayscale-600 text-sm">{error.message}</p> : null}
 		</div>
 	)
 }

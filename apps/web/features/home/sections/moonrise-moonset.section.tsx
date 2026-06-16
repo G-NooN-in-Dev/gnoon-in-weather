@@ -1,31 +1,43 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card'
+import { SearchX } from 'lucide-react'
+
+import EmptyState from '@/components/empty-state'
+import type { ForecastAstroSectionProps } from '@/features/home/types/home-component.type'
+import { formatTime12To24 } from '@/utils/format-utils'
 
 import AstroScheduleTable from '../components/astro-schedule-table'
 
-function MoonriseMoonsetSection() {
-	const mockData = [
-		{ date: '2026-06-15', moonrise: '17:00', moonset: '07:00' },
-		{ date: '2026-06-16', moonrise: '17:00', moonset: '07:00' },
-		{ date: '2026-06-17', moonrise: '17:00', moonset: '07:00' }
-	]
-
+function MoonriseMoonsetSection({ astros }: ForecastAstroSectionProps) {
 	return (
 		<section>
 			<Card className="py-4">
 				<CardHeader>
 					<CardTitle className="text-xl font-bold">월출/월몰</CardTitle>
 				</CardHeader>
-				<CardContent className="flex flex-col gap-2">
-					<AstroScheduleTable
-						data={mockData.map(({ date, moonrise, moonset }) => ({
-							date,
-							left: moonrise,
-							right: moonset
-						}))}
-						leftHeader="월출"
-						rightHeader="월몰"
-					/>
-				</CardContent>
+				{astros.length > 0 ? (
+					<CardContent className="flex flex-col gap-2">
+						{/* TODO - 월출 현황 */}
+						<div>월출 현황</div>
+						<AstroScheduleTable
+							data={astros.map(({ date, moonrise, moonset }) => ({
+								date,
+								left: formatTime12To24(moonrise),
+								right: formatTime12To24(moonset)
+							}))}
+							leftHeader="월출"
+							rightHeader="월몰"
+						/>
+					</CardContent>
+				) : (
+					<EmptyState
+						icon={<SearchX className="text-grayscale-600 size-10" />}
+						className="border-none"
+						title="월출/월몰 데이터 없음"
+						description="월출/월몰 데이터를 찾을 수 없습니다"
+					>
+						<p className="text-muted-foreground text-sm">위치를 확인한 뒤 다시 조회해 주세요.</p>
+					</EmptyState>
+				)}
 			</Card>
 		</section>
 	)

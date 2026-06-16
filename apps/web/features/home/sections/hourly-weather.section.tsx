@@ -1,7 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card'
 import { Info } from 'lucide-react'
 
-function HourlyWeatherSection() {
+import type { ForecastHoursSectionProps } from '@/features/home/types/home-component.type'
+
+function HourlyWeatherSection({ hours }: ForecastHoursSectionProps) {
 	return (
 		<section>
 			<Card className="py-4">
@@ -11,7 +13,11 @@ function HourlyWeatherSection() {
 				</CardHeader>
 				<CardContent>
 					{/* TODO - 시간별 날씨 테이블 */}
-					<div>테이블 (예정)</div>
+					{hours.length > 0 ? (
+						<p className="text-grayscale-600 text-sm">{hours.length}개 시간대 데이터 수신됨</p>
+					) : (
+						<div>테이블 (예정)</div>
+					)}
 				</CardContent>
 			</Card>
 		</section>

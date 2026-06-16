@@ -1,43 +1,46 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card'
 import Image from 'next/image'
 
-function DailyWeatherCard() {
+import type { ForecastDayEntry } from '@/types/weather-api.type'
+import { formatDate, formatWeatherIconUrl, getDayLabel } from '@/utils/format-utils'
+
+type DailyWeatherCardProps = {
+	day: ForecastDayEntry
+	dayIndex: number
+}
+
+function DailyWeatherCard({ day, dayIndex }: DailyWeatherCardProps) {
+	const { date, condition, maxtemp_c, mintemp_c, daily_chance_of_rain, uv } = day
+	const { icon: conditionIcon, text: conditionText } = condition
+
 	return (
 		<Card className="gap-2">
 			<CardHeader className="flex items-center justify-between">
-				<CardTitle className="text-xl font-bold">오늘</CardTitle>
-				<CardDescription className="text-xl font-semibold">05.17 (금)</CardDescription>
+				<CardTitle className="text-xl font-bold">{getDayLabel(dayIndex)}</CardTitle>
+				<CardDescription className="text-xl font-semibold">{formatDate(date, 'MM.DD')}</CardDescription>
 			</CardHeader>
 			<CardContent className="flex flex-col">
-				{/* 상단 */}
 				<div className="flex items-center justify-between gap-4">
 					<div>
-						<Image
-							src="https://cdn.weatherapi.com/weather/64x64/day/113.png"
-							alt="weather-icon"
-							width={100}
-							height={100}
-						/>
+						<Image src={formatWeatherIconUrl(conditionIcon)} alt={conditionText} width={100} height={100} />
 					</div>
-					<div className="px-2 text-2xl font-semibold">
-						<p className="text-pure-red">25°</p>
-						<p className="text-pure-blue">19°</p>
+					<div className="px-2 text-right text-2xl font-semibold">
+						<p className="text-pure-red">{maxtemp_c}°</p>
+						<p className="text-pure-blue">{mintemp_c}°</p>
 					</div>
 				</div>
-				{/* 하단 */}
 				<div className="flex flex-col gap-3 px-2 text-xl font-semibold">
 					<div className="flex items-center justify-between">
 						<span>강수</span>
 						<div className="flex items-baseline gap-1">
-							<span>60</span>
+							<span>{daily_chance_of_rain}</span>
 							<span className="text-muted-foreground text-base">%</span>
 						</div>
 					</div>
 					<div className="flex items-center justify-between">
 						<span>자외선</span>
 						<div className="flex items-baseline gap-1">
-							<span>5</span>
-							<span className="text-muted-foreground text-base">보통</span>
+							<span>{uv}</span>
 						</div>
 					</div>
 				</div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { HOME_FORECAST_DAYS, HOME_WEATHER_LANG } from '@/services/weather.loader'
 import type { AppApiError } from '@/types/error.type'
@@ -12,7 +12,7 @@ import { writeLatestSearchedLocationCookie } from '@/utils/location-cookie'
 type UseWeatherOptions = {
 	/** 서버 page에서 전달한 초기 위치 */
 	initialLocation: LocationState
-	/** 서버에서 미리 조회한 날씨. 있으면 첫 마운트 fetch를 건너뜁니다. */
+	/** 서버 SSR로 미리 채운 날씨. 마운트 직후 클라이언트 refetch 전까지 화면 폴백으로 씁니다. */
 	initialWeather?: WeatherSummary | null
 	/** 서버 초기 로드 실패 시 클라이언트에 넘길 에러 */
 	initialError?: AppApiError | null
@@ -28,8 +28,8 @@ type UseWeatherResult = {
 }
 
 /**
- * GPS·좌표 변경 시 클라이언트에서 날씨를 다시 조회합니다.
- * 초기 데이터는 서버 page에서 props로 받고, 이 훅은 이후 상호작용만 담당합니다.
+ * 마운트·좌표 변경 시 클라이언트에서 날씨를 조회합니다.
+ * 서버 initialWeather로 첫 페인트를 채우고, 마운트 직후 /api/weather로 한 번 더 갱신합니다.
  */
 function useWeather({
 	initialLocation,
@@ -45,14 +45,12 @@ function useWeather({
 	const [locationLabel, setLocationLabel] = useState(label)
 	// /api/weather 응답 전체. 섹션 컴포넌트에 그대로 전달합니다.
 	const [weather, setWeather] = useState<WeatherSummary | null>(initialWeather)
-	// fetchParams 변경으로 날씨 API를 호출하는 동안 true.
-	const [loading, setLoading] = useState(!initialWeather)
+	// 마운트 직후 refetch·좌표 변경 fetch 동안 true. SSR 데이터가 있어도 로딩을 먼저 보여줍니다.
+	const [loading, setLoading] = useState(true)
 	// GPS 권한 요청·getCurrentPosition 대기 중 true. API loading과 별개입니다.
 	const [isLocating, setIsLocating] = useState(false)
 	// API 실패·GPS 거부·브라우저 미지원 등 공통 에러 슬롯.
 	const [error, setError] = useState<AppApiError | null>(initialError)
-	// 서버에서 initialWeather를 받았으면 첫 useEffect fetch를 한 번 건너뜁니다.
-	const skipInitialFetchRef = useRef(Boolean(initialWeather))
 
 	// fetchParams(좌표) + locationLabel(이름) → UI·쿠키에 쓰는 LocationState.
 	const location = useMemo<LocationState>(
@@ -63,13 +61,8 @@ function useWeather({
 		[fetchParams, locationLabel]
 	)
 
-	// 좌표가 바뀔 때마다 날씨 API를 호출하고, 성공 시 쿠키에 최근 위치를 저장합니다.
+	// 마운트·좌표 변경 시 날씨 API를 호출하고, 성공 시 쿠키에 최근 위치를 저장합니다.
 	useEffect(() => {
-		if (skipInitialFetchRef.current) {
-			skipInitialFetchRef.current = false
-			return
-		}
-
 		const { lat, lng } = fetchParams
 		const controller = new AbortController()
 
@@ -146,9 +139,11 @@ function useWeather({
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				const { latitude, longitude } = position.coords
+				// 좌표 확정 직후 전역 로딩으로 넘기기 위해 fetch effect 전에 loading을 켭니다.
+				setIsLocating(false)
+				setLoading(true)
 				setFetchParams({ lat: latitude, lng: longitude })
 				setLocationLabel('')
-				setIsLocating(false)
 			},
 			() => {
 				setIsLocating(false)

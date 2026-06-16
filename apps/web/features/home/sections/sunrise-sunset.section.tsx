@@ -1,31 +1,43 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card'
+import { SearchX } from 'lucide-react'
+
+import EmptyState from '@/components/empty-state'
+import type { ForecastAstroSectionProps } from '@/features/home/types/home-component.type'
+import { formatTime12To24 } from '@/utils/format-utils'
 
 import AstroScheduleTable from '../components/astro-schedule-table'
 
-function SunriseSunsetSection() {
-	const mockData = [
-		{ date: '2026-06-15', sunrise: '06:00', sunset: '18:00' },
-		{ date: '2026-06-16', sunrise: '06:00', sunset: '18:00' },
-		{ date: '2026-06-17', sunrise: '06:00', sunset: '18:00' }
-	]
-
+function SunriseSunsetSection({ astros }: ForecastAstroSectionProps) {
 	return (
 		<section>
 			<Card className="py-4">
 				<CardHeader>
 					<CardTitle className="text-xl font-bold">일출/일몰</CardTitle>
 				</CardHeader>
-				<CardContent className="flex flex-col gap-2">
-					<AstroScheduleTable
-						data={mockData.map(({ date, sunrise, sunset }) => ({
-							date,
-							left: sunrise,
-							right: sunset
-						}))}
-						leftHeader="일출"
-						rightHeader="일몰"
-					/>
-				</CardContent>
+				{astros.length > 0 ? (
+					<CardContent className="flex flex-col gap-2">
+						{/* TODO - 일출 현황 */}
+						<div>일출 현황</div>
+						<AstroScheduleTable
+							data={astros.map(({ date, sunrise, sunset }) => ({
+								date,
+								left: formatTime12To24(sunrise),
+								right: formatTime12To24(sunset)
+							}))}
+							leftHeader="일출"
+							rightHeader="일몰"
+						/>
+					</CardContent>
+				) : (
+					<EmptyState
+						icon={<SearchX className="text-grayscale-600 size-10" />}
+						className="border-none"
+						title="일출/일몰 데이터 없음"
+						description="일출/일몰 데이터를 찾을 수 없습니다"
+					>
+						<p className="text-muted-foreground text-sm">위치를 확인한 뒤 다시 조회해 주세요.</p>
+					</EmptyState>
+				)}
 			</Card>
 		</section>
 	)
