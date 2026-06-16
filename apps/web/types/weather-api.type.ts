@@ -1,12 +1,60 @@
+import type { Coordinates } from '@/types/location.type'
+
+/** WeatherAPI location 필드 최소 형태 */
+type WeatherApiLocation = {
+	name: string
+	region: string
+	country: string
+	lat: number
+	lon: number
+}
+
 /** WeatherAPI 공통 날씨 상태 */
-export type WeatherApiCondition = {
+type WeatherApiCondition = {
 	text: string
 	icon: string
 	code: number
 }
 
+/** current.json 응답의 current 필드 */
+type WeatherApiCurrent = {
+	last_updated_epoch: number
+	last_updated: string
+	temp_c: number
+	temp_f: number
+	is_day: number
+	condition: WeatherApiCondition
+	wind_mph: number
+	wind_kph: number
+	wind_degree: number
+	wind_dir: string
+	pressure_mb: number
+	pressure_in: number
+	precip_mm: number
+	precip_in: number
+	humidity: number
+	cloud: number
+	feelslike_c: number
+	feelslike_f: number
+	windchill_c: number
+	windchill_f: number
+	heatindex_c: number
+	heatindex_f: number
+	dewpoint_c: number
+	dewpoint_f: number
+	vis_km: number
+	vis_miles: number
+	uv: number
+	gust_mph: number
+	gust_kph: number
+	will_it_rain: number
+	chance_of_rain: number
+	will_it_snow: number
+	chance_of_snow: number
+}
+
 /** 일별 요약 (최고/최저 기온, 강수 확률 등) */
-export type WeatherApiDay = {
+type WeatherApiDay = {
 	maxtemp_c: number
 	maxtemp_f: number
 	mintemp_c: number
@@ -30,7 +78,7 @@ export type WeatherApiDay = {
 }
 
 /** 천체 정보 (일출/일몰, 월출/월몰 등) */
-export type WeatherApiAstro = {
+type WeatherApiAstro = {
 	sunrise: string
 	sunset: string
 	moonrise: string
@@ -42,7 +90,7 @@ export type WeatherApiAstro = {
 }
 
 /** 시간별 날씨 */
-export type WeatherApiHour = {
+type WeatherApiHour = {
 	time_epoch: number
 	time: string
 	temp_c: number
@@ -80,7 +128,7 @@ export type WeatherApiHour = {
 }
 
 /** forecast.forecastday 배열의 하루 단위 원본 데이터 */
-export type WeatherApiForecastDay = {
+type WeatherApiForecastDay = {
 	date: string
 	date_epoch: number
 	day: WeatherApiDay
@@ -89,30 +137,76 @@ export type WeatherApiForecastDay = {
 }
 
 /** 예보 API 응답 중 분리 로직에 필요한 최소 형태 */
-export type WeatherApiForecastInput = {
+type WeatherApiForecastInput = {
 	forecast: {
 		forecastday: WeatherApiForecastDay[]
 	}
 }
 
+/** current.json 응답 본문 */
+type WeatherApiRealtimeResponse = {
+	location: WeatherApiLocation
+	current: WeatherApiCurrent
+}
+
+/** forecast.json 응답 본문 (splitForecast 입력) */
+type WeatherApiForecastResponse = WeatherApiForecastInput & {
+	location: WeatherApiLocation
+}
+
 /** 분리된 항목에 공통으로 포함되는 날짜 메타 */
-export type ForecastDateMeta = {
+type ForecastDateMeta = {
 	date: string
 	date_epoch: number
 }
 
 /** day 필드를 date와 같은 depth로 펼친 항목 (DailyWeatherSection 등) */
-export type ForecastDayEntry = ForecastDateMeta & WeatherApiDay
+type ForecastDayEntry = ForecastDateMeta & WeatherApiDay
 
 /** astro 필드를 date와 같은 depth로 펼친 항목 (SunriseSunsetSection, MoonriseMoonsetSection 등) */
-export type ForecastAstroEntry = ForecastDateMeta & WeatherApiAstro
+type ForecastAstroEntry = ForecastDateMeta & WeatherApiAstro
 
 /** splitForecast / splitForecastDays 반환값 */
-export type SplitForecastDaysResult = {
+type SplitForecastDaysResult = {
 	/** 3일치 일별 요약. `days[0].maxtemp_c`처럼 바로 접근 */
 	days: ForecastDayEntry[]
 	/** 3일치 천체 정보. `astros[0].sunrise`처럼 바로 접근 */
 	astros: ForecastAstroEntry[]
 	/** 3일치 시간별 데이터를 1차원으로 펼친 배열 (각 항목의 time, time_epoch 사용) */
 	hours: WeatherApiHour[]
+}
+
+/** WeatherAPI 호출 옵션 */
+type WeatherFetchOptions = {
+	lang?: string
+	days?: number
+}
+
+/** WeatherAPI 호출에 필요한 좌표·옵션 */
+type WeatherFetchParams = Coordinates & WeatherFetchOptions
+
+/** /api/weather 성공 응답. 서버 loader·클라이언트 fetch 공통 타입 */
+type WeatherSummary = {
+	realtime: WeatherApiRealtimeResponse
+	forecast: WeatherApiForecastResponse
+}
+
+export type {
+	ForecastAstroEntry,
+	ForecastDateMeta,
+	ForecastDayEntry,
+	SplitForecastDaysResult,
+	WeatherApiAstro,
+	WeatherApiCondition,
+	WeatherApiCurrent,
+	WeatherApiDay,
+	WeatherApiForecastDay,
+	WeatherApiForecastInput,
+	WeatherApiForecastResponse,
+	WeatherApiHour,
+	WeatherApiLocation,
+	WeatherApiRealtimeResponse,
+	WeatherFetchOptions,
+	WeatherFetchParams,
+	WeatherSummary
 }
