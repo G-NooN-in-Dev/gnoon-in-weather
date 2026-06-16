@@ -1,4 +1,4 @@
-import type { CurrentWeatherProps } from '@/features/home/types/home-component.type'
+import type { CurrentWeatherProps } from '@/features/weather/types/weather-component.type'
 
 function UvIndexSection({ current }: CurrentWeatherProps) {
 	return (

@@ -1,7 +1,6 @@
+import CurrentLocation from '@/features/home/components/current-location'
 import type { CurrentWeatherSectionProps } from '@/features/home/types/home-component.type'
-
-import CurrentLocation from '../components/current-location'
-import CurrentWeather from '../components/current-weather'
+import CurrentWeather from '@/features/weather/components/current-weather'
 
 function CurrentWeatherSection({
 	current,

@@ -3,16 +3,15 @@
 import { useMemo } from 'react'
 
 import Loading from '@/components/loading'
+import { CurrentWeatherSection, WeatherRadarSection } from '@/features/home/sections'
+import type { HomepageClientProps } from '@/features/home/types/home-component.type'
 import {
-	CurrentWeatherSection,
 	DailyWeatherSection,
 	HourlyWeatherSection,
 	MoonriseMoonsetSection,
 	SunriseSunsetSection,
-	UvIndexSection,
-	WeatherRadarSection
-} from '@/features/home/sections'
-import type { HomepageClientProps } from '@/features/home/types/home-component.type'
+	UvIndexSection
+} from '@/features/weather/sections'
 import { useWeather } from '@/hooks/use-weather'
 import { splitForecast } from '@/utils/split-forecast-days'
 

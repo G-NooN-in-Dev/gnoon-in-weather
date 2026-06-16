@@ -1,9 +1,8 @@
 import { SearchX } from 'lucide-react'
 
 import EmptyState from '@/components/empty-state'
-import type { ForecastDaysSectionProps } from '@/features/home/types/home-component.type'
-
-import DailyWeatherCard from '../components/daily-weather-card'
+import DailyWeatherCard from '@/features/weather/components/daily-weather-card'
+import type { ForecastDaysSectionProps } from '@/features/weather/types/weather-component.type'
 
 function DailyWeatherSection({ days }: ForecastDaysSectionProps) {
 	return (

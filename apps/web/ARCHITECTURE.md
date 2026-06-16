@@ -100,36 +100,48 @@ app/
 ### `features/` — 기능(도메인) 단위 UI
 
 ```
-features/home/
+features/weather/                  # 여러 페이지에서 재사용하는 날씨 표시 UI
 ├── types/
-│   └── home-component.type.ts   # 홈 UI 공통 props
-├── sections/                 # 페이지 섹션 (props 받아 조합)
+│   └── weather-component.type.ts  # 날씨 섹션 공통 props
+├── sections/
+│   ├── daily-weather.section.tsx
+│   └── index.ts
+└── components/
+    ├── current-weather.tsx
+    └── daily-weather-card.tsx
+
+features/home/                     # 홈 전용 (GPS 위치, 페이지 조합)
+├── types/
+│   └── home-component.type.ts     # 홈 전용 props (LocationControl 등)
+├── sections/
 │   ├── current-weather.section.tsx
 │   └── index.ts
-└── components/               # 홈 전용 UI 조각
-    ├── current-weather.tsx
+└── components/
     └── current-location.tsx
 ```
 
 **넣을 것**
 
 - 특정 기능(홈, 테마지도 등)에만 쓰는 섹션·카드·테이블
+- **2개 이상 feature에서 쓰는 날씨 UI** → `features/weather/`
 - 섹션 파일: `*.section.tsx` (프로젝트 컨벤션)
 
 **규칙**
 
 - 표시 데이터는 **props로** 받습니다.
 - 섹션이 context를 직접 읽지 않도록 유지합니다. (테스트·재사용 용이)
-- 같은 props 묶음은 `features/home/types/home-component.type.ts`에 정의하고 `&`로 조합합니다.
+- 날씨 섹션 props는 `features/weather/types/weather-component.type.ts`에 정의합니다.
+- 기능 전용 props(GPS 위치 등)는 `features/{기능}/types/`에 정의하고 `&`로 조합합니다.
 
 **공통 props 예시**
 
-| 타입                         | 사용처                                           |
-| ---------------------------- | ------------------------------------------------ |
-| `LocationControlProps`       | `CurrentLocation`                                |
-| `CurrentWeatherSectionProps` | `LocationControlProps` + `current`               |
-| `ForecastDaysSectionProps`   | `DailyWeatherSection`, `UvIndexSection`          |
-| `ForecastAstroSectionProps`  | `SunriseSunsetSection`, `MoonriseMoonsetSection` |
+| 타입                         | 위치      | 사용처                                           |
+| ---------------------------- | --------- | ------------------------------------------------ |
+| `CurrentWeatherProps`        | `weather` | `CurrentWeather`, `UvIndexSection`               |
+| `ForecastDaysSectionProps`   | `weather` | `DailyWeatherSection`                            |
+| `ForecastAstroSectionProps`  | `weather` | `SunriseSunsetSection`, `MoonriseMoonsetSection` |
+| `LocationControlProps`       | `home`    | `CurrentLocation`                                |
+| `CurrentWeatherSectionProps` | `home`    | `LocationControlProps` + `CurrentWeatherProps`   |
 
 **새 기능 추가 예시**
 
@@ -392,8 +404,8 @@ types/
    │  splitForecast()           ← utils/split-forecast-days
    │  props 분배
    ▼
-[UI] features/home/sections/*.section.tsx
-   └─ features/home/components/*.tsx
+[UI] features/home/sections/*.section.tsx  (홈 전용)
+   └─ features/weather/sections, components  (공통 날씨 UI)
 ```
 
 ### 역할 분담

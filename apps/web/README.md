@@ -23,7 +23,8 @@ pnpm dev
 - `app/page.tsx`: 메인 페이지 (서버 — 쿠키·날씨 fetch)
 - `app/_components/homepage.client.tsx`: 메인 client 조합기
 - `app/layout.tsx`: 루트 레이아웃
-- `features/home/`: 홈 UI (sections, components)
+- `features/home/`: 홈 전용 UI (GPS 위치, 섹션 조합)
+- `features/weather/`: 날씨 표시 공통 UI (홈·테마지도 등에서 재사용)
 - `services/weather.loader.ts`: 서버·API 공통 날씨 로더
 - `global.css`: 전역 스타일 (`tailwindcss` + `@shared/tailwind-config`)
 

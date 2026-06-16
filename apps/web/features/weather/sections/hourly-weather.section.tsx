@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card'
 import { Info } from 'lucide-react'
 
-import type { ForecastHoursSectionProps } from '@/features/home/types/home-component.type'
+import type { ForecastHoursSectionProps } from '@/features/weather/types/weather-component.type'
 
 function HourlyWeatherSection({ hours }: ForecastHoursSectionProps) {
 	return (

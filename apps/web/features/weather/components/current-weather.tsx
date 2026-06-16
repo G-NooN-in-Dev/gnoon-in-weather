@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import DataCard from '@/components/data-card'
-import type { CurrentWeatherProps } from '@/features/home/types/home-component.type'
+import type { CurrentWeatherProps } from '@/features/weather/types/weather-component.type'
 import { formatDate, formatWeatherIconUrl, formatWindKphToMps } from '@/utils/format-utils'
 
 function CurrentWeather({ current }: CurrentWeatherProps) {
