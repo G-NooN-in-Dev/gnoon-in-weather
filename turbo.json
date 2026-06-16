@@ -1,6 +1,15 @@
 {
 	"$schema": "https://turborepo.dev/schema.json",
 	"ui": "tui",
+	"globalEnv": [
+		"WEATHER_API_BASE_URL",
+		"WEATHER_API_KEY",
+		"KAKAO_REST_API_KEY",
+		"KAKAO_LOCAL_API_BASE_URL",
+		"NAVER_CLIENT_ID",
+		"NAVER_CLIENT_SECRET",
+		"NAVER_API_BASE_URL"
+	],
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
