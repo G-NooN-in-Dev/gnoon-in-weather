@@ -43,6 +43,7 @@ function ExampleSection() {
 export default ExampleSection
 ```
 
-## 예외
+## Next.js 라우트
 
-- Next.js `page.tsx`, `layout.tsx` 등 프레임워크가 요구하는 기본 export 패턴은 해당 파일 규칙을 우선합니다.
+- `page.tsx`는 위와 동일하게 `function` 선언 + 파일 하단 `export default`를 사용합니다.
+- `layout.tsx`의 `export const metadata`는 Next.js 관례에 따라 인라인 export를 허용합니다.

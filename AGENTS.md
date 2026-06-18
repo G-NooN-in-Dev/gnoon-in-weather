@@ -29,6 +29,13 @@
 - README/가이드 문서는 한글로 작성합니다.
 - 새 설정이나 토큰을 추가하면 관련 문서(`README.md`, `CONFIG_REFERENCE.md`)도 함께 업데이트합니다.
 - 신규 앱 온보딩은 루트 `APP_SETUP.md`를 기준으로 진행합니다.
+- `apps/web` 폴더 구조·데이터 흐름은 `apps/web/ARCHITECTURE.md`를 참고합니다.
+- `services/`·`utils/` 레이어(service/loader, `.server.ts`)는 `.cursor/rules/web-services-utils-layers.mdc`를 따릅니다.
+
+## TypeScript 코딩 컨벤션
+
+- 구조분해할당, `satisfies`/`as` 사용 기준은 `.cursor/rules/typescript-conventions.mdc`를 따릅니다.
+- 합의된 스타일은 작업 중 `.cursor/rules/`에 우선 기록하고, 프로젝트 마무리 시 컨벤션 문서로 통합·정리합니다.
 
 ## React 컴포넌트 템플릿
 
@@ -37,12 +44,6 @@
 - 컴포넌트명은 파일명의 `-`, `.` 단위를 PascalCase로 합칩니다. (예: `example.section.tsx` → `ExampleSection`)
 - 상세 템플릿·예시는 `.cursor/rules/react-component-template.mdc`를 참고합니다.
 - `page.tsx`, `layout.tsx` 등 Next.js 라우트 파일은 프레임워크 규칙을 우선합니다.
-
-## Cursor rules 작업 규칙
-
-- `.cursor/rules/` 변경은 **기능 브랜치가 아닌 `main` 브랜치**에서 추가·수정합니다.
-- 작업 중 다른 브랜치에 있다면, 변경 사항을 stash한 뒤 `main`으로 전환해 rule을 반영합니다.
-- rule 반영 후에는 `main`에 커밋하고, 작업 브랜치에서는 `main`을 merge 또는 rebase해 최신 rule을 가져옵니다.
 
 ## 변경 안전 규칙
 
