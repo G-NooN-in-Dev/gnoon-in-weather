@@ -3,6 +3,8 @@
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 
+import { WIND_DIRECTIONS } from '@/libs/weather'
+
 dayjs.extend(customParseFormat)
 
 /** 숫자 천 단위 구분 등에 쓰는 기본 로케일 */
@@ -60,13 +62,29 @@ function formatWindKphToMps(kph: number): number {
 	return Math.floor((kph / 3.6) * 10) / 10
 }
 
+/** 풍향을 화면 표시용 문자열로 변환합니다. */
+function formatWindDirection(direction: string): string {
+	return WIND_DIRECTIONS[direction as keyof typeof WIND_DIRECTIONS] + '풍'
+}
+
+/** UV 지수를 화면 표시용 문자열로 변환합니다. */
+function formatUvIndexLabel(uv: number): string {
+	if (uv >= 11) return '위험'
+	else if (uv >= 8) return '매우 높음'
+	else if (uv >= 6) return '높음'
+	else if (uv >= 3) return '보통'
+	else return '낮음'
+}
+
 export {
 	DAY_LABELS,
 	DEFAULT_DISPLAY_LOCALE,
 	formatDate,
 	formatLocaleNumber,
 	formatTime12To24,
+	formatUvIndexLabel,
 	formatWeatherIconUrl,
+	formatWindDirection,
 	formatWindKphToMps,
 	getDayLabel
 }

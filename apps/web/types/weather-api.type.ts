@@ -32,6 +32,7 @@ type WeatherApiCurrent = {
 	pressure_in: number
 	precip_mm: number
 	precip_in: number
+	snow_cm: number
 	humidity: number
 	cloud: number
 	feelslike_c: number
