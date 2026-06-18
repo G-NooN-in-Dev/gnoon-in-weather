@@ -5,14 +5,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { HOME_FORECAST_DAYS, HOME_WEATHER_LANG } from '@/services/weather.loader'
 import type { AppApiError } from '@/types/error.type'
 import type { Coordinates, LocationState } from '@/types/location.type'
-import type { WeatherSummary } from '@/types/weather-api.type'
+import type { WeatherApiRealtimeResponse, WeatherSummary } from '@/types/weather-api.type'
 import { formatWeatherLocationLabel } from '@/utils/format-weather-location'
+import { isRealtimeStale } from '@/utils/is-realtime-stale'
 import { writeLatestSearchedLocationCookie } from '@/utils/location-cookie'
 
 type UseWeatherOptions = {
 	/** 서버 page에서 전달한 초기 위치 */
 	initialLocation: LocationState
-	/** 서버 SSR로 미리 채운 날씨. 마운트 직후 클라이언트 refetch 전까지 화면 폴백으로 씁니다. */
+	/** 서버 SSR로 미리 채운 날씨. 5분 이내면 refetch 없이 그대로 사용합니다. */
 	initialWeather?: WeatherSummary | null
 	/** 서버 초기 로드 실패 시 클라이언트에 넘길 에러 */
 	initialError?: AppApiError | null
@@ -26,33 +27,51 @@ type UseWeatherResult = {
 	error: AppApiError | null
 	requestCurrentPosition: () => void
 }
+/** 좌표가 동일한지 판단합니다. */
+function isSameCoordinates(a: Coordinates, b: Coordinates): boolean {
+	return a.lat === b.lat && a.lng === b.lng
+}
+
+/** SSR initialWeather를 추가 API 호출 없이 쓸 수 있는지 판단합니다. */
+function canUseInitialWeatherWithoutFetch(
+	fetchLat: number,
+	fetchLng: number,
+	initialLat: number,
+	initialLng: number,
+	initialWeather: WeatherSummary | null
+): boolean {
+	return (
+		initialWeather !== null &&
+		isSameCoordinates({ lat: fetchLat, lng: fetchLng }, { lat: initialLat, lng: initialLng }) &&
+		!isRealtimeStale(initialWeather)
+	)
+}
 
 /**
- * 마운트·좌표 변경 시 클라이언트에서 날씨를 조회합니다.
- * 서버 initialWeather로 첫 페인트를 채우고, 마운트 직후 /api/weather로 한 번 더 갱신합니다.
+ * 날씨 조회 훅.
+ * - SSR 데이터가 5분 이내면 refetch 생략
+ * - stale이면 realtime만 fresh 조회
+ * - 좌표 변경·SSR 실패 시 전체 조회(서버 캐시 적용)
  */
 function useWeather({
 	initialLocation,
 	initialWeather = null,
 	initialError = null
 }: UseWeatherOptions): UseWeatherResult {
-	const { lat, lng, label } = initialLocation
+	const { lat: initialLat, lng: initialLng, label } = initialLocation
 
-	// 날씨 API 재조회 트리거. 좌표만 담고 label은 별도 state로 분리합니다.
-	// GPS 직후에는 좌표만 갱신하고, 응답의 location으로 label을 채웁니다.
-	const [fetchParams, setFetchParams] = useState<Coordinates>({ lat, lng })
-	// 화면에 보여줄 위치 이름. fetchParams와 합쳐 location을 만듭니다.
+	const [fetchParams, setFetchParams] = useState<Coordinates>(() => ({
+		lat: initialLat,
+		lng: initialLng
+	}))
 	const [locationLabel, setLocationLabel] = useState(label)
-	// /api/weather 응답 전체. 섹션 컴포넌트에 그대로 전달합니다.
 	const [weather, setWeather] = useState<WeatherSummary | null>(initialWeather)
-	// 마운트 직후 refetch·좌표 변경 fetch 동안 true. SSR 데이터가 있어도 로딩을 먼저 보여줍니다.
-	const [loading, setLoading] = useState(true)
-	// GPS 권한 요청·getCurrentPosition 대기 중 true. API loading과 별개입니다.
+	const [loading, setLoading] = useState(
+		() => !canUseInitialWeatherWithoutFetch(initialLat, initialLng, initialLat, initialLng, initialWeather)
+	)
 	const [isLocating, setIsLocating] = useState(false)
-	// API 실패·GPS 거부·브라우저 미지원 등 공통 에러 슬롯.
 	const [error, setError] = useState<AppApiError | null>(initialError)
 
-	// fetchParams(좌표) + locationLabel(이름) → UI·쿠키에 쓰는 LocationState.
 	const location = useMemo<LocationState>(
 		() => ({
 			...fetchParams,
@@ -61,18 +80,60 @@ function useWeather({
 		[fetchParams, locationLabel]
 	)
 
-	// 마운트·좌표 변경 시 날씨 API를 호출하고, 성공 시 쿠키에 최근 위치를 저장합니다.
+	const { lat: fetchLat, lng: fetchLng } = fetchParams
+
 	useEffect(() => {
-		const { lat, lng } = fetchParams
 		const controller = new AbortController()
+		const isSameAsInitial = isSameCoordinates({ lat: fetchLat, lng: fetchLng }, { lat: initialLat, lng: initialLng })
+
+		function applyWeatherSummary(summary: WeatherSummary, coordinates: Coordinates) {
+			const nextLabel = formatWeatherLocationLabel(summary.realtime.location)
+			const nextLocation: LocationState = {
+				...coordinates,
+				label: nextLabel
+			}
+
+			setWeather(summary)
+			setLocationLabel(nextLabel)
+			writeLatestSearchedLocationCookie(nextLocation)
+		}
 
 		async function fetchWeather() {
+			if (canUseInitialWeatherWithoutFetch(fetchLat, fetchLng, initialLat, initialLng, initialWeather)) {
+				setLoading(false)
+				return
+			}
+
 			setLoading(true)
 			setError(null)
 
 			try {
+				// SSR realtime만 stale → forecast는 유지하고 current.json만 fresh 조회
+				if (isSameAsInitial && initialWeather && isRealtimeStale(initialWeather)) {
+					const response = await fetch(
+						`/api/weather/realtime?lat=${fetchLat}&lng=${fetchLng}&lang=${HOME_WEATHER_LANG}&fresh=true`,
+						{ signal: controller.signal }
+					)
+					const data = await response.json()
+
+					if (!response.ok) {
+						setError((data.error as AppApiError | undefined) ?? null)
+						return
+					}
+
+					const realtime = data as WeatherApiRealtimeResponse
+					applyWeatherSummary(
+						{
+							realtime,
+							forecast: initialWeather.forecast
+						},
+						{ lat: fetchLat, lng: fetchLng }
+					)
+					return
+				}
+
 				const response = await fetch(
-					`/api/weather?lat=${lat}&lng=${lng}&lang=${HOME_WEATHER_LANG}&days=${HOME_FORECAST_DAYS}`,
+					`/api/weather?lat=${fetchLat}&lng=${fetchLng}&lang=${HOME_WEATHER_LANG}&days=${HOME_FORECAST_DAYS}`,
 					{ signal: controller.signal }
 				)
 				const data = await response.json()
@@ -82,17 +143,7 @@ function useWeather({
 					return
 				}
 
-				const summary = data as WeatherSummary
-				const nextLabel = formatWeatherLocationLabel(summary.realtime.location)
-				const nextLocation: LocationState = {
-					lat,
-					lng,
-					label: nextLabel
-				}
-
-				setWeather(summary)
-				setLocationLabel(nextLabel)
-				writeLatestSearchedLocationCookie(nextLocation)
+				applyWeatherSummary(data as WeatherSummary, { lat: fetchLat, lng: fetchLng })
 			} catch (fetchError) {
 				if (fetchError instanceof DOMException && fetchError.name === 'AbortError') {
 					return
@@ -118,7 +169,7 @@ function useWeather({
 		return () => {
 			controller.abort()
 		}
-	}, [fetchParams])
+	}, [fetchLat, fetchLng, initialLat, initialLng, initialWeather])
 
 	const requestCurrentPosition = useCallback(() => {
 		if (!navigator.geolocation) {
@@ -139,7 +190,6 @@ function useWeather({
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				const { latitude, longitude } = position.coords
-				// 좌표 확정 직후 전역 로딩으로 넘기기 위해 fetch effect 전에 loading을 켭니다.
 				setIsLocating(false)
 				setLoading(true)
 				setFetchParams({ lat: latitude, lng: longitude })

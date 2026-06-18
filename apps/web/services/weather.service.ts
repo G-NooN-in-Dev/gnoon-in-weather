@@ -6,6 +6,12 @@ import type {
 } from '@/types/weather-api.type'
 import { normalizeWeatherApiError, type WeatherApiErrorPayload } from '@/utils/weather-error'
 
+/** WeatherAPI fetch 시 Data Cache 사용 여부를 제어합니다. */
+type WeatherFetchOptions = {
+	/** true면 revalidate 캐시를 우회하고 WeatherAPI를 직접 조회합니다. */
+	fresh?: boolean
+}
+
 /**
  * WeatherAPI 공통 요청 URL을 조립합니다.
  * 베이스 URL은 `.env`의 `WEATHER_API_BASE_URL`을 사용합니다.
@@ -38,20 +44,24 @@ async function parseWeatherApiResponse<T>(res: Response): Promise<T> {
 	return payload as T
 }
 
-/** Next.js Data Cache에 좌표·엔드포인트별로 응답을 저장합니다. */
-async function fetchWeatherApi<T>(url: URL, revalidateSeconds: number): Promise<T> {
-	const res = await fetch(url, {
-		next: { revalidate: revalidateSeconds }
-	})
+/**
+ * WeatherAPI를 fetch합니다.
+ * fresh가 아니면 Next.js Data Cache(revalidate)를 사용하고, fresh이면 항상 원본 API를 조회합니다.
+ */
+async function fetchWeatherApi<T>(url: URL, revalidateSeconds: number, options?: WeatherFetchOptions): Promise<T> {
+	const res = await fetch(url, options?.fresh ? { cache: 'no-store' } : { next: { revalidate: revalidateSeconds } })
 
 	return parseWeatherApiResponse<T>(res)
 }
 
 /** 현재 날씨를 조회합니다. */
-async function getRealtimeWeather(params: WeatherFetchParams): Promise<WeatherApiRealtimeResponse> {
+async function getRealtimeWeather(
+	params: WeatherFetchParams,
+	options?: WeatherFetchOptions
+): Promise<WeatherApiRealtimeResponse> {
 	const url = buildWeatherApiUrl('current.json', params)
 
-	return fetchWeatherApi<WeatherApiRealtimeResponse>(url, REALTIME_REVALIDATE_SECONDS)
+	return fetchWeatherApi<WeatherApiRealtimeResponse>(url, REALTIME_REVALIDATE_SECONDS, options)
 }
 
 /** 3일 예보를 조회합니다. */
@@ -62,4 +72,4 @@ async function getForecastWeather(params: WeatherFetchParams): Promise<WeatherAp
 	return fetchWeatherApi<WeatherApiForecastResponse>(url, FORECAST_REVALIDATE_SECONDS)
 }
 
-export { getForecastWeather, getRealtimeWeather }
+export { getForecastWeather, getRealtimeWeather, type WeatherFetchOptions }
