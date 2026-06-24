@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 
 import Loading from '@/components/loading'
+import { WeatherUnitsProvider } from '@/contexts/weather-units.context'
 import { CurrentWeatherSection, WeatherRadarSection } from '@/features/home/sections'
 import type { HomepageClientProps } from '@/features/home/types/home-component.type'
 import {
@@ -34,7 +35,7 @@ function HomepageClient({ initialLocation, initialWeather, initialError }: Homep
 	const isPageLoading = loading
 
 	return (
-		<>
+		<WeatherUnitsProvider>
 			{isPageLoading ? <Loading /> : null}
 			<div className="flex gap-10">
 				<div className="flex w-2/3 flex-col gap-6">
@@ -57,7 +58,7 @@ function HomepageClient({ initialLocation, initialWeather, initialError }: Homep
 					<WeatherRadarSection />
 				</div>
 			</div>
-		</>
+		</WeatherUnitsProvider>
 	)
 }
 
