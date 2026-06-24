@@ -3,10 +3,25 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import DataCard from '@/components/data-card'
+import { useWeatherUnits } from '@/contexts/weather-units.context'
 import type { CurrentWeatherProps } from '@/features/weather/types/weather-component.type'
-import { formatDate, formatWeatherIconUrl, formatWindKphToMps } from '@/utils/format-utils'
+import { formatDate } from '@/utils/format-utils'
+import {
+	formatCurrentLabelSpeedAndDistance,
+	formatCurrentLabelTemperature,
+	formatCurrentPrecipitationAndSnowDepth,
+	formatDistanceUnitLabel,
+	formatPrecipitationUnitLabel,
+	formatSnowDepthUnitLabel,
+	formatSpeedUnitLabel,
+	formatUvIndexLabel,
+	formatWeatherIconUrl,
+	formatWindDirection
+} from '@/utils/weather-value-format-utils'
 
 function CurrentWeather({ current }: CurrentWeatherProps) {
+	const { units } = useWeatherUnits()
+
 	if (!current) {
 		return (
 			<Card className="py-4">
@@ -20,20 +35,11 @@ function CurrentWeather({ current }: CurrentWeatherProps) {
 		)
 	}
 
-	const {
-		condition,
-		cloud,
-		temp_c,
-		feelslike_c,
-		precip_mm,
-		chance_of_rain,
-		wind_dir,
-		wind_kph,
-		humidity,
-		vis_km,
-		uv,
-		last_updated
-	} = current
+	const { temp, feelslike } = formatCurrentLabelTemperature(current, units)
+	const { wind, visibility } = formatCurrentLabelSpeedAndDistance(current, units)
+	const { precip, snowDepth } = formatCurrentPrecipitationAndSnowDepth(current, units)
+
+	const { chance_of_rain, chance_of_snow, condition, cloud, wind_degree, humidity, uv, last_updated } = current
 	const { icon: conditionIcon, text: conditionText } = condition
 
 	return (
@@ -51,22 +57,24 @@ function CurrentWeather({ current }: CurrentWeatherProps) {
 						</div>
 					</div>
 					<div className="flex flex-col pl-4">
-						<p className="text-2xl font-semibold">{temp_c}°</p>
-						<p className="text-grayscale-600 text-lg">(체감 : {feelslike_c}°)</p>
+						<p className="text-2xl font-semibold">{temp}°</p>
+						<p className="text-grayscale-600 text-lg">(체감 : {feelslike}°)</p>
 					</div>
 				</div>
 				<div className="-mt-2 flex gap-3">
 					<div className="flex flex-col gap-3">
-						<DataCard title="강수량" value={precip_mm} unit="mm" />
-						<DataCard title="강수 확률" value={chance_of_rain} unit="%" />
+						{chance_of_rain > 0 && (
+							<DataCard title="강수량" value={precip} unit={formatPrecipitationUnitLabel(units)} />
+						)}
+						{chance_of_snow > 0 && <DataCard title="적설량" value={snowDepth} unit={formatSnowDepthUnitLabel(units)} />}
 					</div>
 					<div className="flex flex-col gap-3">
-						<DataCard title={wind_dir} value={formatWindKphToMps(wind_kph)} unit="m/s" />
+						<DataCard title={formatWindDirection(wind_degree)} value={wind} unit={formatSpeedUnitLabel(units)} />
 						<DataCard title="습도" value={humidity} unit="%" />
 					</div>
 					<div className="flex flex-col gap-3">
-						<DataCard title="가시거리" value={vis_km} unit="km" />
-						<DataCard title="자외선지수" value={uv} unit="" />
+						<DataCard title="가시거리" value={visibility} unit={formatDistanceUnitLabel(units)} />
+						<DataCard title="자외선지수" value={uv} unit={formatUvIndexLabel(uv)} />
 					</div>
 				</div>
 			</CardContent>
