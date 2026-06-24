@@ -15,27 +15,30 @@ function CurrentLocation({ location, loading, isLocating, error, onRequestCurren
 			: location.label || '위치 정보 없음'
 
 	return (
+		// FIXME - 에러메시지 관련 수정 예정
 		<div className="flex flex-col gap-1">
-			<div className="flex items-center gap-3 text-xl font-bold">
-				<div className="flex items-center gap-2">
-					<span>
-						<Star fill="var(--color-grayscale-300)" stroke="var(--color-grayscale-300)" />
-					</span>
-					<h2>{label}</h2>
-					<Button
-						type="button"
-						variant="ghost"
-						aria-label="현재 위치로 날씨 조회"
-						aria-busy={isLocating}
-						disabled={isLocating || loading}
-						onClick={onRequestCurrentPosition}
-						className="p-0"
-					>
-						<Crosshair className={cn('text-pastel-blue-600', isLocating && 'animate-spin')} />
-					</Button>
+			<div className="flex items-center justify-between">
+				<div className="flex items-center gap-3 text-xl font-bold">
+					<div className="flex items-center gap-2">
+						<Button type="button" variant="ghost" aria-label="즐겨찾기 추가" className="p-0">
+							<Star fill="var(--color-grayscale-300)" stroke="var(--color-grayscale-300)" className="size-6" />
+						</Button>
+						<h2>{label}</h2>
+						<Button
+							type="button"
+							variant="ghost"
+							aria-label="현재 위치로 날씨 조회"
+							aria-busy={isLocating}
+							disabled={isLocating || loading}
+							onClick={onRequestCurrentPosition}
+							className="p-0"
+						>
+							<Crosshair className={cn('text-pastel-blue-600 size-5', isLocating && 'animate-spin')} />
+						</Button>
+					</div>
 				</div>
 			</div>
-			{error ? <p className="text-grayscale-600 text-sm">{error.message}</p> : null}
+			{error ? <p className="text-destructive text-sm">{error.message}</p> : null}
 		</div>
 	)
 }
