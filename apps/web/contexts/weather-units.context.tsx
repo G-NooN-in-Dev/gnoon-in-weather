@@ -12,7 +12,6 @@ type WeatherUnitsContextValue = {
 const WeatherUnitsContext = createContext<WeatherUnitsContextValue | null>(null)
 
 function WeatherUnitsProvider({ children }: PropsWithChildren) {
-	// TODO - 쿠키에서 불러오기
 	const [units, setUnits] = useState<WeatherUnits>(readWeatherUnitsCookie() ?? DEFAULT_WEATHER_UNITS)
 
 	const applyUnits = useCallback((next: WeatherUnits) => {

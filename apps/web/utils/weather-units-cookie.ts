@@ -1,11 +1,18 @@
 import {
 	DISTANCE_UNITS,
 	PRECIPITATION_UNITS,
+	SNOW_DEPTH_UNITS,
 	TEMPERATURE_UNITS,
 	WEATHER_UNITS_COOKIE_MAX_AGE_SECONDS,
 	WEATHER_UNITS_COOKIE_NAME
 } from '@/libs/weather-units'
-import { DistanceUnit, PrecipitationUnit, TemperatureUnit, WeatherUnits } from '@/types/weather-units.type'
+import {
+	DistanceUnit,
+	PrecipitationUnit,
+	SnowDepthUnit,
+	TemperatureUnit,
+	WeatherUnits
+} from '@/types/weather-units.type'
 
 import { readBrowserCookie } from './cookie'
 
@@ -13,6 +20,7 @@ type WeatherUnitsCookie = {
 	temperature: TemperatureUnit
 	distance: DistanceUnit
 	precipitation: PrecipitationUnit
+	snowDepth: SnowDepthUnit
 }
 
 /** 단위 값이 유효한지 검사합니다. */
@@ -24,17 +32,18 @@ function isWeatherUnit<T extends string>(value: unknown, allowed: readonly T[]):
 function parseWeatherUnitsCookie(value: string): WeatherUnits | null {
 	try {
 		const parsed = JSON.parse(value) as Partial<WeatherUnits>
-		const { temperature, distance, precipitation } = parsed
+		const { temperature, distance, precipitation, snowDepth } = parsed
 
 		if (
 			!isWeatherUnit(temperature, TEMPERATURE_UNITS) ||
 			!isWeatherUnit(distance, DISTANCE_UNITS) ||
-			!isWeatherUnit(precipitation, PRECIPITATION_UNITS)
+			!isWeatherUnit(precipitation, PRECIPITATION_UNITS) ||
+			!isWeatherUnit(snowDepth, SNOW_DEPTH_UNITS)
 		) {
 			return null
 		}
 
-		return { temperature, distance, precipitation }
+		return { temperature, distance, precipitation, snowDepth }
 	} catch {
 		return null
 	}
