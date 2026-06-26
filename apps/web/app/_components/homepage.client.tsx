@@ -20,7 +20,7 @@ import { splitForecast } from '@/utils/split-forecast-days'
  * 홈 페이지 client 조합기.
  * 서버 SSR 데이터로 첫 페인트 후, 마운트 직후 클라이언트 refetch·GPS·좌표 변경을 처리합니다.
  */
-function HomepageClient({ initialLocation, initialWeather, initialError }: HomepageClientProps) {
+function HomepageClient({ initialLocation, initialWeather, initialUnits, initialError }: HomepageClientProps) {
 	const { location, weather, loading, isLocating, error, requestCurrentPosition } = useWeather({
 		initialLocation,
 		initialWeather,
@@ -35,7 +35,7 @@ function HomepageClient({ initialLocation, initialWeather, initialError }: Homep
 	const isPageLoading = loading
 
 	return (
-		<WeatherUnitsProvider>
+		<WeatherUnitsProvider initialUnits={initialUnits}>
 			{isPageLoading ? <Loading /> : null}
 			<div className="flex gap-10">
 				<div className="flex w-2/3 flex-col gap-6">

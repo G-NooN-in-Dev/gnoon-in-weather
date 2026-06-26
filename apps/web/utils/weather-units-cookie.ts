@@ -1,3 +1,4 @@
+import type { WeatherUnitOption } from '@/libs/weather-units'
 import {
 	DISTANCE_UNITS,
 	PRECIPITATION_UNITS,
@@ -23,9 +24,9 @@ type WeatherUnitsCookie = {
 	snowDepth: SnowDepthUnit
 }
 
-/** 단위 값이 유효한지 검사합니다. */
-function isWeatherUnit<T extends string>(value: unknown, allowed: readonly T[]): value is T {
-	return typeof value === 'string' && (allowed as readonly string[]).includes(value)
+/** 단위 값이 유효한 옵션인지 검사합니다. */
+function isWeatherUnit<T extends string>(value: unknown, options: ReadonlyArray<WeatherUnitOption<T>>): value is T {
+	return typeof value === 'string' && options.some((option) => option.value === value)
 }
 
 /** 쿠키 JSON을 WeatherUnits로 안전하게 변환합니다. */
@@ -69,4 +70,4 @@ function writeWeatherUnitsCookie(units: WeatherUnits): void {
 	document.cookie = `${WEATHER_UNITS_COOKIE_NAME}=${encodeURIComponent(payload)}; path=/; max-age=${WEATHER_UNITS_COOKIE_MAX_AGE_SECONDS}; samesite=lax`
 }
 
-export { readWeatherUnitsCookie, writeWeatherUnitsCookie }
+export { parseWeatherUnitsCookie, readWeatherUnitsCookie, writeWeatherUnitsCookie }

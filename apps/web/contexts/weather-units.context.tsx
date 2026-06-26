@@ -2,17 +2,21 @@ import { createContext, PropsWithChildren, useCallback, useContext, useMemo, use
 
 import { DEFAULT_WEATHER_UNITS } from '@/libs/weather-units'
 import { WeatherUnits } from '@/types/weather-units.type'
-import { readWeatherUnitsCookie, writeWeatherUnitsCookie } from '@/utils/weather-units-cookie'
+import { writeWeatherUnitsCookie } from '@/utils/weather-units-cookie'
 
 type WeatherUnitsContextValue = {
 	units: WeatherUnits
 	applyUnits: (next: WeatherUnits) => void
 }
 
+type WeatherUnitsProviderProps = PropsWithChildren<{
+	initialUnits?: WeatherUnits | null
+}>
+
 const WeatherUnitsContext = createContext<WeatherUnitsContextValue | null>(null)
 
-function WeatherUnitsProvider({ children }: PropsWithChildren) {
-	const [units, setUnits] = useState<WeatherUnits>(readWeatherUnitsCookie() ?? DEFAULT_WEATHER_UNITS)
+function WeatherUnitsProvider({ children, initialUnits }: WeatherUnitsProviderProps) {
+	const [units, setUnits] = useState<WeatherUnits>(initialUnits ?? DEFAULT_WEATHER_UNITS)
 
 	const applyUnits = useCallback((next: WeatherUnits) => {
 		setUnits(next)
