@@ -40,8 +40,7 @@ function writeLatestSearchedLocationCookie(location: LocationState): void {
 		return
 	}
 
-	const { lat, lng, label } = location
-	const payload = JSON.stringify({ lat, lng, label } satisfies RecentLocationCookie)
+	const payload = JSON.stringify(location satisfies RecentLocationCookie)
 
 	document.cookie = `${LATEST_SEARCHED_LOCATION_COOKIE_NAME}=${encodeURIComponent(payload)}; path=/; max-age=${LATEST_SEARCHED_LOCATION_COOKIE_MAX_AGE_SECONDS}; samesite=lax`
 }

@@ -6,9 +6,11 @@ import type { WeatherSummary } from '@/types/weather-api.type'
 import { isAppApiError } from '@/utils/api-error'
 import { formatWeatherLocationLabel } from '@/utils/format-weather-location'
 import { resolveHomeLocation } from '@/utils/resolve-home-location'
+import { readWeatherUnitsFromCookies } from '@/utils/weather-units-cookie.server'
 
 async function Homepage() {
 	const baseLocation = await resolveHomeLocation()
+	const initialUnits = await readWeatherUnitsFromCookies()
 	let initialLocation: LocationState = baseLocation
 	let initialWeather: WeatherSummary | null = null
 	let initialError: AppApiError | null = null
@@ -44,6 +46,7 @@ async function Homepage() {
 					<HomepageClient
 						initialLocation={initialLocation}
 						initialWeather={initialWeather}
+						initialUnits={initialUnits}
 						initialError={initialError}
 					/>
 				</div>

@@ -2,6 +2,7 @@ import type { CurrentWeatherProps } from '@/features/weather/types/weather-compo
 import type { AppApiError } from '@/types/error.type'
 import type { LocationState } from '@/types/location.type'
 import type { WeatherSummary } from '@/types/weather-api.type'
+import type { WeatherUnits } from '@/types/weather-units.type'
 
 /** 위치 표시·GPS 버튼에 공통으로 쓰는 props (홈 전용) */
 type LocationControlProps = {
@@ -19,6 +20,7 @@ type CurrentWeatherSectionProps = LocationControlProps & CurrentWeatherProps
 type HomepageClientProps = {
 	initialLocation: LocationState
 	initialWeather: WeatherSummary | null
+	initialUnits: WeatherUnits | null
 	initialError: AppApiError | null
 }
 

@@ -1,7 +1,8 @@
 import { Card, CardContent } from '@shared/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table'
 
-import { formatDate, getDayLabel } from '@/utils/format-utils'
+import { formatDate } from '@/utils/format-utils'
+import { formatDayLabel } from '@/utils/weather-value-format-utils'
 
 type AstroScheduleTableRow = {
 	date: string
@@ -36,7 +37,7 @@ function AstroScheduleTable({ data, leftHeader, rightHeader }: AstroScheduleTabl
 									<CardContent className="grid grid-cols-3 items-center px-4 py-0">
 										<span className="text-left text-lg font-medium">{left}</span>
 										<span className="text-center text-base">
-											{getDayLabel(index)} ({formatDate(date, 'MM.DD')})
+											{formatDayLabel(index)} ({formatDate(date, 'MM.DD')})
 										</span>
 										<span className="text-right text-lg font-medium">{right}</span>
 									</CardContent>

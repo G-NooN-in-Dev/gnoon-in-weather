@@ -2,7 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shar
 import Image from 'next/image'
 
 import type { ForecastDayEntry } from '@/types/weather-api.type'
-import { formatDate, formatWeatherIconUrl, getDayLabel } from '@/utils/format-utils'
+import { formatDate } from '@/utils/format-utils'
+import { formatDayLabel, formatWeatherIconUrl } from '@/utils/weather-value-format-utils'
 
 type DailyWeatherCardProps = {
 	day: ForecastDayEntry
@@ -16,7 +17,7 @@ function DailyWeatherCard({ day, dayIndex }: DailyWeatherCardProps) {
 	return (
 		<Card className="gap-2">
 			<CardHeader className="flex items-center justify-between">
-				<CardTitle className="text-xl font-bold">{getDayLabel(dayIndex)}</CardTitle>
+				<CardTitle className="text-xl font-bold">{formatDayLabel(dayIndex)}</CardTitle>
 				<CardDescription className="text-xl font-semibold">{formatDate(date, 'MM.DD')}</CardDescription>
 			</CardHeader>
 			<CardContent className="flex flex-col">
