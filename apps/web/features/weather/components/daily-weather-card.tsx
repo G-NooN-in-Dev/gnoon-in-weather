@@ -23,7 +23,7 @@ function DailyWeatherCard({ day, dayIndex }: DailyWeatherCardProps) {
 			<CardContent className="flex flex-col">
 				<div className="flex items-center justify-between gap-4">
 					<div>
-						<Image src={formatWeatherIconUrl(conditionIcon)} alt={conditionText} width={100} height={100} />
+						<Image src={formatWeatherIconUrl(conditionIcon)} alt={conditionText} width={100} height={100} priority />
 					</div>
 					<div className="px-2 text-right text-2xl font-semibold">
 						<p className="text-pure-red">{maxtemp_c}°</p>
