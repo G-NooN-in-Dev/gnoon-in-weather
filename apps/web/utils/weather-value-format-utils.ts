@@ -2,6 +2,10 @@ import { WIND_DIRECTIONS } from '@/libs/weather'
 import { WeatherApiCurrent, WeatherApiDay, WeatherApiHour } from '@/types/weather-api.type'
 import { WeatherUnits } from '@/types/weather-units.type'
 
+import { formatTime12To24 } from './format-utils'
+
+const ASTRO_UNAVAILABLE_MESSAGE = /^Does not (rise|set) today$/i
+
 /** 3일 예보·천체 일정 등에서 쓰는 일차 라벨 */
 const DAY_LABELS = ['오늘', '내일', '모레'] as const
 
@@ -203,7 +207,17 @@ function formatWeatherIconUrl(icon: string): string {
 	return `https:${icon}`
 }
 
+/** 천체 일정 시간 표시용 문자열 생성 */
+function formatAstroScheduleTime(time: string): string {
+	if (ASTRO_UNAVAILABLE_MESSAGE.test(time)) {
+		return '-'
+	}
+
+	return formatTime12To24(time)
+}
+
 export {
+	formatAstroScheduleTime,
 	formatCurrentLabelSpeedAndDistance,
 	formatCurrentLabelTemperature,
 	formatCurrentPrecipitationAndSnowDepth,
