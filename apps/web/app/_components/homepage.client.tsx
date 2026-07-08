@@ -47,7 +47,7 @@ function HomepageClient({ initialLocation, initialWeather, initialUnits, initial
 						error={activeError}
 						onRequestCurrentPosition={requestCurrentPosition}
 					/>
-					<HourlyWeatherSection hours={forecastSplit?.hours ?? []} />
+					<HourlyWeatherSection hours={forecastSplit?.hours ?? []} astros={forecastSplit?.astros ?? []} />
 					<DailyWeatherSection days={forecastSplit?.days ?? []} />
 				</div>
 				<div className="flex w-1/3 flex-col gap-6">

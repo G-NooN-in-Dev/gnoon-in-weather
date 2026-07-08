@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 import { WIND_DIRECTIONS } from '@/libs/weather'
 import { WeatherApiCurrent, WeatherApiDay, WeatherApiHour } from '@/types/weather-api.type'
 import { WeatherUnits } from '@/types/weather-units.type'
@@ -216,6 +218,25 @@ function formatAstroScheduleTime(time: string): string {
 	return formatTime12To24(time)
 }
 
+/** 예보 일차 인덱스를 계산합니다. */
+function getForecastDayIndex(date: string, baseDate: string): number {
+	return dayjs(date).startOf('day').diff(dayjs(baseDate).startOf('day'), 'day')
+}
+
+/** 시간별 날씨 시간 표시용 문자열 생성 */
+function formatHourlyTimeLabel(hour: WeatherApiHour, baseDate: string): string {
+	const { time } = hour
+	const parsedTime = dayjs(time)
+	const hourValue = parsedTime.hour()
+	const dayIndex = getForecastDayIndex(time, baseDate)
+
+	if (hourValue === 0) {
+		return formatDayLabel(dayIndex)
+	}
+
+	return `${String(hourValue).padStart(2, '0')}시`
+}
+
 export {
 	formatAstroScheduleTime,
 	formatCurrentLabelSpeedAndDistance,
@@ -228,6 +249,7 @@ export {
 	formatForecastPrecipitationAndSnowDepth,
 	formatHourLabelSpeedAndDistance,
 	formatHourLabelTemperature,
+	formatHourlyTimeLabel,
 	formatHourPrecipitationAndSnowDepth,
 	formatKphToMps,
 	formatPrecipitationUnitLabel,

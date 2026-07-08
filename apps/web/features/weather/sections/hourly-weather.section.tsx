@@ -1,9 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card'
-import { Info } from 'lucide-react'
+import { Info, SearchX } from 'lucide-react'
 
+import EmptyState from '@/components/empty-state'
 import type { ForecastHoursSectionProps } from '@/features/weather/types/weather-component.type'
 
-function HourlyWeatherSection({ hours }: ForecastHoursSectionProps) {
+import HourlyWeatherTable from '../components/hourly-weather-table'
+
+function HourlyWeatherSection({ hours, astros }: ForecastHoursSectionProps) {
 	return (
 		<section>
 			<Card className="py-4">
@@ -12,11 +15,15 @@ function HourlyWeatherSection({ hours }: ForecastHoursSectionProps) {
 					<Info className="text-grayscale-600 cursor-pointer" size={16} />
 				</CardHeader>
 				<CardContent>
-					{/* TODO - 시간별 날씨 테이블 */}
 					{hours.length > 0 ? (
-						<p className="text-grayscale-600 text-sm">{hours.length}개 시간대 데이터 수신됨</p>
+						<HourlyWeatherTable hours={hours} astros={astros} />
 					) : (
-						<div>테이블 (예정)</div>
+						<EmptyState
+							className="border-none"
+							icon={<SearchX className="text-grayscale-600 size-10" />}
+							title="시간별 날씨 데이터 없음"
+							description="시간별 날씨 데이터를 찾을 수 없습니다"
+						/>
 					)}
 				</CardContent>
 			</Card>

@@ -7,7 +7,6 @@ import type { ForecastAstroSectionProps } from '@/features/weather/types/weather
 import { formatAstroScheduleTime } from '@/utils/weather-value-format-utils'
 
 function MoonriseMoonsetSection({ astros }: ForecastAstroSectionProps) {
-	console.log({ astros })
 	return (
 		<section>
 			<Card className="py-4">
