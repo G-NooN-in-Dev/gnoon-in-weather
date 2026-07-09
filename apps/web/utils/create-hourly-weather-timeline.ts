@@ -37,7 +37,7 @@ function createAstroTimeline(astro: ForecastAstroEntry, kind: SunStatusKind) {
 		epoch,
 		date,
 		time: astroTime,
-		timeLabel: kind === 'sunrise' ? '일출' : '일몰'
+		timeLabel: kind === 'sunrise' ? `일출${'\u2191'}` : `일몰${'\u2193'}`
 	}
 }
 
