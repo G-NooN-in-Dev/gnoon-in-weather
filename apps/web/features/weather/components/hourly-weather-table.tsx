@@ -1,64 +1,104 @@
 'use client'
 
+import { Badge } from '@shared/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@shared/ui/table'
+import { cn } from '@shared/ui/utils'
+import dayjs from 'dayjs'
 import { ArrowBigUp } from 'lucide-react'
 import Image from 'next/image'
 import { ReactNode } from 'react'
 
+import HorizontalScrollContainer from '@/components/horizontal-scroll-container'
 import { useWeatherUnits } from '@/contexts/weather-units.context'
 import { WeatherUnits } from '@/types/weather-units.type'
 import createHourlyWeatherTimeline, { HourlyWeatherTimeline } from '@/utils/create-hourly-weather-timeline'
+import { formatLocaleNumber } from '@/utils/format-utils'
 import {
+	formatDistanceUnitLabel,
 	formatHourLabelSpeedAndDistance,
 	formatHourLabelTemperature,
-	formatHourPrecipitationAndSnowDepth
+	formatHourPrecipitationAndSnowDepth,
+	formatPrecipitationUnitLabel,
+	formatSnowDepthUnitLabel,
+	formatSpeedUnitLabel,
+	formatTemperatureLabel
 } from '@/utils/weather-value-format-utils'
 
 import { HourlyWeatherTableProps } from '../types/weather-component.type'
 
 type TimelineRowConfig = {
 	id: string
-	label: string | ReactNode
+	label: (units: WeatherUnits) => ReactNode
 	isVisible?: (item: HourlyWeatherTimeline) => boolean
 	render: (item: HourlyWeatherTimeline, units: WeatherUnits) => ReactNode
 }
 
+const stickyTableHeadClassName = 'sticky left-0 z-[1] bg-background min-w-24 w-24 '
+const hourlyTablePrevButtonClassName = 'left-[calc(6rem+0.25rem)]'
+const timelineBorderClassName = 'border-l border-border'
+const tableHeadClassName = 'font-semibold'
+const unitLabelClassName = 'text-muted-foreground text-sm'
+const tableCellClassName = 'font-medium'
+
 const timelineRows: TimelineRowConfig[] = [
 	{
 		id: 'temp',
-		label: (
-			<div className="flex flex-col">
-				<p>온도</p>
-				<p>(체감온도)</p>
-			</div>
-		),
+		label: (units) => {
+			const temperatureLabel = formatTemperatureLabel(units)
+			return (
+				<div className="flex justify-between">
+					<div className="flex flex-col">
+						<p className={tableHeadClassName}>온도</p>
+						<p className="text-sm font-semibold">(체감온도)</p>
+					</div>
+					<span className={unitLabelClassName}>{temperatureLabel}</span>
+				</div>
+			)
+		},
 		render: (item, units) => {
 			if (item.kind !== 'hour') return null
 
 			const { temp, feelslike } = formatHourLabelTemperature(item, units)
-
 			return (
 				<div className="flex flex-col">
-					<p>{temp}°</p>
-					<p>({feelslike}°)</p>
+					<p className={cn(tableCellClassName, 'text-lg font-semibold')}>{temp}°</p>
+					<p className={cn(tableCellClassName, 'text-sm')}>({feelslike}°)</p>
 				</div>
 			)
 		}
 	},
 	{
 		id: 'chance',
-		label: '강수확률',
+		label: () => <p className={tableHeadClassName}>강수확률</p>,
 		render: (item) => {
 			if (item.kind !== 'hour') return null
 
 			const { chance_of_rain, chance_of_snow } = item
-
-			return <span>{Math.max(chance_of_rain, chance_of_snow)}</span>
+			const chance = Math.max(chance_of_rain, chance_of_snow)
+			return (
+				<span
+					className={cn(
+						tableCellClassName,
+						'text-lg font-semibold',
+						chance > 0 ? 'text-blue-600' : 'text-muted-foreground'
+					)}
+				>
+					{chance > 0 ? `${chance}%` : '-'}
+				</span>
+			)
 		}
 	},
 	{
 		id: 'precip',
-		label: '강수량',
+		label: (units) => {
+			const precipitationLabel = formatPrecipitationUnitLabel(units)
+			return (
+				<p className="flex justify-between">
+					<span className={tableHeadClassName}>강수량</span>
+					<span className={unitLabelClassName}>{precipitationLabel}</span>
+				</p>
+			)
+		},
 		isVisible: (item) => {
 			if (item.kind !== 'hour') return false
 			return Boolean(item.chance_of_rain)
@@ -66,13 +106,24 @@ const timelineRows: TimelineRowConfig[] = [
 		render: (item, units) => {
 			if (item.kind !== 'hour') return null
 			const { precip } = formatHourPrecipitationAndSnowDepth(item, units)
-
-			return <span>{precip}</span>
+			return (
+				<span className={cn(tableCellClassName, precip > 0 ? 'text-blue-800' : 'text-muted-foreground')}>
+					{formatLocaleNumber(precip)}
+				</span>
+			)
 		}
 	},
 	{
 		id: 'snow',
-		label: '적설량',
+		label: (units) => {
+			const snowDepthLabel = formatSnowDepthUnitLabel(units)
+			return (
+				<p className="flex justify-between">
+					<span className={tableHeadClassName}>적설량</span>
+					<span className={unitLabelClassName}>{snowDepthLabel}</span>
+				</p>
+			)
+		},
 		isVisible: (item) => {
 			if (item.kind !== 'hour') return false
 			return Boolean(item.chance_of_snow)
@@ -80,117 +131,216 @@ const timelineRows: TimelineRowConfig[] = [
 		render: (item, units) => {
 			if (item.kind !== 'hour') return null
 			const { snowDepth } = formatHourPrecipitationAndSnowDepth(item, units)
-
-			return <span>{snowDepth}</span>
+			return (
+				<span className={cn(tableCellClassName, snowDepth > 0 ? 'text-blue-800' : 'text-muted-foreground')}>
+					{formatLocaleNumber(snowDepth)}
+				</span>
+			)
 		}
 	},
 	{
 		id: 'humidity',
-		label: '습도',
+		label: () => <p className={tableHeadClassName}>습도</p>,
 		render: (item) => {
 			if (item.kind !== 'hour') return null
-			return <span>{item.humidity}</span>
+
+			const { humidity } = item
+			return (
+				<span
+					className={cn(tableCellClassName, 'font-semibold', humidity > 0 ? 'text-blue-600' : 'text-muted-foreground')}
+				>
+					{humidity > 0 ? `${humidity}%` : '-'}
+				</span>
+			)
 		}
 	},
 	{
 		id: 'wind',
-		label: '바람',
+		label: (units) => {
+			const windLabel = formatSpeedUnitLabel(units)
+			return (
+				<p className="flex justify-between">
+					<span className={tableHeadClassName}>바람</span>
+					<span className={unitLabelClassName}>{windLabel}</span>
+				</p>
+			)
+		},
 		render: (item, units) => {
 			if (item.kind !== 'hour') return null
 			const { wind } = formatHourLabelSpeedAndDistance(item, units)
 			const { wind_degree } = item
 
 			const windDirection = Math.round(wind_degree / 45) % 8
-
 			return (
-				<div className="flex flex-col">
+				<div className="flex flex-col items-center">
 					<ArrowBigUp
 						className="fill-blue-500 text-blue-500"
 						style={{ transform: `rotate(${windDirection * 45 + 180}deg)` }}
 					/>
-					<span>{wind}</span>
+					<span className={tableCellClassName}>{formatLocaleNumber(wind)}</span>
 				</div>
 			)
 		}
 	},
 	{
 		id: 'cloud',
-		label: '구름 비율',
+		label: () => <p className={tableHeadClassName}>구름비율</p>,
 		render: (item) => {
 			if (item.kind !== 'hour') return null
-			return <span>{item.cloud}</span>
+
+			const { cloud } = item
+			return (
+				<span
+					className={cn(tableCellClassName, 'font-semibold', cloud > 0 ? 'text-muted-foreground' : 'text-gray-400')}
+				>
+					{cloud > 0 ? `${cloud}%` : '-'}
+				</span>
+			)
 		}
 	},
 	{
 		id: 'visibility',
-		label: '가시거리',
+		label: (units) => {
+			const visibilityLabel = formatDistanceUnitLabel(units)
+			return (
+				<p className="flex justify-between">
+					<span className={tableHeadClassName}>가시거리</span>
+					<span className={unitLabelClassName}>{visibilityLabel}</span>
+				</p>
+			)
+		},
 		render: (item, units) => {
 			if (item.kind !== 'hour') return null
 			const { visibility } = formatHourLabelSpeedAndDistance(item, units)
-
-			return <span>{visibility}</span>
+			return <span className={tableCellClassName}>{formatLocaleNumber(visibility)}</span>
 		}
 	},
 	{
 		id: 'uv',
-		label: '자외선지수',
+		label: () => <p className={tableHeadClassName}>자외선지수</p>,
 		render: (item) => {
 			if (item.kind !== 'hour') return null
-			return <span>{item.uv}</span>
+			return <span className={tableCellClassName}>{item.uv}</span>
 		}
 	}
 ]
 
 function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 	const { units } = useWeatherUnits()
-	// TODO - baseDate 활용하여 오늘/내일/모레 구분
-	const { timeline } = createHourlyWeatherTimeline(hours, astros)
+	const { timeline, baseDate } = createHourlyWeatherTimeline(hours, astros)
 
 	const visibleRows = timelineRows.filter((row) => !row.isVisible || timeline.some((item) => row.isVisible?.(item)))
 
 	return (
-		<div className="overflow-x-auto">
+		<HorizontalScrollContainer prevButtonClassName={hourlyTablePrevButtonClassName}>
 			<Table className="w-max">
-				<TableBody>
+				<TableBody className="text-center text-base [&_tr]:border-none">
+					{/* 시간 헤더 */}
 					<TableRow>
-						<TableHead>시간</TableHead>
+						<TableHead className={cn(stickyTableHeadClassName, tableHeadClassName)}>시간</TableHead>
 						{timeline.map((item) => {
-							const { epoch, kind, timeLabel } = item
-							return <TableCell key={epoch}>{kind !== 'hour' ? item.time : timeLabel}</TableCell>
+							const { date, epoch, kind, time, timeLabel } = item
+
+							if (kind !== 'hour')
+								return (
+									<TableCell key={epoch} className={cn(timelineBorderClassName, 'font-semibold')}>
+										<span className="text-destructive">{time}</span>
+									</TableCell>
+								)
+
+							switch (timeLabel) {
+								case '오늘':
+									return (
+										<TableCell
+											key={epoch}
+											className={cn(timelineBorderClassName, 'flex items-center justify-center font-semibold')}
+										>
+											<Badge className="size-fit text-base font-bold">내일</Badge>
+										</TableCell>
+									)
+								case '내일':
+									return (
+										<TableCell
+											key={epoch}
+											className={cn(timelineBorderClassName, 'flex items-center justify-center font-semibold')}
+										>
+											<Badge className="bg-pastel-purple-600 size-fit text-base font-bold">내일</Badge>
+										</TableCell>
+									)
+								case '모레':
+									return (
+										<TableCell
+											key={epoch}
+											className={cn(timelineBorderClassName, 'flex items-center justify-center font-semibold')}
+										>
+											<Badge className="bg-pastel-blue-600 size-fit text-base font-bold">모레</Badge>
+										</TableCell>
+									)
+								default: {
+									const dayDiff = dayjs(date).diff(dayjs(baseDate), 'day')
+									return (
+										<TableCell
+											key={epoch}
+											className={cn(
+												timelineBorderClassName,
+												'font-semibold',
+												dayDiff === 1 && 'text-violet-700',
+												dayDiff === 2 && 'text-blue-700'
+											)}
+										>
+											{timeLabel}
+										</TableCell>
+									)
+								}
+							}
 						})}
 					</TableRow>
+					{/* 날씨 아이콘 */}
 					<TableRow>
-						<TableHead />
+						<TableHead className={stickyTableHeadClassName} />
 						{timeline.map((item) => {
 							const { epoch, kind, timeLabel } = item
 
-							if (kind !== 'hour') return <TableCell key={epoch}>{timeLabel}</TableCell>
+							if (kind !== 'hour') {
+								return (
+									<TableCell key={epoch} className={cn(timelineBorderClassName, 'py-0 font-semibold')}>
+										<Badge variant="destructive" className="size-fit font-bold">
+											{timeLabel}
+										</Badge>
+									</TableCell>
+								)
+							}
 
 							const { condition } = item
 							const { icon, text } = condition
 							return (
-								<TableCell key={epoch}>
-									<Image src={icon} alt={text} width={24} height={24} />
+								<TableCell key={epoch} className={(cn(timelineBorderClassName), 'py-0')}>
+									<Image src={icon} alt={text} width={32} height={32} className="mx-auto" priority />
 								</TableCell>
 							)
 						})}
 					</TableRow>
+					{/* 날씨 데이터 */}
 					{visibleRows.map((row) => {
 						const { id, label, render } = row
 
 						return (
 							<TableRow key={id}>
-								<TableHead>{label}</TableHead>
+								<TableHead className={stickyTableHeadClassName}>{label(units)}</TableHead>
 								{timeline.map((item) => {
 									const { epoch } = item
-									return <TableCell key={epoch}>{render(item, units)}</TableCell>
+									return (
+										<TableCell key={epoch} className={timelineBorderClassName}>
+											{render(item, units)}
+										</TableCell>
+									)
 								})}
 							</TableRow>
 						)
 					})}
 				</TableBody>
 			</Table>
-		</div>
+		</HorizontalScrollContainer>
 	)
 }
 
