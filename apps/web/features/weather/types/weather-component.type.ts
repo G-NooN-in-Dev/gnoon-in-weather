@@ -13,6 +13,7 @@ type ForecastDaysSectionProps = {
 /** 시간별 예보 섹션 props */
 type ForecastHoursSectionProps = {
 	hours: WeatherApiHour[]
+	astros: ForecastAstroEntry[]
 }
 
 /** 일출/월출 등 천체 일정 섹션 공통 props */
@@ -20,4 +21,16 @@ type ForecastAstroSectionProps = {
 	astros: ForecastAstroEntry[]
 }
 
-export type { CurrentWeatherProps, ForecastAstroSectionProps, ForecastDaysSectionProps, ForecastHoursSectionProps }
+/** 시간별 예보 테이블 props */
+type HourlyWeatherTableProps = {
+	hours: WeatherApiHour[]
+	astros: ForecastAstroEntry[]
+}
+
+export type {
+	CurrentWeatherProps,
+	ForecastAstroSectionProps,
+	ForecastDaysSectionProps,
+	ForecastHoursSectionProps,
+	HourlyWeatherTableProps
+}

@@ -30,7 +30,7 @@
 - 새 설정이나 토큰을 추가하면 관련 문서(`README.md`, `CONFIG_REFERENCE.md`)도 함께 업데이트합니다.
 - 신규 앱 온보딩은 루트 `APP_SETUP.md`를 기준으로 진행합니다.
 - `apps/web` 폴더 구조·데이터 흐름은 `apps/web/ARCHITECTURE.md`를 참고합니다.
-- `services/`·`utils/` 레이어(service/loader, `.server.ts`)는 `.cursor/rules/web-services-utils-layers.mdc`를 따릅니다.
+- `services/`·`lib/`·`utils/` 레이어(service/loader, `.server.ts`)는 `.cursor/rules/web-services-utils-layers.mdc`를 따릅니다.
 
 ## TypeScript 코딩 컨벤션
 

@@ -1,4 +1,7 @@
-import { LATEST_SEARCHED_LOCATION_COOKIE_MAX_AGE_SECONDS, LATEST_SEARCHED_LOCATION_COOKIE_NAME } from '@/libs/location'
+import {
+	LATEST_SEARCHED_LOCATION_COOKIE_MAX_AGE_SECONDS,
+	LATEST_SEARCHED_LOCATION_COOKIE_NAME
+} from '@/lib/location/constants'
 import type { LocationState } from '@/types/location.type'
 import { readBrowserCookie } from '@/utils/cookie'
 

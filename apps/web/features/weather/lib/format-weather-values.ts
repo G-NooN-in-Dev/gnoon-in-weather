@@ -1,6 +1,11 @@
-import { WIND_DIRECTIONS } from '@/libs/weather'
+import dayjs from 'dayjs'
+
+import { WIND_DIRECTIONS } from '@/lib/weather/constants'
 import { WeatherApiCurrent, WeatherApiDay, WeatherApiHour } from '@/types/weather-api.type'
 import { WeatherUnits } from '@/types/weather-units.type'
+import { formatTime12To24 } from '@/utils/format'
+
+const ASTRO_UNAVAILABLE_MESSAGE = /^Does not (rise|set) today$/i
 
 /** 3일 예보·천체 일정 등에서 쓰는 일차 라벨 */
 const DAY_LABELS = ['오늘', '내일', '모레'] as const
@@ -191,6 +196,12 @@ function formatForecastPrecipitationAndSnowDepth(day: WeatherApiDay, units: Weat
 	}
 }
 
+/** WeatherAPI CDN 아이콘 크기 (legend·미리보기용) */
+type WeatherConditionIconSize = 64 | 128
+
+/** 낮/밤 아이콘 경로 구분 */
+type WeatherConditionPeriod = 'day' | 'night'
+
 /**
  * WeatherAPI `condition.icon`을 Next Image `src`에 쓸 수 있는 절대 URL로 변환합니다.
  * API는 `//cdn.weatherapi.com/...` 형태의 프로토콜 상대 URL을 반환합니다.
@@ -203,7 +214,50 @@ function formatWeatherIconUrl(icon: string): string {
 	return `https:${icon}`
 }
 
+/**
+ * WeatherAPI CDN 아이콘 URL을 조립합니다.
+ * `weather-conditions.json`의 `icon` 번호와 day/night 폴더를 조합할 때 사용합니다.
+ */
+function getWeatherConditionIconUrl(
+	icon: number,
+	period: WeatherConditionPeriod = 'day',
+	size: WeatherConditionIconSize = 64
+): string {
+	return `https://cdn.weatherapi.com/weather/${size}x${size}/${period}/${icon}.png`
+}
+
+/** 천체 일정 시간 표시용 문자열 생성 */
+function formatAstroScheduleTime(time: string): string {
+	if (ASTRO_UNAVAILABLE_MESSAGE.test(time)) {
+		return '-'
+	}
+
+	return formatTime12To24(time)
+}
+
+/** 예보 일차 인덱스를 계산합니다. */
+function getForecastDayIndex(date: string, baseDate: string): number {
+	return dayjs(date).startOf('day').diff(dayjs(baseDate).startOf('day'), 'day')
+}
+
+/** 시간별 날씨 시간 표시용 문자열 생성 */
+function formatHourlyTimeLabel(hour: WeatherApiHour, baseDate: string): string {
+	const { time } = hour
+	const parsedTime = dayjs(time)
+	const hourValue = parsedTime.hour()
+	const dayIndex = getForecastDayIndex(time, baseDate)
+
+	if (hourValue === 0) {
+		return formatDayLabel(dayIndex)
+	}
+
+	return `${String(hourValue).padStart(2, '0')}시`
+}
+
+export type { WeatherConditionIconSize, WeatherConditionPeriod }
+
 export {
+	formatAstroScheduleTime,
 	formatCurrentLabelSpeedAndDistance,
 	formatCurrentLabelTemperature,
 	formatCurrentPrecipitationAndSnowDepth,
@@ -214,6 +268,7 @@ export {
 	formatForecastPrecipitationAndSnowDepth,
 	formatHourLabelSpeedAndDistance,
 	formatHourLabelTemperature,
+	formatHourlyTimeLabel,
 	formatHourPrecipitationAndSnowDepth,
 	formatKphToMps,
 	formatPrecipitationUnitLabel,
@@ -222,5 +277,6 @@ export {
 	formatTemperatureLabel,
 	formatUvIndexLabel,
 	formatWeatherIconUrl,
-	formatWindDirection
+	formatWindDirection,
+	getWeatherConditionIconUrl
 }

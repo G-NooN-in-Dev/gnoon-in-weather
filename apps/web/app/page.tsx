@@ -1,12 +1,12 @@
 import HomepageClient from '@/app/_components/homepage.client'
+import { isAppApiError } from '@/lib/api-error'
+import { resolveHomeLocation } from '@/lib/location/resolve-home'
+import { formatWeatherLocationLabel } from '@/lib/weather/format-location'
+import { readWeatherUnitsFromCookies } from '@/lib/weather/units-cookie.server'
 import { loadWeatherSummary } from '@/services/weather.loader'
 import type { AppApiError } from '@/types/error.type'
 import type { LocationState } from '@/types/location.type'
 import type { WeatherSummary } from '@/types/weather-api.type'
-import { isAppApiError } from '@/utils/api-error'
-import { formatWeatherLocationLabel } from '@/utils/format-weather-location'
-import { resolveHomeLocation } from '@/utils/resolve-home-location'
-import { readWeatherUnitsFromCookies } from '@/utils/weather-units-cookie.server'
 
 async function Homepage() {
 	const baseLocation = await resolveHomeLocation()

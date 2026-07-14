@@ -1,4 +1,4 @@
-import type { WeatherUnitOption } from '@/libs/weather-units'
+import type { WeatherUnitOption } from '@/lib/weather/units'
 import {
 	DISTANCE_UNITS,
 	PRECIPITATION_UNITS,
@@ -6,7 +6,7 @@ import {
 	TEMPERATURE_UNITS,
 	WEATHER_UNITS_COOKIE_MAX_AGE_SECONDS,
 	WEATHER_UNITS_COOKIE_NAME
-} from '@/libs/weather-units'
+} from '@/lib/weather/units'
 import {
 	DistanceUnit,
 	PrecipitationUnit,
@@ -14,8 +14,7 @@ import {
 	TemperatureUnit,
 	WeatherUnits
 } from '@/types/weather-units.type'
-
-import { readBrowserCookie } from './cookie'
+import { readBrowserCookie } from '@/utils/cookie'
 
 type WeatherUnitsCookie = {
 	temperature: TemperatureUnit

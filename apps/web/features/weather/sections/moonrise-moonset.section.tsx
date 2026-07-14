@@ -3,8 +3,8 @@ import { SearchX } from 'lucide-react'
 
 import EmptyState from '@/components/empty-state'
 import AstroScheduleTable from '@/features/weather/components/astro-schedule-table'
+import { formatAstroScheduleTime } from '@/features/weather/lib/format-weather-values'
 import type { ForecastAstroSectionProps } from '@/features/weather/types/weather-component.type'
-import { formatTime12To24 } from '@/utils/format-utils'
 
 function MoonriseMoonsetSection({ astros }: ForecastAstroSectionProps) {
 	return (
@@ -20,8 +20,8 @@ function MoonriseMoonsetSection({ astros }: ForecastAstroSectionProps) {
 						<AstroScheduleTable
 							data={astros.map(({ date, moonrise, moonset }) => ({
 								date,
-								left: formatTime12To24(moonrise),
-								right: formatTime12To24(moonset)
+								left: formatAstroScheduleTime(moonrise),
+								right: formatAstroScheduleTime(moonset)
 							}))}
 							leftHeader="월출"
 							rightHeader="월몰"

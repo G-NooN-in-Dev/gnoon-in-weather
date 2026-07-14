@@ -18,20 +18,20 @@ app/page.tsx (Server)           ← 쿠키·fetch·초기 데이터
 공통 코드는 기능(`features/`) 밖의 루트 폴더에 둡니다.
 
 ```
-app/  features/  components/  services/  hooks/  libs/  utils/  types/
+app/  features/  components/  services/  hooks/  lib/  utils/  types/
 ```
 
-| 폴더               | 한 줄 역할                    |
-| ------------------ | ----------------------------- |
-| `app/`             | 라우트, SSR, API Route        |
-| `app/_components/` | 페이지 전용 client 조합기     |
-| `features/`        | 도메인(홈, 테마지도 등) UI    |
-| `components/`      | 앱 전역 공통 UI               |
-| `services/`        | 외부 API 호출                 |
-| `hooks/`           | 클라이언트 훅                 |
-| `libs/`            | 상수·규칙·서버 오케스트레이션 |
-| `utils/`           | 변환·I/O 헬퍼                 |
-| `types/`           | 공유 타입                     |
+| 폴더               | 한 줄 역할                                         |
+| ------------------ | -------------------------------------------------- |
+| `app/`             | 라우트, SSR, API Route                             |
+| `app/_components/` | 페이지 전용 client 조합기                          |
+| `features/`        | 도메인(홈, 날씨 등) UI · feature 전용 `lib/`       |
+| `components/`      | 앱 전역 공통 UI                                    |
+| `services/`        | 외부 API 호출                                      |
+| `hooks/`           | 클라이언트 훅                                      |
+| `lib/`             | 도메인 모듈(상수·규칙·쿠키·정규화) `lib/{domain}/` |
+| `utils/`           | 순수·범용 헬퍼만 (`format`, `cookie` 등)           |
+| `types/`           | 공유 타입                                          |
 
 ---
 
@@ -208,61 +208,77 @@ hooks/
 
 ---
 
-### `libs/` — 상수·규칙·서버 오케스트레이션
+### `lib/` — 도메인 모듈 (`lib/{domain}/`)
+
+앱 인프라·도메인 로직을 **도메인 폴더**로 묶습니다. Next 생태계에서 흔한 `lib/` 단수명을 사용합니다.
 
 ```
-libs/
-├── location.ts                 # 기본 좌표, 쿠키 이름/만료
-├── weather.ts                  # revalidate 주기
-├── weather-error-rules.ts        # WeatherAPI 에러 코드 → 앱 에러 매핑
-└── kakao-error-rules.ts
+lib/
+├── api-error.ts                 # AppApiError 타입 가드 (횡단)
+├── weather/
+│   ├── constants.ts             # revalidate, 풍향
+│   ├── units.ts                 # 단위 옵션·쿠키 상수
+│   ├── units-cookie.ts          # 단위 쿠키 parse/read/write
+│   ├── units-cookie.server.ts
+│   ├── error-rules.ts           # WeatherAPI 에러 코드 매핑
+│   ├── normalize-error.ts
+│   ├── api-route-errors.ts
+│   ├── format-location.ts
+│   ├── parse-api-query.ts
+│   ├── split-forecast.ts
+│   └── is-realtime-stale.ts
+├── location/
+│   ├── constants.ts             # 기본 좌표, 쿠키 이름/만료
+│   ├── cookie.ts
+│   ├── cookie.server.ts
+│   └── resolve-home.ts          # 쿠키 → 기본 좌표
+└── kakao/
+    ├── error-rules.ts
+    └── normalize-error.ts
 ```
 
 **넣을 것**
 
-- 도메인 상수, 설정값
-- 에러 코드 매핑 테이블
+- 도메인 상수·규칙 테이블
+- 쿠키 I/O, 에러 정규화, 짧은 오케스트레이션
+- 여러 feature/서비스에서 공유하는 도메인 변환
 
-**`utils/`와 구분** — `resolve-*` 같은 서버 오케스트레이션은 `utils/`에 둡니다 (`utils/resolve-home-location.ts`).
+**`utils/`와 구분**
 
-| libs                    | utils                     |
-| ----------------------- | ------------------------- |
-| "무엇을 쓸지" 정책·상수 | "어떻게 바꿀지" 변환·파싱 |
-| 에러 규칙 테이블        | 에러 정규화 함수          |
-| `DEFAULT_COORDINATES`   | `splitForecastDays()`     |
+| `lib/{domain}/`                     | `utils/`          |
+| ----------------------------------- | ----------------- |
+| 도메인에 묶인 모듈(상수+I/O+정규화) | 순수·범용 헬퍼만  |
+| `lib/weather/normalize-error.ts`    | `utils/format.ts` |
+| `lib/location/resolve-home.ts`      | `utils/cookie.ts` |
+
+**feature 전용 로직** — 한 feature UI에서만 쓰면 `features/{name}/lib/`에 둡니다.  
+예: `features/weather/lib/format-weather-values.ts`, `create-hourly-weather-timeline.ts`, `condition-legend.ts`
 
 ---
 
-### `utils/` — 순수 헬퍼·I/O 유틸
+### `utils/` — 순수·범용 헬퍼
 
 ```
 utils/
-├── split-forecast-days.ts       # forecast → days / hours / astros
-├── format-weather-location.ts
-├── resolve-home-location.ts     # 서버 초기 좌표 결정 (쿠키 → 기본값)
-├── location-cookie.ts           # 쿠키 파싱 + 클라이언트 읽기/쓰기
-├── location-cookie.server.ts    # 서버 쿠키 읽기 (cookies())
-├── weather-error.ts
-├── kakao-error.ts
-└── api-error.ts
+├── format.ts    # formatLocaleNumber, formatDate, formatTime12To24
+└── cookie.ts    # readBrowserCookie (document.cookie 한 줄)
 ```
 
 **넣을 것**
 
-- 데이터 변환, 포맷, 파싱
-- 쿠키·에러 등 I/O 헬퍼
-- 서버 초기값 결정 등 짧은 오케스트레이션 (`resolve-*.ts`)
+- 도메인에 종속되지 않는 짧은 순수 함수
+- 브라우저 쿠키용 아주 작은 공통 헬퍼
 
-**서버 전용 파일** — 상세는 [레이어 구분 패턴](#레이어-구분-패턴-serviceloaderservert) 참고
+도메인 변환·쿠키 정책·에러 매핑은 `lib/` 또는 `features/*/lib/`로 올립니다.
 
-- `*.server.ts` 접미사 사용 (`next/headers`의 `cookies()` 등)
-- 공통 파싱·변환은 접미사 없는 파일에 두고, 서버/클라이언트 I/O만 분리
+**서버 전용 파일** — 상세는 [레이어 구분 패턴](#레이어-구분-패턴-serviceloaderservert) 참고.  
+`*.server.ts`는 보통 `lib/{domain}/` 안에 둡니다.
 
 ---
 
 ## 레이어 구분 패턴 (service · loader · server)
 
-`services/`와 `utils/`에서 파일을 나눌 때 따르는 공통 규칙입니다.  
+`services/`와 `lib/`에서 파일을 나눌 때 따르는 공통 규칙입니다.  
 새 외부 API·쿠키·스토리지 연동을 추가할 때 이 패턴을 우선 적용합니다.
 
 ### `*.service.ts` vs `*.loader.ts`
@@ -308,12 +324,12 @@ weather.service.ts          weather.loader.ts
 
 ---
 
-### `*.ts` vs `*.server.ts` (utils)
+### `*.ts` vs `*.server.ts` (`lib/{domain}/`)
 
 Next.js에서 `cookies()`, `headers()` 등은 **서버 전용**입니다.  
 같은 쿠키/값을 읽더라도 **실행 환경별 API가 다르므로** 파일을 나눕니다.
 
-| 구분      | `utils/{name}.ts`               | `utils/{name}.server.ts`                   |
+| 구분      | `lib/{domain}/{name}.ts`        | `lib/{domain}/{name}.server.ts`            |
 | --------- | ------------------------------- | ------------------------------------------ |
 | 실행 환경 | 브라우저 (Client Component, 훅) | Server Component, Route Handler            |
 | I/O API   | `document.cookie`               | `cookies()` from `next/headers`            |
@@ -325,10 +341,10 @@ Next.js에서 `cookies()`, `headers()` 등은 **서버 전용**입니다.
 환경마다 **raw 값을 가져오는 방법**만 다르고, JSON 파싱·검증은 동일해야 합니다.
 
 ```
-location-cookie.ts                 location-cookie.server.ts
-├── parseRecentLocationCookie() ◄──┤ readRecentLocationFromCookies()
-├── readRecentLocationCookie()     │   cookies().get() → parse 재사용
-└── writeRecentLocationCookie()    └── (쓰기 없음)
+lib/location/cookie.ts                    lib/location/cookie.server.ts
+├── parseLatestSearchedLocationCookie() ◄──┤ readLatestSearchedLocationFromCookies()
+├── readLatestSearchedLocationCookie()     │   cookies().get() → parse 재사용
+└── writeLatestSearchedLocationCookie()    └── (쓰기 없음)
 ```
 
 - `parse*`, `format*`, `normalize*` → 접미사 없는 파일 (서버·클라이언트 공용)
@@ -336,16 +352,16 @@ location-cookie.ts                 location-cookie.server.ts
 
 **새 스토리지/쿠키 추가 시 판단**
 
-1. 파싱·검증 로직 작성 → `{name}.ts`
-2. 서버에서 읽기 필요 → `{name}.server.ts`에서 `cookies()` 사용 후 `parse*` 호출
-3. 클라이언트에서 읽기/쓰기 필요 → `{name}.ts`에 `document.cookie` 처리
+1. 파싱·검증 로직 작성 → `lib/{domain}/{name}.ts`
+2. 서버에서 읽기 필요 → `lib/{domain}/{name}.server.ts`에서 `cookies()` 사용 후 `parse*` 호출
+3. 클라이언트에서 읽기/쓰기 필요 → 동일 도메인 `{name}.ts`에 `document.cookie` 처리
 4. `.server.ts`에서 `document` 사용 금지, `.ts`에서 `cookies()` import 금지
 
 **오케스트레이션 위치**
 
-- 쿠키 **읽기 한 줄** → `utils/*.server.ts`
-- 쿠키 → 기본값 등 **도메인 정책** → `utils/resolve-*.ts` 또는 `libs/` (짧은 서버 오케스트레이션)
-  - 예: `utils/resolve-home-location.ts` — `readRecentLocationFromCookies()` + `DEFAULT_COORDINATES`
+- 쿠키 **읽기 한 줄** → `lib/{domain}/*.server.ts`
+- 쿠키 → 기본값 등 **도메인 정책** → `lib/{domain}/resolve-*.ts`
+  - 예: `lib/location/resolve-home.ts` — `readLatestSearchedLocationFromCookies()` + `DEFAULT_COORDINATES`
 
 ---
 
@@ -357,10 +373,10 @@ app/page.tsx, app/api/*/route.ts
         ▼
   *.loader.ts ──► *.service.ts ──► 외부 API
         │
-  utils/resolve-*.ts
+  lib/{domain}/resolve-*.ts
         │
         ▼
-  *.server.ts ──► *.ts (parse/format)
+  lib/{domain}/*.server.ts ──► lib/{domain}/*.ts (parse/format)
         ▲
   hooks/*.ts (write/read via document.cookie)
 ```
@@ -396,12 +412,12 @@ types/
 
 ```
 [Server] app/page.tsx
-   │  resolveHomeLocation()     ← utils/resolve-home-location + utils/location-cookie.server
+   │  resolveHomeLocation()     ← lib/location/resolve-home + lib/location/cookie.server
    │  loadWeatherSummary()      ← services/weather.loader
    ▼
 [Client] app/_components/homepage.client.tsx
    │  useWeather()              ← hooks/use-weather (GPS·refetch, 첫 fetch skip)
-   │  splitForecast()           ← utils/split-forecast-days
+   │  splitForecast()           ← lib/weather/split-forecast
    │  props 분배
    ▼
 [UI] features/home/sections/*.section.tsx  (홈 전용)
@@ -431,12 +447,13 @@ types/
 1. **URL·라우트인가?** → `app/`
 2. **그 페이지만 쓰는 client 조합인가?** → `app/.../_components/*.client.tsx`
 3. **특정 기능 UI인가?** → `features/{기능}/`
-4. **여러 페이지 공통 UI인가?** → `components/`
-5. **외부 API 호출인가?** → `services/` (`*.service.ts` + 필요 시 `*.loader.ts`)
-6. **클라이언트 상태·훅인가?** → `hooks/` (또는 `features/{기능}/hooks/`)
-7. **상수·규칙 테이블인가?** → `libs/`
-8. **변환·파싱·포맷인가?** → `utils/` (서버 I/O는 `*.server.ts` 분리)
-9. **타입만인가?** → `types/`
+4. **그 feature만 쓰는 변환·범례인가?** → `features/{기능}/lib/`
+5. **여러 페이지 공통 UI인가?** → `components/`
+6. **외부 API 호출인가?** → `services/` (`*.service.ts` + 필요 시 `*.loader.ts`)
+7. **클라이언트 상태·훅인가?** → `hooks/` (또는 `features/{기능}/hooks/`)
+8. **도메인 상수·쿠키·에러·변환인가?** → `lib/{domain}/` (서버 I/O는 `*.server.ts`)
+9. **순수·범용 헬퍼인가?** → `utils/`
+10. **타입만인가?** → `types/`
 
 ---
 
