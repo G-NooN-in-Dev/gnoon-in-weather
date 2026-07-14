@@ -3,6 +3,7 @@ import { SearchX } from 'lucide-react'
 
 import EmptyState from '@/components/empty-state'
 import AstroScheduleTable from '@/features/weather/components/astro-schedule-table'
+import { formatLunarDateExtra } from '@/features/weather/lib/format-lunar-date'
 import { formatAstroScheduleTime } from '@/features/weather/lib/format-weather-values'
 import type { ForecastAstroSectionProps } from '@/features/weather/types/weather-component.type'
 
@@ -17,11 +18,13 @@ function MoonriseMoonsetSection({ astros }: ForecastAstroSectionProps) {
 					<CardContent className="flex flex-col gap-2">
 						{/* TODO - 월출 현황 */}
 						<div>월출 현황</div>
+						{/* dateExtra로 음력만 월출 섹션에 추가 (일출 테이블은 변경 없음) */}
 						<AstroScheduleTable
 							data={astros.map(({ date, moonrise, moonset }) => ({
 								date,
 								left: formatAstroScheduleTime(moonrise),
-								right: formatAstroScheduleTime(moonset)
+								right: formatAstroScheduleTime(moonset),
+								dateExtra: formatLunarDateExtra(date) ?? undefined
 							}))}
 							leftHeader="월출"
 							rightHeader="월몰"
