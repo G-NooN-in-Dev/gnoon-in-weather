@@ -196,6 +196,12 @@ function formatForecastPrecipitationAndSnowDepth(day: WeatherApiDay, units: Weat
 	}
 }
 
+/** WeatherAPI CDN 아이콘 크기 (legend·미리보기용) */
+type WeatherConditionIconSize = 64 | 128
+
+/** 낮/밤 아이콘 경로 구분 */
+type WeatherConditionPeriod = 'day' | 'night'
+
 /**
  * WeatherAPI `condition.icon`을 Next Image `src`에 쓸 수 있는 절대 URL로 변환합니다.
  * API는 `//cdn.weatherapi.com/...` 형태의 프로토콜 상대 URL을 반환합니다.
@@ -206,6 +212,18 @@ function formatWeatherIconUrl(icon: string): string {
 	}
 
 	return `https:${icon}`
+}
+
+/**
+ * WeatherAPI CDN 아이콘 URL을 조립합니다.
+ * `weather-conditions.json`의 `icon` 번호와 day/night 폴더를 조합할 때 사용합니다.
+ */
+function getWeatherConditionIconUrl(
+	icon: number,
+	period: WeatherConditionPeriod = 'day',
+	size: WeatherConditionIconSize = 64
+): string {
+	return `https://cdn.weatherapi.com/weather/${size}x${size}/${period}/${icon}.png`
 }
 
 /** 천체 일정 시간 표시용 문자열 생성 */
@@ -236,6 +254,8 @@ function formatHourlyTimeLabel(hour: WeatherApiHour, baseDate: string): string {
 	return `${String(hourValue).padStart(2, '0')}시`
 }
 
+export type { WeatherConditionIconSize, WeatherConditionPeriod }
+
 export {
 	formatAstroScheduleTime,
 	formatCurrentLabelSpeedAndDistance,
@@ -257,5 +277,6 @@ export {
 	formatTemperatureLabel,
 	formatUvIndexLabel,
 	formatWeatherIconUrl,
-	formatWindDirection
+	formatWindDirection,
+	getWeatherConditionIconUrl
 }

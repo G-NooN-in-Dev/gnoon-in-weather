@@ -1,0 +1,482 @@
+[
+	{
+		"code": 1000,
+		"day": "Sunny",
+		"night": "Clear",
+		"icon": 113,
+		"day_text": "화창함",
+		"night_text": "맑음"
+	},
+	{
+		"code": 1003,
+		"day": "Partly cloudy",
+		"night": "Partly cloudy",
+		"icon": 116,
+		"day_text": "부분적으로 흐림",
+		"night_text": "부분적으로 흐림"
+	},
+	{
+		"code": 1006,
+		"day": "Cloudy",
+		"night": "Cloudy",
+		"icon": 119,
+		"day_text": "흐림",
+		"night_text": "흐림"
+	},
+	{
+		"code": 1009,
+		"day": "Overcast",
+		"night": "Overcast",
+		"icon": 122,
+		"day_text": "흐린 날씨",
+		"night_text": "흐린 날씨"
+	},
+	{
+		"code": 1012,
+		"day": "Haze",
+		"night": "Haze",
+		"icon": 125,
+		"day_text": "연무",
+		"night_text": "연무"
+	},
+	{
+		"code": 1015,
+		"day": "Dust haze",
+		"night": "Dust haze",
+		"icon": 128,
+		"day_text": "황사 연무",
+		"night_text": "황사 연무"
+	},
+	{
+		"code": 1018,
+		"day": "Blowing dust",
+		"night": "Blowing dust",
+		"icon": 131,
+		"day_text": "날리는 먼지",
+		"night_text": "날리는 먼지"
+	},
+	{
+		"code": 1021,
+		"day": "Dust storm",
+		"night": "Dust storm",
+		"icon": 134,
+		"day_text": "먼지 폭풍",
+		"night_text": "먼지 폭풍"
+	},
+	{
+		"code": 1024,
+		"day": "Sandstorm",
+		"night": "Sandstorm",
+		"icon": 137,
+		"day_text": "모래 폭풍",
+		"night_text": "모래 폭풍"
+	},
+	{
+		"code": 1027,
+		"day": "Severe sandstorm",
+		"night": "Severe sandstorm",
+		"icon": 140,
+		"day_text": "심한 모래 폭풍",
+		"night_text": "심한 모래 폭풍"
+	},
+	{
+		"code": 1030,
+		"day": "Mist",
+		"night": "Mist",
+		"icon": 143,
+		"day_text": "안개",
+		"night_text": "안개"
+	},
+	{
+		"code": 1033,
+		"day": "Smoke",
+		"night": "Smoke",
+		"icon": 146,
+		"day_text": "연기",
+		"night_text": "연기"
+	},
+	{
+		"code": 1036,
+		"day": "Smoky haze",
+		"night": "Smoky haze",
+		"icon": 149,
+		"day_text": "연기 안개",
+		"night_text": "연기 안개"
+	},
+	{
+		"code": 1039,
+		"day": "Smog",
+		"night": "Smog",
+		"icon": 152,
+		"day_text": "스모그",
+		"night_text": "스모그"
+	},
+	{
+		"code": 1042,
+		"day": "Severe smog",
+		"night": "Severe smog",
+		"icon": 155,
+		"day_text": "심한 스모그",
+		"night_text": "심한 스모그"
+	},
+	{
+		"code": 1045,
+		"day": "Saharan dust",
+		"night": "Saharan dust",
+		"icon": 158,
+		"day_text": "사하라 먼지",
+		"night_text": "사하라 먼지"
+	},
+	{
+		"code": 1048,
+		"day": "Dust",
+		"night": "Dust",
+		"icon": 161,
+		"day_text": "먼지",
+		"night_text": "먼지"
+	},
+	{
+		"code": 1063,
+		"day": "Patchy rain possible",
+		"night": "Patchy rain possible",
+		"icon": 176,
+		"day_text": "근처에 간헐적 비",
+		"night_text": "근처에 간헐적 비"
+	},
+	{
+		"code": 1066,
+		"day": "Patchy snow possible",
+		"night": "Patchy snow possible",
+		"icon": 179,
+		"day_text": "근처에 간헐적 눈",
+		"night_text": "근처에 간헐적 눈"
+	},
+	{
+		"code": 1069,
+		"day": "Patchy sleet possible",
+		"night": "Patchy sleet possible",
+		"icon": 182,
+		"day_text": "근처에 간헐적 진눈깨비",
+		"night_text": "근처에 간헐적 진눈깨비"
+	},
+	{
+		"code": 1072,
+		"day": "Patchy freezing drizzle possible",
+		"night": "Patchy freezing drizzle possible",
+		"icon": 185,
+		"day_text": "근처에 간헐적 어는 이슬비",
+		"night_text": "근처에 간헐적 어는 이슬비"
+	},
+	{
+		"code": 1087,
+		"day": "Thundery outbreaks possible",
+		"night": "Thundery outbreaks possible",
+		"icon": 200,
+		"day_text": "근처에 뇌우",
+		"night_text": "근처에 뇌우"
+	},
+	{
+		"code": 1114,
+		"day": "Blowing snow",
+		"night": "Blowing snow",
+		"icon": 227,
+		"day_text": "날리는 눈",
+		"night_text": "날리는 눈"
+	},
+	{
+		"code": 1117,
+		"day": "Blizzard",
+		"night": "Blizzard",
+		"icon": 230,
+		"day_text": "눈보라",
+		"night_text": "눈보라"
+	},
+	{
+		"code": 1135,
+		"day": "Fog",
+		"night": "Fog",
+		"icon": 248,
+		"day_text": "짙은 안개",
+		"night_text": "짙은 안개"
+	},
+	{
+		"code": 1147,
+		"day": "Freezing fog",
+		"night": "Freezing fog",
+		"icon": 260,
+		"day_text": "어는 안개",
+		"night_text": "어는 안개"
+	},
+	{
+		"code": 1150,
+		"day": "Patchy light drizzle",
+		"night": "Patchy light drizzle",
+		"icon": 263,
+		"day_text": "간헐적 가벼운 이슬비",
+		"night_text": "간헐적 가벼운 이슬비"
+	},
+	{
+		"code": 1153,
+		"day": "Light drizzle",
+		"night": "Light drizzle",
+		"icon": 266,
+		"day_text": "가벼운 이슬비",
+		"night_text": "가벼운 이슬비"
+	},
+	{
+		"code": 1168,
+		"day": "Freezing drizzle",
+		"night": "Freezing drizzle",
+		"icon": 281,
+		"day_text": "어는 이슬비",
+		"night_text": "어는 이슬비"
+	},
+	{
+		"code": 1171,
+		"day": "Heavy freezing drizzle",
+		"night": "Heavy freezing drizzle",
+		"icon": 284,
+		"day_text": "강한 어는 이슬비",
+		"night_text": "강한 어는 이슬비"
+	},
+	{
+		"code": 1180,
+		"day": "Patchy light rain",
+		"night": "Patchy light rain",
+		"icon": 293,
+		"day_text": "간헐적 가벼운 비",
+		"night_text": "간헐적 가벼운 비"
+	},
+	{
+		"code": 1183,
+		"day": "Light rain",
+		"night": "Light rain",
+		"icon": 296,
+		"day_text": "가벼운 비",
+		"night_text": "가벼운 비"
+	},
+	{
+		"code": 1186,
+		"day": "Moderate rain at times",
+		"night": "Moderate rain at times",
+		"icon": 299,
+		"day_text": "때때로 보통 비",
+		"night_text": "때때로 보통 비"
+	},
+	{
+		"code": 1189,
+		"day": "Moderate rain",
+		"night": "Moderate rain",
+		"icon": 302,
+		"day_text": "보통 비",
+		"night_text": "보통 비"
+	},
+	{
+		"code": 1192,
+		"day": "Heavy rain at times",
+		"night": "Heavy rain at times",
+		"icon": 305,
+		"day_text": "때때로 강한 비",
+		"night_text": "때때로 강한 비"
+	},
+	{
+		"code": 1195,
+		"day": "Heavy rain",
+		"night": "Heavy rain",
+		"icon": 308,
+		"day_text": "강한 비",
+		"night_text": "강한 비"
+	},
+	{
+		"code": 1198,
+		"day": "Light freezing rain",
+		"night": "Light freezing rain",
+		"icon": 311,
+		"day_text": "가벼운 어는 비",
+		"night_text": "가벼운 어는 비"
+	},
+	{
+		"code": 1201,
+		"day": "Moderate or heavy freezing rain",
+		"night": "Moderate or heavy freezing rain",
+		"icon": 314,
+		"day_text": "보통 또는 강한 어는 비",
+		"night_text": "보통 또는 강한 어는 비"
+	},
+	{
+		"code": 1204,
+		"day": "Light sleet",
+		"night": "Light sleet",
+		"icon": 317,
+		"day_text": "가벼운 진눈깨비",
+		"night_text": "가벼운 진눈깨비"
+	},
+	{
+		"code": 1207,
+		"day": "Moderate or heavy sleet",
+		"night": "Moderate or heavy sleet",
+		"icon": 320,
+		"day_text": "보통 또는 강한 진눈깨비",
+		"night_text": "보통 또는 강한 진눈깨비"
+	},
+	{
+		"code": 1210,
+		"day": "Patchy light snow",
+		"night": "Patchy light snow",
+		"icon": 323,
+		"day_text": "간헐적 가벼운 눈",
+		"night_text": "간헐적 가벼운 눈"
+	},
+	{
+		"code": 1213,
+		"day": "Light snow",
+		"night": "Light snow",
+		"icon": 326,
+		"day_text": "가벼운 눈",
+		"night_text": "가벼운 눈"
+	},
+	{
+		"code": 1216,
+		"day": "Patchy moderate snow",
+		"night": "Patchy moderate snow",
+		"icon": 329,
+		"day_text": "간헐적 보통 눈",
+		"night_text": "간헐적 보통 눈"
+	},
+	{
+		"code": 1219,
+		"day": "Moderate snow",
+		"night": "Moderate snow",
+		"icon": 332,
+		"day_text": "보통 눈",
+		"night_text": "보통 눈"
+	},
+	{
+		"code": 1222,
+		"day": "Patchy heavy snow",
+		"night": "Patchy heavy snow",
+		"icon": 335,
+		"day_text": "간헐적 강한 눈",
+		"night_text": "간헐적 강한 눈"
+	},
+	{
+		"code": 1225,
+		"day": "Heavy snow",
+		"night": "Heavy snow",
+		"icon": 338,
+		"day_text": "강한 눈",
+		"night_text": "강한 눈"
+	},
+	{
+		"code": 1237,
+		"day": "Ice pellets",
+		"night": "Ice pellets",
+		"icon": 350,
+		"day_text": "우박 알갱이",
+		"night_text": "우박 알갱이"
+	},
+	{
+		"code": 1240,
+		"day": "Light rain shower",
+		"night": "Light rain shower",
+		"icon": 353,
+		"day_text": "가벼운 소나기",
+		"night_text": "가벼운 소나기"
+	},
+	{
+		"code": 1243,
+		"day": "Moderate or heavy rain shower",
+		"night": "Moderate or heavy rain shower",
+		"icon": 356,
+		"day_text": "보통 또는 강한 소나기",
+		"night_text": "보통 또는 강한 소나기"
+	},
+	{
+		"code": 1246,
+		"day": "Torrential rain shower",
+		"night": "Torrential rain shower",
+		"icon": 359,
+		"day_text": "폭우",
+		"night_text": "폭우"
+	},
+	{
+		"code": 1249,
+		"day": "Light sleet showers",
+		"night": "Light sleet showers",
+		"icon": 362,
+		"day_text": "가벼운 진눈깨비 소나기",
+		"night_text": "가벼운 진눈깨비 소나기"
+	},
+	{
+		"code": 1252,
+		"day": "Moderate or heavy sleet showers",
+		"night": "Moderate or heavy sleet showers",
+		"icon": 365,
+		"day_text": "보통 또는 강한 진눈깨비 소나기",
+		"night_text": "보통 또는 강한 진눈깨비 소나기"
+	},
+	{
+		"code": 1255,
+		"day": "Light snow showers",
+		"night": "Light snow showers",
+		"icon": 368,
+		"day_text": "가벼운 눈 소나기",
+		"night_text": "가벼운 눈 소나기"
+	},
+	{
+		"code": 1258,
+		"day": "Moderate or heavy snow showers",
+		"night": "Moderate or heavy snow showers",
+		"icon": 371,
+		"day_text": "보통 또는 강한 눈 소나기",
+		"night_text": "보통 또는 강한 눈 소나기"
+	},
+	{
+		"code": 1261,
+		"day": "Light showers of ice pellets",
+		"night": "Light showers of ice pellets",
+		"icon": 374,
+		"day_text": "가벼운 얼음 알갱이 소나기",
+		"night_text": "가벼운 얼음 알갱이 소나기"
+	},
+	{
+		"code": 1264,
+		"day": "Moderate or heavy showers of ice pellets",
+		"night": "Moderate or heavy showers of ice pellets",
+		"icon": 377,
+		"day_text": "보통 또는 강한 얼음 알갱이 소나기",
+		"night_text": "보통 또는 강한 얼음 알갱이 소나기"
+	},
+	{
+		"code": 1273,
+		"day": "Patchy light rain with thunder",
+		"night": "Patchy light rain with thunder",
+		"icon": 386,
+		"day_text": "천둥을 동반한 간헐적 가벼운 비",
+		"night_text": "천둥을 동반한 간헐적 가벼운 비"
+	},
+	{
+		"code": 1276,
+		"day": "Moderate or heavy rain with thunder",
+		"night": "Moderate or heavy rain with thunder",
+		"icon": 389,
+		"day_text": "천둥을 동반한 보통 또는 강한 비",
+		"night_text": "천둥을 동반한 보통 또는 강한 비"
+	},
+	{
+		"code": 1279,
+		"day": "Patchy light snow with thunder",
+		"night": "Patchy light snow with thunder",
+		"icon": 392,
+		"day_text": "천둥을 동반한 간헐적 가벼운 눈",
+		"night_text": "천둥을 동반한 간헐적 가벼운 눈"
+	},
+	{
+		"code": 1282,
+		"day": "Moderate or heavy snow with thunder",
+		"night": "Moderate or heavy snow with thunder",
+		"icon": 395,
+		"day_text": "천둥을 동반한 보통 또는 강한 눈",
+		"night_text": "천둥을 동반한 보통 또는 강한 눈"
+	}
+]

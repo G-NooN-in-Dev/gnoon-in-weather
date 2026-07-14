@@ -1,10 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card'
-import { Info, SearchX } from 'lucide-react'
+import { SearchX } from 'lucide-react'
 
 import EmptyState from '@/components/empty-state'
 import type { ForecastHoursSectionProps } from '@/features/weather/types/weather-component.type'
 
 import HourlyWeatherTable from '../components/hourly-weather-table'
+import WeatherConditionLegendPopover from '../components/weather-condition-legend-popover'
 
 function HourlyWeatherSection({ hours, astros }: ForecastHoursSectionProps) {
 	return (
@@ -12,7 +13,7 @@ function HourlyWeatherSection({ hours, astros }: ForecastHoursSectionProps) {
 			<Card className="py-4">
 				<CardHeader className="flex items-center gap-3">
 					<CardTitle className="text-xl font-bold">시간별 날씨</CardTitle>
-					<Info className="text-grayscale-600 cursor-pointer" size={16} />
+					<WeatherConditionLegendPopover />
 				</CardHeader>
 				<CardContent>
 					{hours.length > 0 ? (
