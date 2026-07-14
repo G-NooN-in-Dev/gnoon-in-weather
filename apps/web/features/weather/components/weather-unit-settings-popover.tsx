@@ -15,8 +15,8 @@ import { RotateCcwIcon } from 'lucide-react'
 import { useCallback, useState } from 'react'
 
 import { useWeatherUnits } from '@/contexts/weather-units.context'
-import type { WeatherUnitOption } from '@/libs/weather-units'
-import { DISTANCE_UNITS, PRECIPITATION_UNITS, SNOW_DEPTH_UNITS, TEMPERATURE_UNITS } from '@/libs/weather-units'
+import type { WeatherUnitOption } from '@/lib/weather/units'
+import { DISTANCE_UNITS, PRECIPITATION_UNITS, SNOW_DEPTH_UNITS, TEMPERATURE_UNITS } from '@/lib/weather/units'
 import { WeatherUnits } from '@/types/weather-units.type'
 
 type WeatherUnitOptionTabsProps<T extends string> = {

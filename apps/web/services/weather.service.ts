@@ -1,10 +1,10 @@
-import { FORECAST_REVALIDATE_SECONDS, REALTIME_REVALIDATE_SECONDS } from '@/libs/weather'
+import { FORECAST_REVALIDATE_SECONDS, REALTIME_REVALIDATE_SECONDS } from '@/lib/weather/constants'
+import { normalizeWeatherApiError, type WeatherApiErrorPayload } from '@/lib/weather/normalize-error'
 import type {
 	WeatherApiForecastResponse,
 	WeatherApiRealtimeResponse,
 	WeatherFetchParams
 } from '@/types/weather-api.type'
-import { normalizeWeatherApiError, type WeatherApiErrorPayload } from '@/utils/weather-error'
 
 /** WeatherAPI fetch 시 Data Cache 사용 여부를 제어합니다. */
 type WeatherFetchOptions = {

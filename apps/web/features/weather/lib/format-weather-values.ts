@@ -1,10 +1,9 @@
 import dayjs from 'dayjs'
 
-import { WIND_DIRECTIONS } from '@/libs/weather'
+import { WIND_DIRECTIONS } from '@/lib/weather/constants'
 import { WeatherApiCurrent, WeatherApiDay, WeatherApiHour } from '@/types/weather-api.type'
 import { WeatherUnits } from '@/types/weather-units.type'
-
-import { formatTime12To24 } from './format-utils'
+import { formatTime12To24 } from '@/utils/format'
 
 const ASTRO_UNAVAILABLE_MESSAGE = /^Does not (rise|set) today$/i
 

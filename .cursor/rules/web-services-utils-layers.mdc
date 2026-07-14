@@ -1,6 +1,6 @@
 ---
-description: apps/web services·utils 레이어 구분 (service/loader, .server.ts)
-globs: apps/web/{services,utils}/**/*
+description: apps/web services·lib 레이어 구분 (service/loader, .server.ts)
+globs: apps/web/{services,lib,utils}/**/*
 alwaysApply: false
 ---
 
@@ -16,16 +16,23 @@ alwaysApply: false
 - **네이밍**: `get*()` = service, `load*()` = loader.
 - 클라이언트 refetch는 `/api/*` Route Handler 경유. 훅은 loader **상수**만 가져와도 됨.
 
+## `lib/` vs `utils/` vs `features/*/lib/`
+
+- **`lib/{domain}/`**: 도메인 상수·규칙·쿠키·에러 정규화·짧은 오케스트레이션.
+- **`utils/`**: 도메인 비의존 순수 헬퍼만 (`format.ts`, `cookie.ts`).
+- **`features/{name}/lib/`**: 해당 feature UI에서만 쓰는 변환·범례.
+
 ## `*.ts` vs `*.server.ts`
 
 - **공통** (`{name}.ts`): `parse*`, `format*`, `normalize*` — 서버·클라이언트 공용.
 - **클라이언트** (`{name}.ts`): `document.cookie` 읽기/쓰기 (`read*Cookie`, `write*Cookie`).
 - **서버** (`{name}.server.ts`): `cookies()` 읽기만. raw 값 → 공통 `parse*` 재사용.
 - `{name}.server.ts`에 `document` 사용 금지. `{name}.ts`에 `next/headers` import 금지.
-- 도메인 정책(쿠키 → 기본값)은 `utils/resolve-*.ts` 등 짧은 오케스트레이션에 둠.
+- 도메인 정책(쿠키 → 기본값)은 `lib/{domain}/resolve-*.ts` 등 짧은 오케스트레이션에 둠.
+- 서버 전용 파일은 보통 `lib/{domain}/` 아래에 둡니다.
 
 ## 새 파일 추가 체크
 
 1. API 엔드포인트 여러 개 + 화면에서 묶어 씀 → `service` + `loader`
-2. 쿠키/스토리지 → `parse` 공통 + 환경별 read/write 파일 분리
+2. 쿠키/스토리지 → `lib/{domain}/`에 `parse` 공통 + 환경별 read/write 파일 분리
 3. 환경 변수·API 키는 `service`에만 두고 loader/UI로 노출하지 않음

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { WEATHER_INVALID_COORDINATES_ERROR } from '@/libs/weather-api-route-errors'
+import { isAppApiError } from '@/lib/api-error'
+import { WEATHER_INVALID_COORDINATES_ERROR } from '@/lib/weather/api-route-errors'
+import { parseWeatherFetchParams } from '@/lib/weather/parse-api-query'
 import { loadWeatherSummary } from '@/services/weather.loader'
 import type { AppApiError } from '@/types/error.type'
-import { isAppApiError } from '@/utils/api-error'
-import { parseWeatherFetchParams } from '@/utils/parse-weather-api-query'
 
 async function GET(request: NextRequest) {
 	const params = parseWeatherFetchParams(request.nextUrl.searchParams)

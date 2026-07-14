@@ -10,9 +10,9 @@ import { ReactNode } from 'react'
 
 import HorizontalScrollContainer from '@/components/horizontal-scroll-container'
 import { useWeatherUnits } from '@/contexts/weather-units.context'
-import { WeatherUnits } from '@/types/weather-units.type'
-import createHourlyWeatherTimeline, { HourlyWeatherTimeline } from '@/utils/create-hourly-weather-timeline'
-import { formatLocaleNumber } from '@/utils/format-utils'
+import createHourlyWeatherTimeline, {
+	HourlyWeatherTimeline
+} from '@/features/weather/lib/create-hourly-weather-timeline'
 import {
 	formatDistanceUnitLabel,
 	formatHourLabelSpeedAndDistance,
@@ -22,7 +22,9 @@ import {
 	formatSnowDepthUnitLabel,
 	formatSpeedUnitLabel,
 	formatTemperatureLabel
-} from '@/utils/weather-value-format-utils'
+} from '@/features/weather/lib/format-weather-values'
+import { WeatherUnits } from '@/types/weather-units.type'
+import { formatLocaleNumber } from '@/utils/format'
 
 import { HourlyWeatherTableProps } from '../types/weather-component.type'
 

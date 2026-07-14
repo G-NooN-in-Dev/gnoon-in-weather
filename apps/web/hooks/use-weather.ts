@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { writeLatestSearchedLocationCookie } from '@/lib/location/cookie'
+import { formatWeatherLocationLabel } from '@/lib/weather/format-location'
+import { isRealtimeStale } from '@/lib/weather/is-realtime-stale'
 import { HOME_FORECAST_DAYS, HOME_WEATHER_LANG } from '@/services/weather.loader'
 import type { AppApiError } from '@/types/error.type'
 import type { Coordinates, LocationState } from '@/types/location.type'
 import type { WeatherApiRealtimeResponse, WeatherSummary } from '@/types/weather-api.type'
-import { formatWeatherLocationLabel } from '@/utils/format-weather-location'
-import { isRealtimeStale } from '@/utils/is-realtime-stale'
-import { writeLatestSearchedLocationCookie } from '@/utils/location-cookie'
 
 type UseWeatherOptions = {
 	/** 서버 page에서 전달한 초기 위치 */

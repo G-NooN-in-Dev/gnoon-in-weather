@@ -14,7 +14,7 @@ import {
 	UvIndexSection
 } from '@/features/weather/sections'
 import { useWeather } from '@/hooks/use-weather'
-import { splitForecast } from '@/utils/split-forecast-days'
+import { splitForecast } from '@/lib/weather/split-forecast'
 
 /**
  * 홈 페이지 client 조합기.

@@ -1,4 +1,4 @@
-import { KAKAO_COMMON_ERROR_RULES } from '@/libs/kakao-error-rules'
+import { KAKAO_COMMON_ERROR_RULES } from '@/lib/kakao/error-rules'
 import type { AppApiError } from '@/types/error.type'
 
 type KakaoErrorPayload = {

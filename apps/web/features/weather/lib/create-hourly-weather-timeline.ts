@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 
 import { ForecastAstroEntry, WeatherApiAstro, WeatherApiHour } from '@/types/weather-api.type'
 
-import { formatAstroScheduleTime, formatHourlyTimeLabel } from './weather-value-format-utils'
+import { formatAstroScheduleTime, formatHourlyTimeLabel } from './format-weather-values'
 
 type SunStatusKind = keyof Pick<WeatherApiAstro, 'sunrise' | 'sunset'>
 type HourlyTimeline = {

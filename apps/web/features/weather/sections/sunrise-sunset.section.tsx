@@ -3,8 +3,8 @@ import { SearchX } from 'lucide-react'
 
 import EmptyState from '@/components/empty-state'
 import AstroScheduleTable from '@/features/weather/components/astro-schedule-table'
+import { formatAstroScheduleTime } from '@/features/weather/lib/format-weather-values'
 import type { ForecastAstroSectionProps } from '@/features/weather/types/weather-component.type'
-import { formatAstroScheduleTime } from '@/utils/weather-value-format-utils'
 
 function SunriseSunsetSection({ astros }: ForecastAstroSectionProps) {
 	return (

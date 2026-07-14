@@ -1,8 +1,8 @@
 import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from 'react'
 
-import { DEFAULT_WEATHER_UNITS } from '@/libs/weather-units'
+import { DEFAULT_WEATHER_UNITS } from '@/lib/weather/units'
+import { writeWeatherUnitsCookie } from '@/lib/weather/units-cookie'
 import { WeatherUnits } from '@/types/weather-units.type'
-import { writeWeatherUnitsCookie } from '@/utils/weather-units-cookie'
 
 type WeatherUnitsContextValue = {
 	units: WeatherUnits

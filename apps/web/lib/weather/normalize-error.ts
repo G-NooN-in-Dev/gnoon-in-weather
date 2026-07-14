@@ -1,4 +1,4 @@
-import { WEATHER_ERROR_RULES } from '@/libs/weather-error-rules'
+import { WEATHER_ERROR_RULES } from '@/lib/weather/error-rules'
 import type { AppApiError } from '@/types/error.type'
 
 type WeatherApiErrorPayload = {

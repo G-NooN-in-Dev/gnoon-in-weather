@@ -1,4 +1,4 @@
-import { REALTIME_REVALIDATE_SECONDS } from '@/libs/weather'
+import { REALTIME_REVALIDATE_SECONDS } from '@/lib/weather/constants'
 import type { WeatherSummary } from '@/types/weather-api.type'
 
 /**

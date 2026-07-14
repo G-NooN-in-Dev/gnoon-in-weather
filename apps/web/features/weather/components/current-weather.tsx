@@ -4,8 +4,6 @@ import Link from 'next/link'
 
 import DataCard from '@/components/data-card'
 import { useWeatherUnits } from '@/contexts/weather-units.context'
-import type { CurrentWeatherProps } from '@/features/weather/types/weather-component.type'
-import { formatDate } from '@/utils/format-utils'
 import {
 	formatCurrentLabelSpeedAndDistance,
 	formatCurrentLabelTemperature,
@@ -17,7 +15,9 @@ import {
 	formatUvIndexLabel,
 	formatWeatherIconUrl,
 	formatWindDirection
-} from '@/utils/weather-value-format-utils'
+} from '@/features/weather/lib/format-weather-values'
+import type { CurrentWeatherProps } from '@/features/weather/types/weather-component.type'
+import { formatDate } from '@/utils/format'
 
 function CurrentWeather({ current }: CurrentWeatherProps) {
 	const { units } = useWeatherUnits()

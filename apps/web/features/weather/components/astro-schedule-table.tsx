@@ -1,8 +1,8 @@
 import { Card, CardContent } from '@shared/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table'
 
-import { formatDate } from '@/utils/format-utils'
-import { formatDayLabel } from '@/utils/weather-value-format-utils'
+import { formatDayLabel } from '@/features/weather/lib/format-weather-values'
+import { formatDate } from '@/utils/format'
 
 type AstroScheduleTableRow = {
 	date: string

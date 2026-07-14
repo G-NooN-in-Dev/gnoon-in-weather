@@ -1,9 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card'
 import Image from 'next/image'
 
+import { formatDayLabel, formatWeatherIconUrl } from '@/features/weather/lib/format-weather-values'
 import type { ForecastDayEntry } from '@/types/weather-api.type'
-import { formatDate } from '@/utils/format-utils'
-import { formatDayLabel, formatWeatherIconUrl } from '@/utils/weather-value-format-utils'
+import { formatDate } from '@/utils/format'
 
 type DailyWeatherCardProps = {
 	day: ForecastDayEntry
