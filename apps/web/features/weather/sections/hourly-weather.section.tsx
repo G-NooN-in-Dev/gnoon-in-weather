@@ -1,10 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@shared/ui/card'
 import { SearchX } from 'lucide-react'
 
 import EmptyState from '@/components/empty-state'
 import type { ForecastHoursSectionProps } from '@/features/weather/types/weather-component.type'
 
 import HourlyWeatherTable from '../components/hourly-weather-table'
+import WeatherApiCredit from '../components/weather-api-credit'
 import WeatherConditionLegendPopover from '../components/weather-condition-legend-popover'
 
 function HourlyWeatherSection({ hours, astros }: ForecastHoursSectionProps) {
@@ -27,6 +28,9 @@ function HourlyWeatherSection({ hours, astros }: ForecastHoursSectionProps) {
 						/>
 					)}
 				</CardContent>
+				<CardFooter>
+					<WeatherApiCredit />
+				</CardFooter>
 			</Card>
 		</section>
 	)

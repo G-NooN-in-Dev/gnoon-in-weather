@@ -1,0 +1,50 @@
+---
+description: React 19 기준 훅·컴포넌트·Compiler 규칙
+alwaysApply: true
+---
+
+# React 19 기준
+
+이 레포는 **React 19**를 사용합니다 (`apps/web`: `19.2.x`, React Compiler 활성).
+
+모든 React/Next UI 작업은 React 19 API·관례를 기준으로 합니다. React 17/18 관례로 돌아가지 않습니다.
+
+## 버전·환경
+
+- `apps/web`의 `react` / `react-dom`을 기준으로 맞춤 (현재 19.2.x)
+- `apps/web/next.config.ts`에 `reactCompiler: true` — 불필요한 `useMemo` / `useCallback`을 기본으로 추가하지 않음
+- 클라이언트 전용 값이 필요할 때만 `'use client'`
+
+## 하이드레이션·클라이언트 전용 값
+
+기기 시각·`window`·`localStorage`처럼 서버와 다른 값은 렌더에서 바로 읽지 않습니다.
+
+- **선호:** `useSyncExternalStore` (예: `useIsClient` — 서버 `false`, 클라이언트 `true`)
+- **지양:** 마운트 후 `useEffect` + `useState`로만 “클라 준비됨” 플래그를 세우는 패턴 (같은 목적이면 `useSyncExternalStore` 우선)
+- `Date.now()`를 `useSyncExternalStore`의 `getSnapshot`에 매 호출마다 넣지 않음 (매 렌더 값이 바뀌면 tearing 경고)
+
+```tsx
+// ✅ 클라이언트에서만 현재 시각으로 계산
+const isClient = useIsClient()
+const status = isClient ? createSunriseStatus(today, tomorrow, dayjs()) : null
+```
+
+## React 19 API 우선
+
+| 상황 | 사용 |
+| --- | --- |
+| Promise·Context 읽기 (클라이언트) | `use()` |
+| form / 서버 액션 상태 | `useActionState`, `useFormStatus` |
+| 낙관적 UI | `useOptimistic` |
+| ref | `forwardRef` 없이 **ref를 일반 prop**으로 받음 |
+| 문서 head | 컴포넌트 트리 안 `<title>` / `<meta>` (필요 시) |
+
+## 컴포넌트 작성
+
+- `.cursor/rules/react-component-template.mdc`의 `function` + 하단 `export default`를 유지합니다.
+- 클래스 컴포넌트·레거시 string ref·`defaultProps` on function components는 사용하지 않습니다.
+
+## 금지·주의
+
+- React 18 이전 문서의 `ReactDOM.render` / 구 Concurrent 모드 설명을 전제로 한 코드 제안 금지
+- hydrate mismatch를 막으려고 **의미 있는 “현재 시각”을 API `last_updated`로 대체하지 않음** — 현재 시각이 맞으면 클라 전용 계산으로 맞춤

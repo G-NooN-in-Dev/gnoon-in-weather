@@ -1,6 +1,5 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@shared/ui/card'
 import Image from 'next/image'
-import Link from 'next/link'
 
 import DataCard from '@/components/data-card'
 import { useWeatherUnits } from '@/contexts/weather-units.context'
@@ -18,6 +17,8 @@ import {
 } from '@/features/weather/lib/format-weather-values'
 import type { CurrentWeatherProps } from '@/features/weather/types/weather-component.type'
 import { formatDate } from '@/utils/format'
+
+import WeatherApiCredit from './weather-api-credit'
 
 function CurrentWeather({ current }: CurrentWeatherProps) {
 	const { units } = useWeatherUnits()
@@ -79,17 +80,7 @@ function CurrentWeather({ current }: CurrentWeatherProps) {
 				</div>
 			</CardContent>
 			<CardFooter className="gap-3">
-				<div className="flex gap-1">
-					<span>제공 : </span>
-					<Link
-						href="https://www.weatherapi.com/"
-						target="_blank"
-						rel="noopener noreferrer"
-						className="text-pastel-blue-700 hover:underline"
-					>
-						WeatherAPI
-					</Link>
-				</div>
+				<WeatherApiCredit />
 				<div className="flex gap-1">
 					<span>기준 : </span>
 					<span className="text-grayscale-400">{formatDate(last_updated, 'YYYY.MM.DD HH:mm')}</span>

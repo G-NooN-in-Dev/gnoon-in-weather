@@ -4,6 +4,8 @@ import EmptyState from '@/components/empty-state'
 import DailyWeatherCard from '@/features/weather/components/daily-weather-card'
 import type { ForecastDaysSectionProps } from '@/features/weather/types/weather-component.type'
 
+import WeatherApiCredit from '../components/weather-api-credit'
+
 function DailyWeatherSection({ days }: ForecastDaysSectionProps) {
 	return (
 		<section className="flex flex-col gap-4">
@@ -20,6 +22,7 @@ function DailyWeatherSection({ days }: ForecastDaysSectionProps) {
 					/>
 				)}
 			</div>
+			<WeatherApiCredit />
 		</section>
 	)
 }
