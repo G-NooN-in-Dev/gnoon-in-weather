@@ -10,6 +10,7 @@
 		"check-types": "tsc --noEmit"
 	},
 	"dependencies": {
+		"@meteocons/svg-static": "^0.1.0",
 		"@shared/ui": "workspace:*",
 		"dayjs": "^1.11.21",
 		"korean-lunar-calendar": "^0.4.0",
