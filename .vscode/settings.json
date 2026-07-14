@@ -5,6 +5,11 @@
 		}
 	],
 	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": "always"
-	}
+		"source.fixAll.eslint": "always",
+		// IntelliSense suggestCanonicalClasses 등 Tailwind autofix (확장 버전에 따라 동작)
+		"source.fixAll.tailwindcss": "always"
+	},
+	"tailwindCSS.lint.suggestCanonicalClasses": "warning",
+	// cn / clsx 등 헬퍼 안 className도 IntelliSense·lint 대상에 포함
+	"tailwindCSS.classFunctions": ["cn", "clsx", "cva", "twMerge", "ctl", "classnames"]
 }

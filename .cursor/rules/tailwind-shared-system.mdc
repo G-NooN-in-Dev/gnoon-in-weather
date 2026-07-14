@@ -1,7 +1,7 @@
 ---
-description: Tailwind 공통 토큰과 스타일 시스템 규칙
+description: Tailwind 공통 토큰·canonical className 규칙 (앱/UI 공통)
 globs: "**/*.{css,ts,tsx,mjs,md,mdx}"
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Tailwind 규칙
@@ -13,16 +13,38 @@ alwaysApply: false
 - 새 색상/토큰 추가 시 기존 네이밍 규칙(`grayscale`, `success` 등)과 스케일 체계를 유지한다.
 - 토큰이 변경되면 `packages/tailwind-config/README.md`와 `packages/tailwind-config/CONFIG_REFERENCE.md`를 함께 갱신한다.
 
-# Tailwind v4 className 정규화 (`@shared/ui`)
+# Tailwind v4 className 정규화 (canonical)
 
-Tailwind CSS IntelliSense의 "can be written as …" 제안은 v4 canonical 문법이다. `packages/ui` 컴포넌트를 수정·추가할 때 아래 규칙을 우선 적용한다.
+Tailwind CSS IntelliSense의 `suggestCanonicalClasses`("can be written as …")는 v4 canonical 문법이다.
+`apps/**`, `packages/ui` 등 **className을 쓰는 모든 코드**에서 처음부터 아래 형태를 사용한다.
+임의값(`[…]`)은 토큰·shortcut이 없을 때만 쓴다.
+
+## spacing / 크기 (rem → 스케일)
+
+기본 spacing 1 = `0.25rem`이므로, 고정 rem은 `rem × 4` 스케일 클래스를 쓴다.
+
+- `w-[60rem]` → `w-240`
+- `h-[2.5rem]` → `h-10`
+- `translate-x-[2.5rem]` → `translate-x-10`
+- `mt-[16px]` → `mt-4` (16px = 1rem = 스케일 4)
+
+## CSS 변수 / calc
 
 - CSS 변수 단독 참조: `w-[var(--foo)]` → `w-(--foo)`
-- `calc(-1 * var(--foo))` / `calc(var(--foo) * -1)` 형태의 음수 오프셋: `-left-(--foo)` (예: sidebar offcanvas)
+- `calc(-1 * var(--foo))` / `calc(var(--foo) * -1)` 형태 음수 오프셋: `-left-(--foo)`
 - `calc` 안의 `var(--foo)`: `calc(var(--foo)+…)` → `calc((--foo)+…)`
 - 단순 spacing 함수: `h-[calc(--spacing(5.5))]` → `h-(--spacing(5.5))`
-- 고정 rem이 spacing 스케일과 같으면 토큰 클래스 사용: `translate-x-[2.5rem]` → `translate-x-10`
-- shadcn CLI로 컴포넌트를 추가한 뒤에도 위 항목이 남아 있으면 수동으로 정규화한다.
+
+## shorthand / 기타
+
+- `flex-shrink-0` → `shrink-0`
+- `flex-grow` → `grow`
+- IntelliSense가 제안하는 다른 canonical 형태가 있으면 그 제안을 따른다.
+
+## 적용 시점
+
+- 새 className을 작성할 때부터 canonical을 쓴다 (저장 후 autofix에 의존하지 않는다).
+- shadcn CLI로 컴포넌트를 추가한 뒤에도 위 항목이 남아 있으면 바로 정규화한다.
 
 # 폰트 규칙
 
