@@ -1,13 +1,26 @@
+'use client'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card'
+import dayjs from 'dayjs'
 import { SearchX } from 'lucide-react'
+import { useMemo } from 'react'
 
 import EmptyState from '@/components/empty-state'
 import AstroScheduleTable from '@/features/weather/components/astro-schedule-table'
+import MoonriseStatus from '@/features/weather/components/moonrise-status'
+import useYesterdayMoonAstro from '@/features/weather/hooks/use-yesterday-moon-astro'
+import createMoonriseStatus from '@/features/weather/lib/create-moonrise-status'
 import { formatLunarDateExtra } from '@/features/weather/lib/format-lunar-date'
 import { formatAstroScheduleTime } from '@/features/weather/lib/format-weather-values'
-import type { ForecastAstroSectionProps } from '@/features/weather/types/weather-component.type'
+import type { MoonriseMoonsetSectionProps } from '@/features/weather/types/weather-component.type'
+import useIsClient from '@/hooks/use-is-client'
 
-function MoonriseMoonsetSection({ astros }: ForecastAstroSectionProps) {
+function MoonriseMoonsetSection({ astros, coordinates }: MoonriseMoonsetSectionProps) {
+	const isClient = useIsClient()
+	const yesterdayAstro = useYesterdayMoonAstro({ astros, coordinates: isClient ? coordinates : null })
+	const statusAstros = useMemo(() => (yesterdayAstro ? [yesterdayAstro, ...astros] : astros), [yesterdayAstro, astros])
+	const moonriseStatus = isClient && statusAstros.length > 0 ? createMoonriseStatus(statusAstros, dayjs()) : null
+
 	return (
 		<section>
 			<Card className="py-4">
@@ -16,8 +29,7 @@ function MoonriseMoonsetSection({ astros }: ForecastAstroSectionProps) {
 				</CardHeader>
 				{astros.length > 0 ? (
 					<CardContent className="flex flex-col gap-2">
-						{/* TODO - 월출 현황 */}
-						<div>월출 현황</div>
+						{moonriseStatus ? <MoonriseStatus status={moonriseStatus} /> : null}
 						{/* dateExtra로 음력만 월출 섹션에 추가 (일출 테이블은 변경 없음) */}
 						<AstroScheduleTable
 							data={astros.map(({ date, moonrise, moonset }) => ({

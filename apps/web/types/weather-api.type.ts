@@ -155,6 +155,14 @@ type WeatherApiForecastResponse = WeatherApiForecastInput & {
 	location: WeatherApiLocation
 }
 
+/** astronomy.json 응답 본문 */
+type WeatherApiAstronomyResponse = {
+	location: WeatherApiLocation
+	astronomy: {
+		astro: WeatherApiAstro
+	}
+}
+
 /** 분리된 항목에 공통으로 포함되는 날짜 메타 */
 type ForecastDateMeta = {
 	date: string
@@ -198,6 +206,7 @@ export type {
 	ForecastDayEntry,
 	SplitForecastDaysResult,
 	WeatherApiAstro,
+	WeatherApiAstronomyResponse,
 	WeatherApiCondition,
 	WeatherApiCurrent,
 	WeatherApiDay,

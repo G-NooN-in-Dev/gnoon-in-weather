@@ -1,6 +1,7 @@
 import { FORECAST_REVALIDATE_SECONDS, REALTIME_REVALIDATE_SECONDS } from '@/lib/weather/constants'
 import { normalizeWeatherApiError, type WeatherApiErrorPayload } from '@/lib/weather/normalize-error'
 import type {
+	WeatherApiAstronomyResponse,
 	WeatherApiForecastResponse,
 	WeatherApiRealtimeResponse,
 	WeatherFetchParams
@@ -78,4 +79,19 @@ async function getForecastWeather(
 	return fetchWeatherApi<WeatherApiForecastResponse>(url, FORECAST_REVALIDATE_SECONDS, options)
 }
 
-export { getForecastWeather, getRealtimeWeather, type WeatherFetchOptions }
+/**
+ * 특정 날짜의 천체 정보(월출/월몰 포함)를 조회합니다.
+ * 자정 경계 월출 status 계산을 위해 어제 1일 데이터를 보강할 때 사용합니다.
+ */
+async function getAstronomyWeather(
+	params: WeatherFetchParams,
+	date: string,
+	options?: WeatherFetchOptions
+): Promise<WeatherApiAstronomyResponse> {
+	const url = buildWeatherApiUrl('astronomy.json', params)
+	url.searchParams.set('dt', date)
+
+	return fetchWeatherApi<WeatherApiAstronomyResponse>(url, FORECAST_REVALIDATE_SECONDS, options)
+}
+
+export { getAstronomyWeather, getForecastWeather, getRealtimeWeather, type WeatherFetchOptions }
