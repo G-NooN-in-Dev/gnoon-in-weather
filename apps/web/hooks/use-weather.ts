@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { writeLatestSearchedLocationCookie } from '@/lib/location/cookie'
+import { buildWeatherApiUrl } from '@/lib/weather/api-url'
 import { formatWeatherLocationLabel } from '@/lib/weather/format-location'
 import { isForecastStale } from '@/lib/weather/is-forecast-stale'
 import { isRealtimeStale } from '@/lib/weather/is-realtime-stale'
@@ -113,7 +114,12 @@ function useWeather({
 				// realtime만 stale이고 forecast 날짜는 오늘이면 current.json만 fresh 조회
 				if (isSameAsInitial && initialWeather && isRealtimeStale(initialWeather) && !isForecastStale(initialWeather)) {
 					const response = await fetch(
-						`/api/weather/realtime?lat=${fetchLat}&lng=${fetchLng}&lang=${HOME_WEATHER_LANG}&fresh=true`,
+						buildWeatherApiUrl('realtime', {
+							lat: fetchLat,
+							lng: fetchLng,
+							lang: HOME_WEATHER_LANG,
+							fresh: true
+						}),
 						{ signal: controller.signal }
 					)
 					const data = await response.json()
@@ -135,7 +141,12 @@ function useWeather({
 				}
 
 				const response = await fetch(
-					`/api/weather?lat=${fetchLat}&lng=${fetchLng}&lang=${HOME_WEATHER_LANG}&days=${HOME_FORECAST_DAYS}`,
+					buildWeatherApiUrl(undefined, {
+						lat: fetchLat,
+						lng: fetchLng,
+						lang: HOME_WEATHER_LANG,
+						days: HOME_FORECAST_DAYS
+					}),
 					{ signal: controller.signal }
 				)
 				const data = await response.json()
