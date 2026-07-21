@@ -64,12 +64,18 @@ async function getRealtimeWeather(
 	return fetchWeatherApi<WeatherApiRealtimeResponse>(url, REALTIME_REVALIDATE_SECONDS, options)
 }
 
-/** 3일 예보를 조회합니다. */
-async function getForecastWeather(params: WeatherFetchParams): Promise<WeatherApiForecastResponse> {
+/**
+ * 3일 예보를 조회합니다.
+ * fresh면 Data Cache를 우회합니다 (날짜가 바뀐 stale forecast 보정용).
+ */
+async function getForecastWeather(
+	params: WeatherFetchParams,
+	options?: WeatherFetchOptions
+): Promise<WeatherApiForecastResponse> {
 	const url = buildWeatherApiUrl('forecast.json', params)
 	url.searchParams.set('days', String(params.days ?? 3))
 
-	return fetchWeatherApi<WeatherApiForecastResponse>(url, FORECAST_REVALIDATE_SECONDS)
+	return fetchWeatherApi<WeatherApiForecastResponse>(url, FORECAST_REVALIDATE_SECONDS, options)
 }
 
 export { getForecastWeather, getRealtimeWeather, type WeatherFetchOptions }
