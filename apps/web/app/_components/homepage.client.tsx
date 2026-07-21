@@ -54,7 +54,7 @@ function HomepageClient({ initialLocation, initialWeather, initialUnits, initial
 					<section>검색</section>
 					<UvIndexSection current={current} />
 					<SunriseSunsetSection astros={forecastSplit?.astros ?? []} />
-					<MoonriseMoonsetSection astros={forecastSplit?.astros ?? []} />
+					<MoonriseMoonsetSection astros={forecastSplit?.astros ?? []} coordinates={location} />
 					<WeatherRadarSection />
 				</div>
 			</div>

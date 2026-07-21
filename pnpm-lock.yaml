@@ -111,12 +111,18 @@ importers:
 
   apps/web:
     dependencies:
+      '@meteocons/svg-static':
+        specifier: ^0.1.0
+        version: 0.1.0
       '@shared/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       dayjs:
         specifier: ^1.11.21
         version: 1.11.21
+      korean-lunar-calendar:
+        specifier: ^0.4.0
+        version: 0.4.0
       lucide-react:
         specifier: ^1.17.0
         version: 1.17.0(react@19.2.4)
@@ -939,6 +945,10 @@ packages:
     peerDependencies:
       '@types/react': '>=16'
       react: '>=16'
+
+  '@meteocons/svg-static@0.1.0':
+    resolution:
+      { integrity: sha512-dnuXOkt1W5q+XZbyj54dzjuBcKmsC0eLv51IVaW9kzzvzwnhwv9KgNXHKgpvmdN6cX2stMo+k95iMFbcyM4x5Q== }
 
   '@napi-rs/wasm-runtime@1.1.4':
     resolution:
@@ -3490,6 +3500,11 @@ packages:
     resolution:
       { integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw== }
 
+  korean-lunar-calendar@0.4.0:
+    resolution:
+      { integrity: sha512-kJXyH3sI/butJxCBtsLXlMJsl5qqNKNjduf1Na0s7XXwP+D/Wdlx0R0/S5ygxPVFSXf/JZ3bBKaCP6bGWhgZ0w== }
+    engines: { node: '>= 16.14.0' }
+
   levn@0.4.1:
     resolution:
       { integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ== }
@@ -5174,6 +5189,8 @@ snapshots:
       '@types/mdx': 2.0.13
       '@types/react': 19.2.14
       react: 19.2.4
+
+  '@meteocons/svg-static@0.1.0': {}
 
   '@napi-rs/wasm-runtime@1.1.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
@@ -7223,6 +7240,8 @@ snapshots:
   keyv@4.5.4:
     dependencies:
       json-buffer: 3.0.1
+
+  korean-lunar-calendar@0.4.0: {}
 
   levn@0.4.1:
     dependencies:

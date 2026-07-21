@@ -8,6 +8,8 @@ type AstroScheduleTableRow = {
 	date: string
 	left: string
 	right: string
+	/** 양력 라벨 아래 줄에 표시하는 부가 문구. 예: `(음 06.01 (윤))` — 월출 섹션 전용 */
+	dateExtra?: string
 }
 
 type AstroScheduleTableProps = {
@@ -28,7 +30,7 @@ function AstroScheduleTable({ data, leftHeader, rightHeader }: AstroScheduleTabl
 			</TableHeader>
 			<TableBody className="[&_tr]:border-0">
 				{data.map((row, index) => {
-					const { date, left, right } = row
+					const { date, left, right, dateExtra } = row
 
 					return (
 						<TableRow key={date} className="border-0 bg-transparent hover:bg-transparent">
@@ -36,8 +38,11 @@ function AstroScheduleTable({ data, leftHeader, rightHeader }: AstroScheduleTabl
 								<Card className="bg-grayscale-50 border-grayscale-200 py-2">
 									<CardContent className="grid grid-cols-3 items-center px-4 py-0">
 										<span className="text-left text-lg font-medium">{left}</span>
-										<span className="text-center text-base">
-											{formatDayLabel(index)} ({formatDate(date, 'MM.DD')})
+										<span className="flex flex-col items-center text-center text-base leading-tight">
+											<span>
+												{formatDayLabel(index)} ({formatDate(date, 'MM.DD')})
+											</span>
+											{dateExtra ? <span className="text-grayscale-600 text-sm">{dateExtra}</span> : null}
 										</span>
 										<span className="text-right text-lg font-medium">{right}</span>
 									</CardContent>

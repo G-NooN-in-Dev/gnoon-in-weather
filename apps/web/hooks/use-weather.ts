@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { writeLatestSearchedLocationCookie } from '@/lib/location/cookie'
+import { buildWeatherApiUrl } from '@/lib/weather/api-url'
 import { formatWeatherLocationLabel } from '@/lib/weather/format-location'
+import { isForecastStale } from '@/lib/weather/is-forecast-stale'
 import { isRealtimeStale } from '@/lib/weather/is-realtime-stale'
 import { HOME_FORECAST_DAYS, HOME_WEATHER_LANG } from '@/services/weather.loader'
 import type { AppApiError } from '@/types/error.type'
@@ -43,15 +45,16 @@ function canUseInitialWeatherWithoutFetch(
 	return (
 		initialWeather !== null &&
 		isSameCoordinates({ lat: fetchLat, lng: fetchLng }, { lat: initialLat, lng: initialLng }) &&
-		!isRealtimeStale(initialWeather)
+		!isRealtimeStale(initialWeather) &&
+		!isForecastStale(initialWeather)
 	)
 }
 
 /**
  * 날씨 조회 훅.
- * - SSR 데이터가 5분 이내면 refetch 생략
- * - stale이면 realtime만 fresh 조회
- * - 좌표 변경·SSR 실패 시 전체 조회(서버 캐시 적용)
+ * - SSR 데이터가 5분 이내이고 forecast 날짜가 오늘이면 refetch 생략
+ * - realtime만 stale이면 current.json만 fresh 조회
+ * - forecast 날짜 stale·좌표 변경·SSR 실패 시 전체 조회
  */
 function useWeather({
 	initialLocation,
@@ -108,10 +111,15 @@ function useWeather({
 			setError(null)
 
 			try {
-				// SSR realtime만 stale → forecast는 유지하고 current.json만 fresh 조회
-				if (isSameAsInitial && initialWeather && isRealtimeStale(initialWeather)) {
+				// realtime만 stale이고 forecast 날짜는 오늘이면 current.json만 fresh 조회
+				if (isSameAsInitial && initialWeather && isRealtimeStale(initialWeather) && !isForecastStale(initialWeather)) {
 					const response = await fetch(
-						`/api/weather/realtime?lat=${fetchLat}&lng=${fetchLng}&lang=${HOME_WEATHER_LANG}&fresh=true`,
+						buildWeatherApiUrl('realtime', {
+							lat: fetchLat,
+							lng: fetchLng,
+							lang: HOME_WEATHER_LANG,
+							fresh: true
+						}),
 						{ signal: controller.signal }
 					)
 					const data = await response.json()
@@ -133,7 +141,12 @@ function useWeather({
 				}
 
 				const response = await fetch(
-					`/api/weather?lat=${fetchLat}&lng=${fetchLng}&lang=${HOME_WEATHER_LANG}&days=${HOME_FORECAST_DAYS}`,
+					buildWeatherApiUrl(undefined, {
+						lat: fetchLat,
+						lng: fetchLng,
+						lang: HOME_WEATHER_LANG,
+						days: HOME_FORECAST_DAYS
+					}),
 					{ signal: controller.signal }
 				)
 				const data = await response.json()
