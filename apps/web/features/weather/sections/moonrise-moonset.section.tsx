@@ -8,7 +8,6 @@ import { useMemo } from 'react'
 import EmptyState from '@/components/empty-state'
 import AstroScheduleTable from '@/features/weather/components/astro-schedule-table'
 import MoonriseStatus from '@/features/weather/components/moonrise-status'
-import useYesterdayMoonAstro from '@/features/weather/hooks/use-yesterday-moon-astro'
 import createMoonriseStatus from '@/features/weather/lib/create-moonrise-status'
 import { formatLunarDateExtra } from '@/features/weather/lib/format-lunar-date'
 import { formatAstroScheduleTime } from '@/features/weather/lib/format-weather-values'
@@ -17,9 +16,12 @@ import useIsClient from '@/hooks/use-is-client'
 
 import WeatherApiCredit from '../components/weather-api-credit'
 
-function MoonriseMoonsetSection({ astros, coordinates }: MoonriseMoonsetSectionProps) {
+/**
+ * 월출/월몰 섹션.
+ * 어제 astro는 부모(`AstroScheduleSections`)에서 복구해 주입받습니다.
+ */
+function MoonriseMoonsetSection({ astros, yesterdayAstro = null }: MoonriseMoonsetSectionProps) {
 	const isClient = useIsClient()
-	const yesterdayAstro = useYesterdayMoonAstro({ astros, coordinates: isClient ? coordinates : null })
 	const statusAstros = useMemo(() => (yesterdayAstro ? [yesterdayAstro, ...astros] : astros), [yesterdayAstro, astros])
 	const moonriseStatus = isClient && statusAstros.length > 0 ? createMoonriseStatus(statusAstros, dayjs()) : null
 

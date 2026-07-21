@@ -7,10 +7,9 @@ import { WeatherUnitsProvider } from '@/contexts/weather-units.context'
 import { CurrentWeatherSection, WeatherRadarSection } from '@/features/home/sections'
 import type { HomepageClientProps } from '@/features/home/types/home-component.type'
 import {
+	AstroScheduleSections,
 	DailyWeatherSection,
 	HourlyWeatherSection,
-	MoonriseMoonsetSection,
-	SunriseSunsetSection,
 	UvIndexSection
 } from '@/features/weather/sections'
 import { useWeather } from '@/hooks/use-weather'
@@ -53,8 +52,7 @@ function HomepageClient({ initialLocation, initialWeather, initialUnits, initial
 				<div className="flex w-1/3 flex-col gap-6">
 					<section>검색</section>
 					<UvIndexSection current={current} />
-					<SunriseSunsetSection astros={forecastSplit?.astros ?? []} />
-					<MoonriseMoonsetSection astros={forecastSplit?.astros ?? []} coordinates={location} />
+					<AstroScheduleSections astros={forecastSplit?.astros ?? []} coordinates={location} />
 					<WeatherRadarSection />
 				</div>
 			</div>

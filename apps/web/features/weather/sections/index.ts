@@ -1,3 +1,4 @@
+export { default as AstroScheduleSections } from './astro-schedule.sections'
 export { default as DailyWeatherSection } from './daily-weather.section'
 export { default as HourlyWeatherSection } from './hourly-weather.section'
 export { default as MoonriseMoonsetSection } from './moonrise-moonset.section'
