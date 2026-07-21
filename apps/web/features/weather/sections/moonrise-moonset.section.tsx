@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@shared/ui/card'
 import dayjs from 'dayjs'
 import { SearchX } from 'lucide-react'
 import { useMemo } from 'react'
@@ -15,6 +15,8 @@ import { formatAstroScheduleTime } from '@/features/weather/lib/format-weather-v
 import type { MoonriseMoonsetSectionProps } from '@/features/weather/types/weather-component.type'
 import useIsClient from '@/hooks/use-is-client'
 
+import WeatherApiCredit from '../components/weather-api-credit'
+
 function MoonriseMoonsetSection({ astros, coordinates }: MoonriseMoonsetSectionProps) {
 	const isClient = useIsClient()
 	const yesterdayAstro = useYesterdayMoonAstro({ astros, coordinates: isClient ? coordinates : null })
@@ -23,7 +25,7 @@ function MoonriseMoonsetSection({ astros, coordinates }: MoonriseMoonsetSectionP
 
 	return (
 		<section>
-			<Card className="py-4">
+			<Card className="gap-0 py-4">
 				<CardHeader>
 					<CardTitle className="text-xl font-bold">월출/월몰</CardTitle>
 				</CardHeader>
@@ -52,6 +54,9 @@ function MoonriseMoonsetSection({ astros, coordinates }: MoonriseMoonsetSectionP
 						<p className="text-muted-foreground text-sm">위치를 확인한 뒤 다시 조회해 주세요.</p>
 					</EmptyState>
 				)}
+				<CardFooter className="mt-2">
+					<WeatherApiCredit />
+				</CardFooter>
 			</Card>
 		</section>
 	)
