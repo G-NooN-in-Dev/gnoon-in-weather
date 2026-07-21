@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 
+import createUvIndexGuide from '@/features/weather/lib/create-uv-index-guide'
 import { WIND_DIRECTIONS } from '@/lib/weather/constants'
 import { WeatherApiCurrent, WeatherApiDay, WeatherApiHour } from '@/types/weather-api.type'
 import { WeatherUnits } from '@/types/weather-units.type'
@@ -26,13 +27,10 @@ function formatWindDirection(degree: number): string {
 	return `${WIND_DIRECTIONS[index]}풍`
 }
 
-/** UV 지수를 화면 표시용 문자열로 변환합니다. */
+/** UV 지수를 화면 표시용 문자열로 변환합니다. (등급 정의는 createUvIndexGuide와 공유) */
 function formatUvIndexLabel(uv: number): string {
-	if (uv >= 11) return '위험'
-	else if (uv >= 8) return '매우 높음'
-	else if (uv >= 6) return '높음'
-	else if (uv >= 3) return '보통'
-	else return '낮음'
+	const uvGuide = createUvIndexGuide(uv)
+	return uvGuide.label
 }
 
 /** 온도 단위 설정 */
