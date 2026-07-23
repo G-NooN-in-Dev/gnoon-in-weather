@@ -1,6 +1,12 @@
 import dayjs, { type Dayjs } from 'dayjs'
 
-import { calculateAstroDiffTime, clampProgress, parseAstroDateTime } from '@/features/weather/lib/astro-status-utils'
+import {
+	calculateAstroDiffTime,
+	clampProgress,
+	isAstroForecastCurrent,
+	parseAstroDateTime,
+	resolveAstroMoonsetAt
+} from '@/features/weather/lib/astro-status-utils'
 import type { ForecastAstroEntry } from '@/types/weather-api.type'
 
 type MoonriseStatusHeadline = '월몰까지' | '월출까지'
@@ -38,7 +44,7 @@ function createMoonEvents(astros: ForecastAstroEntry[]): AstroEvent[] {
 	return astros
 		.flatMap((astro) => {
 			const moonrise = parseAstroDateTime(astro.date, astro.moonrise)
-			const moonset = parseAstroDateTime(astro.date, astro.moonset)
+			const moonset = resolveAstroMoonsetAt(astro)
 			const events: AstroEvent[] = []
 
 			if (moonrise) {
@@ -58,8 +64,19 @@ function createMoonEvents(astros: ForecastAstroEntry[]): AstroEvent[] {
  * 월출 현황(남은 시간 + 달 progress)을 만듭니다.
  * - 달이 떠 있는 구간: 가장 최근 moonrise ~ 다음 moonset
  * - 달이 안 떠 있는 구간: 다음 moonrise까지
+ *
+ * `forecastTodayDate`가 있으면 기기 오늘과 다를 때(stale forecast) null을 반환합니다.
  */
-function createMoonriseStatus(astros: ForecastAstroEntry[], now: Dayjs = dayjs()): MoonriseStatus | null {
+function createMoonriseStatus(
+	astros: ForecastAstroEntry[],
+	now: Dayjs = dayjs(),
+	forecastTodayDate?: string
+): MoonriseStatus | null {
+	// 어제 보강분이 섞여 있어도, forecast 첫날 기준으로 stale 여부를 봅니다.
+	if (forecastTodayDate !== undefined && !isAstroForecastCurrent(forecastTodayDate, now)) {
+		return null
+	}
+
 	const events = createMoonEvents(astros)
 
 	if (events.length === 0) {
@@ -71,11 +88,17 @@ function createMoonriseStatus(astros: ForecastAstroEntry[], now: Dayjs = dayjs()
 
 	// 현재 시각이 월출~월몰 구간 안이면 progress를 계산합니다.
 	if (previousMoonrise && nextMoonset && previousMoonrise.at.isBefore(nextMoonset.at)) {
-		const { hours, minutes } = calculateAstroDiffTime(now, nextMoonset.at)
+		const remaining = calculateAstroDiffTime(now, nextMoonset.at)
+
+		if (!remaining) {
+			return null
+		}
+
 		const totalMs = nextMoonset.at.diff(previousMoonrise.at)
 		const elapsedMs = now.diff(previousMoonrise.at)
 		const progress = totalMs > 0 ? elapsedMs / totalMs : 0
 		const moonPhase = findMoonPhaseByDate(astros, previousMoonrise.at.format('YYYY-MM-DD'))
+		const { hours, minutes } = remaining
 
 		return {
 			headline: '월몰까지',
@@ -93,7 +116,13 @@ function createMoonriseStatus(astros: ForecastAstroEntry[], now: Dayjs = dayjs()
 		return null
 	}
 
-	const { hours, minutes } = calculateAstroDiffTime(now, nextMoonrise.at)
+	const remaining = calculateAstroDiffTime(now, nextMoonrise.at)
+
+	if (!remaining) {
+		return null
+	}
+
+	const { hours, minutes } = remaining
 
 	return {
 		headline: '월출까지',
@@ -107,4 +136,6 @@ function createMoonriseStatus(astros: ForecastAstroEntry[], now: Dayjs = dayjs()
 
 export default createMoonriseStatus
 
-export type { MoonriseStatus, MoonriseStatusHeadline }
+export { createMoonEvents }
+
+export type { AstroEvent, MoonriseStatus, MoonriseStatusHeadline }

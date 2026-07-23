@@ -35,7 +35,7 @@ function shouldPreferMoonriseSection({
 		return false
 	}
 
-	const moonStatus = createMoonriseStatus(moonStatusAstros, now)
+	const moonStatus = createMoonriseStatus(moonStatusAstros, now, today.date)
 
 	return moonStatus?.showMoon === true
 }

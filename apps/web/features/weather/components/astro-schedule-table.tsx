@@ -10,6 +10,8 @@ type AstroScheduleTableRow = {
 	right: string
 	/** 양력 라벨 아래 줄에 표시하는 부가 문구. 예: `(음 06.01 (윤))` — 월출 섹션 전용 */
 	dateExtra?: string
+	/** 지정 시 index 기반 `오늘/내일/모레` 대신 이 라벨을 씁니다. (월출 어제 윈도 등) */
+	dayLabel?: string
 }
 
 type AstroScheduleTableProps = {
@@ -30,7 +32,7 @@ function AstroScheduleTable({ data, leftHeader, rightHeader }: AstroScheduleTabl
 			</TableHeader>
 			<TableBody className="[&_tr]:border-0">
 				{data.map((row, index) => {
-					const { date, left, right, dateExtra } = row
+					const { date, left, right, dateExtra, dayLabel } = row
 
 					return (
 						<TableRow key={date} className="border-0 bg-transparent hover:bg-transparent">
@@ -40,7 +42,7 @@ function AstroScheduleTable({ data, leftHeader, rightHeader }: AstroScheduleTabl
 										<span className="text-left text-lg font-medium">{left}</span>
 										<span className="flex flex-col items-center text-center text-base leading-tight">
 											<span>
-												{formatDayLabel(index)} ({formatDate(date, 'MM.DD')})
+												{dayLabel ?? formatDayLabel(index)} ({formatDate(date, 'MM.DD')})
 											</span>
 											{dateExtra ? <span className="text-grayscale-600 text-sm">{dateExtra}</span> : null}
 										</span>

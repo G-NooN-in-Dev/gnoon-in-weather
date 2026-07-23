@@ -8,9 +8,8 @@ import { useMemo } from 'react'
 import EmptyState from '@/components/empty-state'
 import AstroScheduleTable from '@/features/weather/components/astro-schedule-table'
 import MoonriseStatus from '@/features/weather/components/moonrise-status'
+import createMoonScheduleTableRows from '@/features/weather/lib/create-moon-schedule-table-rows'
 import createMoonriseStatus from '@/features/weather/lib/create-moonrise-status'
-import { formatLunarDateExtra } from '@/features/weather/lib/format-lunar-date'
-import { formatAstroScheduleTime } from '@/features/weather/lib/format-weather-values'
 import type { MoonriseMoonsetSectionProps } from '@/features/weather/types/weather-component.type'
 import useIsClient from '@/hooks/use-is-client'
 
@@ -19,11 +18,23 @@ import WeatherApiCredit from '../components/weather-api-credit'
 /**
  * 월출/월몰 섹션.
  * 어제 astro는 부모(`AstroScheduleSections`)에서 복구해 주입받습니다.
+ * 어제 행 월몰이 아직 안 지났으면 표를 어제·오늘·내일로 열고, 지났으면 오늘 기준 3일입니다.
  */
 function MoonriseMoonsetSection({ astros, yesterdayAstro = null }: MoonriseMoonsetSectionProps) {
 	const isClient = useIsClient()
 	const statusAstros = useMemo(() => (yesterdayAstro ? [yesterdayAstro, ...astros] : astros), [yesterdayAstro, astros])
-	const moonriseStatus = isClient && statusAstros.length > 0 ? createMoonriseStatus(statusAstros, dayjs()) : null
+	const forecastTodayDate = astros[0]?.date
+	const moonriseStatus =
+		isClient && statusAstros.length > 0 ? createMoonriseStatus(statusAstros, dayjs(), forecastTodayDate) : null
+
+	// hydrate 전엔 오늘 기준 3일. 클라에서만 어제 월몰 경과 여부로 윈도우를 바꿉니다.
+	const tableRows = useMemo(() => {
+		if (!isClient) {
+			return createMoonScheduleTableRows(astros, null)
+		}
+
+		return createMoonScheduleTableRows(astros, yesterdayAstro, dayjs())
+	}, [isClient, astros, yesterdayAstro])
 
 	return (
 		<section>
@@ -34,17 +45,7 @@ function MoonriseMoonsetSection({ astros, yesterdayAstro = null }: MoonriseMoons
 				{astros.length > 0 ? (
 					<CardContent className="flex flex-col gap-2">
 						{moonriseStatus ? <MoonriseStatus status={moonriseStatus} /> : null}
-						{/* dateExtra로 음력만 월출 섹션에 추가 (일출 테이블은 변경 없음) */}
-						<AstroScheduleTable
-							data={astros.map(({ date, moonrise, moonset }) => ({
-								date,
-								left: formatAstroScheduleTime(moonrise),
-								right: formatAstroScheduleTime(moonset),
-								dateExtra: formatLunarDateExtra(date) ?? undefined
-							}))}
-							leftHeader="월출"
-							rightHeader="월몰"
-						/>
+						<AstroScheduleTable data={tableRows} leftHeader="월출" rightHeader="월몰" />
 					</CardContent>
 				) : (
 					<EmptyState

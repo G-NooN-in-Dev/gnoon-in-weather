@@ -8,12 +8,22 @@ import { formatTime12To24 } from '@/utils/format'
 
 const ASTRO_UNAVAILABLE_MESSAGE = /^Does not (rise|set) today$/i
 
-/** 3일 예보·천체 일정 등에서 쓰는 일차 라벨 */
-const DAY_LABELS = ['오늘', '내일', '모레'] as const
+/** 천체·예보 일차 라벨. index 0=어제 … 4=글피 */
+const DAY_LABELS = ['어제', '오늘', '내일', '모레', '글피'] as const
 
-/** 예보 일차 인덱스를 화면 라벨(오늘/내일/모레)로 변환합니다. */
-function formatDayLabel(dayIndex: number): string {
-	return DAY_LABELS[dayIndex] ?? `${dayIndex + 1}일차`
+/** 기본 예보 일차(0=오늘)가 DAY_LABELS에서 시작하는 위치 */
+const TODAY_DAY_LABEL_OFFSET = 1
+
+/** 어제부터 세는 윈도우(월출 표 등)가 DAY_LABELS에서 시작하는 위치 */
+const YESTERDAY_DAY_LABEL_OFFSET = 0
+
+/**
+ * 예보 일차 인덱스를 화면 라벨로 변환합니다.
+ * @param dayIndex 윈도우 안 순서 (0부터)
+ * @param labelOffset `DAY_LABELS` 시작 위치. 기본은 오늘(`TODAY_DAY_LABEL_OFFSET`).
+ */
+function formatDayLabel(dayIndex: number, labelOffset: number = TODAY_DAY_LABEL_OFFSET): string {
+	return DAY_LABELS[labelOffset + dayIndex] ?? `${dayIndex + 1}일차`
 }
 
 /**
@@ -276,5 +286,7 @@ export {
 	formatUvIndexLabel,
 	formatWeatherIconUrl,
 	formatWindDirection,
-	getWeatherConditionIconUrl
+	getWeatherConditionIconUrl,
+	TODAY_DAY_LABEL_OFFSET,
+	YESTERDAY_DAY_LABEL_OFFSET
 }

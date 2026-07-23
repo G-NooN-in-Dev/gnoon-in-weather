@@ -31,8 +31,15 @@ function formatDate(date: string, format?: string, includeTime?: boolean): strin
 	}
 }
 
+/** `05:32 AM` → `05:32`. 파싱 실패 시 `-`를 반환합니다. */
 function formatTime12To24(time: string): string {
-	return dayjs(time, 'hh:mm A').format('HH:mm')
+	const parsed = dayjs(time, 'hh:mm A')
+
+	if (!parsed.isValid()) {
+		return '-'
+	}
+
+	return parsed.format('HH:mm')
 }
 
 export { DEFAULT_DISPLAY_LOCALE, formatDate, formatLocaleNumber, formatTime12To24 }
