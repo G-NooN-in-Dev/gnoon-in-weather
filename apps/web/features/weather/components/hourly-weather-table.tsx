@@ -4,10 +4,11 @@ import { Badge } from '@shared/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@shared/ui/table'
 import { cn } from '@shared/ui/utils'
 import dayjs from 'dayjs'
-import { ArrowBigUp } from 'lucide-react'
+import { ArrowBigUp, SearchX } from 'lucide-react'
 import Image from 'next/image'
 import { ReactNode } from 'react'
 
+import EmptyState from '@/components/empty-state'
 import HorizontalScrollContainer from '@/components/horizontal-scroll-container'
 import { useWeatherUnits } from '@/contexts/weather-units.context'
 import createHourlyWeatherTimeline, {
@@ -230,6 +231,18 @@ const timelineRows: TimelineRowConfig[] = [
 function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 	const { units } = useWeatherUnits()
 	const { timeline, baseDate } = createHourlyWeatherTimeline(hours, astros)
+
+	// stale forecast처럼 전부 과거 epoch이면 hours는 있어도 표시할 열이 없습니다.
+	if (timeline.length === 0) {
+		return (
+			<EmptyState
+				className="border-none"
+				icon={<SearchX className="text-grayscale-600 size-10" />}
+				title="시간별 날씨 데이터 없음"
+				description="표시할 시간별 날씨 데이터가 없습니다"
+			/>
+		)
+	}
 
 	const visibleRows = timelineRows.filter((row) => !row.isVisible || timeline.some((item) => row.isVisible?.(item)))
 

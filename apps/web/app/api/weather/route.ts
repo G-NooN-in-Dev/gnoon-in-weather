@@ -13,8 +13,11 @@ async function GET(request: NextRequest) {
 		return NextResponse.json({ error: WEATHER_INVALID_COORDINATES_ERROR }, { status: 400 })
 	}
 
+	// 클라이언트가 stale SSR 데이터를 알고 전체 재조회할 때 캐시를 우회합니다.
+	const fresh = request.nextUrl.searchParams.get('fresh') === 'true'
+
 	try {
-		const summary = await loadWeatherSummary(params)
+		const summary = await loadWeatherSummary(params, fresh ? { fresh: true } : undefined)
 
 		return NextResponse.json(summary)
 	} catch (error) {

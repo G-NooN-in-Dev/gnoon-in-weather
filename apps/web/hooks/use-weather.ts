@@ -34,7 +34,10 @@ function isSameCoordinates(a: Coordinates, b: Coordinates): boolean {
 	return a.lat === b.lat && a.lng === b.lng
 }
 
-/** SSR initialWeather를 추가 API 호출 없이 쓸 수 있는지 판단합니다. */
+/**
+ * SSR initialWeather를 추가 API 호출 없이 쓸 수 있는지 판단합니다.
+ * realtime TTL·forecast 기준 날짜가 모두 유효해야 합니다.
+ */
 function canUseInitialWeatherWithoutFetch(
 	fetchLat: number,
 	fetchLng: number,
@@ -52,9 +55,9 @@ function canUseInitialWeatherWithoutFetch(
 
 /**
  * 날씨 조회 훅.
- * - SSR 데이터가 5분 이내이고 forecast 날짜가 오늘이면 refetch 생략
- * - realtime만 stale이면 current.json만 fresh 조회
- * - forecast 날짜 stale·좌표 변경·SSR 실패 시 전체 조회
+ * - SSR 데이터가 5분 이내이고 forecast 날짜가 기준 오늘이면 refetch 생략
+ * - realtime만 stale이고 forecast는 오늘이면 current.json만 fresh 조회
+ * - forecast 날짜 stale·좌표 변경·SSR 실패 시 전체 조회 (SSR stale면 fresh 우회)
  */
 function useWeather({
 	initialLocation,
@@ -111,7 +114,7 @@ function useWeather({
 			setError(null)
 
 			try {
-				// realtime만 stale이고 forecast 날짜는 오늘이면 current.json만 fresh 조회
+				// realtime만 stale이고 forecast 날짜는 기준 오늘이면 current.json만 fresh 조회
 				if (isSameAsInitial && initialWeather && isRealtimeStale(initialWeather) && !isForecastStale(initialWeather)) {
 					const response = await fetch(
 						buildWeatherApiUrl('realtime', {
@@ -140,12 +143,19 @@ function useWeather({
 					return
 				}
 
+				// SSR이 stale이었으면 Data Cache를 우회해 한 번에 fresh 조회합니다.
+				const shouldFetchFresh =
+					isSameAsInitial &&
+					initialWeather !== null &&
+					(isRealtimeStale(initialWeather) || isForecastStale(initialWeather))
+
 				const response = await fetch(
 					buildWeatherApiUrl(undefined, {
 						lat: fetchLat,
 						lng: fetchLng,
 						lang: HOME_WEATHER_LANG,
-						days: HOME_FORECAST_DAYS
+						days: HOME_FORECAST_DAYS,
+						fresh: shouldFetchFresh || undefined
 					}),
 					{ signal: controller.signal }
 				)
