@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { writeLatestSearchedLocationCookie } from '@/lib/location/cookie'
+import { requestCurrentGeolocation } from '@/lib/location/geolocation'
 import { buildWeatherApiUrl } from '@/lib/weather/api-url'
 import { formatWeatherLocationLabel } from '@/lib/weather/format-location'
 import { isForecastStale } from '@/lib/weather/is-forecast-stale'
@@ -195,42 +196,24 @@ function useWeather({
 	}, [fetchLat, fetchLng, initialLat, initialLng, initialWeather])
 
 	const requestCurrentPosition = useCallback(() => {
-		if (!navigator.geolocation) {
-			setError({
-				provider: 'weatherapi',
-				code: 0,
-				key: 'GEOLOCATION_UNAVAILABLE',
-				status: 400,
-				retryable: false,
-				message: '이 브라우저에서는 현재 위치를 사용할 수 없습니다.'
-			})
-			return
-		}
-
 		setIsLocating(true)
 		setError(null)
 
-		navigator.geolocation.getCurrentPosition(
-			(position) => {
-				const { latitude, longitude } = position.coords
+		void (async () => {
+			const result = await requestCurrentGeolocation()
+
+			if (!result.ok) {
 				setIsLocating(false)
-				setLoading(true)
-				setFetchParams({ lat: latitude, lng: longitude })
-				setLocationLabel('')
-			},
-			() => {
-				setIsLocating(false)
-				setError({
-					provider: 'weatherapi',
-					code: 0,
-					key: 'GEOLOCATION_DENIED',
-					status: 400,
-					retryable: true,
-					message: '현재 위치 권한이 필요합니다. 브라우저 설정을 확인해주세요.'
-				})
-			},
-			{ enableHighAccuracy: false, timeout: 10_000 }
-		)
+				setError(result.error)
+				return
+			}
+
+			const { latitude, longitude } = result.position.coords
+			setIsLocating(false)
+			setLoading(true)
+			setFetchParams({ lat: latitude, lng: longitude })
+			setLocationLabel('')
+		})()
 	}, [])
 
 	return {
