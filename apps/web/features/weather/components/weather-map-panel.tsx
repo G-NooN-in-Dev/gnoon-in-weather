@@ -7,6 +7,7 @@ import { AlertCircle } from 'lucide-react'
 
 import KoreaWeatherMap from '@/features/weather/components/korea-weather-map'
 import WeatherApiCredit from '@/features/weather/components/weather-api-credit'
+import WeatherMapColorScale from '@/features/weather/components/weather-map-color-scale'
 import {
 	WEATHER_MAP_LAYER_LABEL,
 	WEATHER_MAP_LAYERS,
@@ -91,6 +92,9 @@ function WeatherMapPanel({
 					</div>
 				) : null}
 			</div>
+
+			{/* 레이어 탭에 맞춰 기온·강수·기압 공식 색상 척도 표시 */}
+			<WeatherMapColorScale layer={layer} viewVariant={viewVariant} />
 
 			{preloadError ? (
 				<p className="text-danger flex items-center gap-2 text-sm">
