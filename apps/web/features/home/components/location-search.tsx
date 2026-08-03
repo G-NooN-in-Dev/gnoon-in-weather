@@ -144,7 +144,7 @@ function LocationSearch({ onSelect, className }: LocationSearchProps) {
 				<Input
 					type="search"
 					value={query}
-					placeholder="장소·주소 검색"
+					placeholder="장소·주소를 검색하세요"
 					autoComplete="off"
 					aria-autocomplete="list"
 					aria-controls={listId}
