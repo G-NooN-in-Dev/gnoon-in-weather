@@ -77,7 +77,7 @@ function formatCoordAddressLabel(document: KakaoCoord2AddressDocument): string {
 
 /**
  * 키워드·주소 결과를 합치고, 같은 좌표는 한 번만 남깁니다.
- * 장소명(키워드)을 앞에 두어 목록에서 먼저 보이게 합니다.
+ * 주소 결과를 앞에 두어 목록에서 먼저 보이게 합니다.
  */
 function mergeLocationSearchItems(
 	keywordItems: LocationSearchItem[],
@@ -86,7 +86,7 @@ function mergeLocationSearchItems(
 	const seen = new Set<string>()
 	const merged: LocationSearchItem[] = []
 
-	for (const item of [...keywordItems, ...addressItems]) {
+	for (const item of [...addressItems, ...keywordItems]) {
 		const key = `${item.lat.toFixed(5)},${item.lng.toFixed(5)}`
 
 		if (seen.has(key)) {

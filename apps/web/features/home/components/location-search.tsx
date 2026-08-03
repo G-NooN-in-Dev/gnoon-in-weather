@@ -6,6 +6,10 @@ import { cn } from '@shared/ui/utils'
 import { Search } from 'lucide-react'
 import { useEffect, useId, useState } from 'react'
 
+import LocationRecentSearches from '@/features/home/components/location-recent-searches'
+import LocationSearchPanel from '@/features/home/components/location-search-panel'
+import LocationSearchResults from '@/features/home/components/location-search-results'
+import useRecentSearches from '@/hooks/use-recent-searches'
 import { buildKakaoApiUrl } from '@/lib/kakao/api-url'
 import { KAKAO_SEARCH_DEBOUNCE_MS, KAKAO_SEARCH_MIN_QUERY_LENGTH } from '@/lib/kakao/constants'
 import type { AppApiError } from '@/types/error.type'
@@ -20,12 +24,14 @@ type LocationSearchProps = {
 /**
  * 카카오 Local 기반 위치 검색창.
  * 입력 debounce 후 /api/kakao/search를 호출하고, 선택 시 좌표·라벨을 상위로 넘깁니다.
+ * 검색어가 짧을 때는 같은 패널에 최근 검색을 보여 줍니다.
  *
  * 짧은 검색어로 결과를 비울 때는 effect에서 동기 setState 하지 않고,
  * onChange(이벤트)에서 리셋합니다. effect는 debounce·fetch(외부 시스템)만 담당합니다.
  */
 function LocationSearch({ onSelect, className }: LocationSearchProps) {
 	const listId = useId()
+	const recent = useRecentSearches()
 	const [query, setQuery] = useState('')
 	const [items, setItems] = useState<LocationSearchItem[]>([])
 	const [loading, setLoading] = useState(false)
@@ -34,6 +40,10 @@ function LocationSearch({ onSelect, className }: LocationSearchProps) {
 
 	const trimmedQuery = query.trim()
 	const canSearch = trimmedQuery.length >= KAKAO_SEARCH_MIN_QUERY_LENGTH
+	const showSearchResults = isOpen && canSearch
+	// 짧은 검색어·빈 입력이면 최근 검색 패널 (켜기/끄기 UI도 여기서 접근)
+	const showRecent = isOpen && !canSearch
+	const showPanel = showSearchResults || showRecent
 
 	useEffect(() => {
 		// 최소 글자 미만이면 fetch하지 않음. 결과 리셋은 onChange에서 처리.
@@ -86,6 +96,21 @@ function LocationSearch({ onSelect, className }: LocationSearchProps) {
 		}
 	}, [canSearch, trimmedQuery])
 
+	useEffect(() => {
+		if (!isOpen) {
+			return
+		}
+
+		function handleKeyDown(event: KeyboardEvent) {
+			if (event.key === 'Escape') {
+				setIsOpen(false)
+			}
+		}
+
+		window.addEventListener('keydown', handleKeyDown)
+		return () => window.removeEventListener('keydown', handleKeyDown)
+	}, [isOpen])
+
 	function handleQueryChange(nextQuery: string) {
 		setQuery(nextQuery)
 		setIsOpen(true)
@@ -99,6 +124,7 @@ function LocationSearch({ onSelect, className }: LocationSearchProps) {
 	}
 
 	function handleSelect(item: LocationSearchItem) {
+		recent.add(item)
 		onSelect(item)
 		setQuery(item.label)
 		setIsOpen(false)
@@ -107,7 +133,9 @@ function LocationSearch({ onSelect, className }: LocationSearchProps) {
 		setLoading(false)
 	}
 
-	const showPanel = isOpen && canSearch
+	function handleClose() {
+		setIsOpen(false)
+	}
 
 	return (
 		<section className={cn('relative flex flex-col gap-2', className)} aria-label="위치 검색">
@@ -125,9 +153,7 @@ function LocationSearch({ onSelect, className }: LocationSearchProps) {
 						handleQueryChange(event.target.value)
 					}}
 					onFocus={() => {
-						if (canSearch && (items.length > 0 || errorMessage)) {
-							setIsOpen(true)
-						}
+						setIsOpen(true)
 					}}
 					onBlur={() => {
 						// 항목 클릭이 blur보다 먼저 처리되도록 짧게 지연합니다.
@@ -138,34 +164,23 @@ function LocationSearch({ onSelect, className }: LocationSearchProps) {
 				{loading ? <Spinner className="text-muted-foreground absolute top-1/2 right-2.5 -translate-y-1/2" /> : null}
 			</div>
 
-			{showPanel ? (
-				<ul
-					id={listId}
-					role="listbox"
-					className="border-border bg-popover absolute top-full z-20 mt-1 max-h-72 w-full overflow-y-auto rounded-md border py-1 shadow-md"
-				>
-					{loading && items.length === 0 ? <li className="text-muted-foreground px-3 py-2 text-sm">검색 중…</li> : null}
-					{errorMessage ? <li className="text-destructive px-3 py-2 text-sm">{errorMessage}</li> : null}
-					{!loading && !errorMessage && items.length === 0 ? (
-						<li className="text-muted-foreground px-3 py-2 text-sm">검색 결과가 없습니다.</li>
-					) : null}
-					{items.map((item) => (
-						<li key={item.id} role="option">
-							<button
-								type="button"
-								className="hover:bg-accent hover:text-accent-foreground flex w-full cursor-pointer flex-col items-start gap-0.5 px-3 py-2 text-left text-sm"
-								onMouseDown={(event) => {
-									// blur로 패널이 닫히기 전에 선택을 확정합니다.
-									event.preventDefault()
-									handleSelect(item)
-								}}
-							>
-								<span className="font-medium">{item.label}</span>
-								{item.address ? <span className="text-muted-foreground text-xs">{item.address}</span> : null}
-							</button>
-						</li>
-					))}
-				</ul>
+			{showSearchResults ? (
+				<LocationSearchPanel listId={listId} title="검색 결과" onClose={handleClose}>
+					<LocationSearchResults items={items} loading={loading} errorMessage={errorMessage} onSelect={handleSelect} />
+				</LocationSearchPanel>
+			) : null}
+
+			{showRecent ? (
+				<LocationSearchPanel listId={listId} title="최근 검색" onClose={handleClose}>
+					<LocationRecentSearches
+						enabled={recent.enabled}
+						items={recent.items}
+						onEnabledChange={recent.setEnabled}
+						onSelect={handleSelect}
+						onRemove={recent.remove}
+						onClear={recent.clear}
+					/>
+				</LocationSearchPanel>
 			) : null}
 		</section>
 	)
