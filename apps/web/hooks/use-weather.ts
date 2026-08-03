@@ -2,14 +2,15 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { buildKakaoApiUrl } from '@/lib/kakao/api-url'
 import { writeLatestSearchedLocationCookie } from '@/lib/location/cookie'
 import { requestCurrentGeolocation } from '@/lib/location/geolocation'
 import { buildWeatherApiUrl } from '@/lib/weather/api-url'
-import { formatWeatherLocationLabel } from '@/lib/weather/format-location'
 import { isForecastStale } from '@/lib/weather/is-forecast-stale'
 import { isRealtimeStale } from '@/lib/weather/is-realtime-stale'
 import { HOME_FORECAST_DAYS, HOME_WEATHER_LANG } from '@/services/weather.loader'
 import type { AppApiError } from '@/types/error.type'
+import type { CoordAddressLabelResponse, LocationSearchItem } from '@/types/kakao-local.type'
 import type { Coordinates, LocationState } from '@/types/location.type'
 import type { WeatherApiRealtimeResponse, WeatherSummary } from '@/types/weather-api.type'
 
@@ -29,7 +30,10 @@ type UseWeatherResult = {
 	isLocating: boolean
 	error: AppApiError | null
 	requestCurrentPosition: () => void
+	/** 카카오 검색 결과 선택 — 라벨·좌표를 카카오 값으로 고정한 뒤 날씨를 조회합니다. */
+	selectLocation: (item: LocationSearchItem) => void
 }
+
 /** 좌표가 동일한지 판단합니다. */
 function isSameCoordinates(a: Coordinates, b: Coordinates): boolean {
 	return a.lat === b.lat && a.lng === b.lng
@@ -56,6 +60,7 @@ function canUseInitialWeatherWithoutFetch(
 
 /**
  * 날씨 조회 훅.
+ * - 표시 라벨은 카카오(검색·역지오코딩·쿠키) 값을 유지하고 WeatherAPI location으로 덮지 않습니다.
  * - SSR 데이터가 5분 이내이고 forecast 날짜가 기준 오늘이면 refetch 생략
  * - realtime만 stale이고 forecast는 오늘이면 current.json만 fresh 조회
  * - forecast 날짜 stale·좌표 변경·SSR 실패 시 전체 조회 (SSR stale면 fresh 우회)
@@ -93,16 +98,17 @@ function useWeather({
 		const controller = new AbortController()
 		const isSameAsInitial = isSameCoordinates({ lat: fetchLat, lng: fetchLng }, { lat: initialLat, lng: initialLng })
 
+		/** 날씨만 반영하고, 라벨은 카카오/쿠키 값을 유지한 채 쿠키에 저장합니다. */
 		function applyWeatherSummary(summary: WeatherSummary, coordinates: Coordinates) {
-			const nextLabel = formatWeatherLocationLabel(summary.realtime.location)
-			const nextLocation: LocationState = {
-				...coordinates,
-				label: nextLabel
-			}
-
 			setWeather(summary)
-			setLocationLabel(nextLabel)
-			writeLatestSearchedLocationCookie(nextLocation)
+			setLocationLabel((currentLabel) => {
+				writeLatestSearchedLocationCookie({
+					...coordinates,
+					label: currentLabel
+				})
+
+				return currentLabel
+			})
 		}
 
 		async function fetchWeather() {
@@ -195,6 +201,16 @@ function useWeather({
 		}
 	}, [fetchLat, fetchLng, initialLat, initialLng, initialWeather])
 
+	/** 검색 결과 선택 — 카카오 label을 먼저 고정한 뒤 좌표로 날씨를 조회합니다. */
+	const selectLocation = useCallback((item: LocationSearchItem) => {
+		const { label, lat, lng } = item
+
+		setError(null)
+		setLoading(true)
+		setLocationLabel(label)
+		setFetchParams({ lat, lng })
+	}, [])
+
 	const requestCurrentPosition = useCallback(() => {
 		setIsLocating(true)
 		setError(null)
@@ -209,10 +225,40 @@ function useWeather({
 			}
 
 			const { latitude, longitude } = result.position.coords
-			setIsLocating(false)
-			setLoading(true)
-			setFetchParams({ lat: latitude, lng: longitude })
-			setLocationLabel('')
+
+			try {
+				// GPS 좌표를 카카오 도로명/지번 라벨로 바꿉니다.
+				const response = await fetch(
+					buildKakaoApiUrl('coord2address', {
+						lat: latitude,
+						lng: longitude
+					})
+				)
+				const data = await response.json()
+
+				if (!response.ok) {
+					setIsLocating(false)
+					setError((data.error as AppApiError | undefined) ?? null)
+					return
+				}
+
+				const { label: nextLabel } = data as CoordAddressLabelResponse
+
+				setIsLocating(false)
+				setLoading(true)
+				setLocationLabel(nextLabel || '현재 위치')
+				setFetchParams({ lat: latitude, lng: longitude })
+			} catch {
+				setIsLocating(false)
+				setError({
+					provider: 'kakao',
+					code: 0,
+					key: 'KAKAO_INTERNAL_ERROR',
+					status: 500,
+					retryable: true,
+					message: '현재 위치 주소를 불러오는 중 오류가 발생했습니다.'
+				})
+			}
 		})()
 	}, [])
 
@@ -222,7 +268,8 @@ function useWeather({
 		loading,
 		isLocating,
 		error,
-		requestCurrentPosition
+		requestCurrentPosition,
+		selectLocation
 	}
 }
 

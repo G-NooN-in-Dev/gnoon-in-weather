@@ -1,7 +1,6 @@
 import HomepageClient from '@/app/_components/homepage.client'
 import { isAppApiError } from '@/lib/api-error'
 import { resolveHomeLocation } from '@/lib/location/resolve-home'
-import { formatWeatherLocationLabel } from '@/lib/weather/format-location'
 import { readWeatherUnitsFromCookies } from '@/lib/weather/units-cookie.server'
 import { loadWeatherSummary } from '@/services/weather.loader'
 import type { AppApiError } from '@/types/error.type'
@@ -11,19 +10,13 @@ import type { WeatherSummary } from '@/types/weather-api.type'
 async function Homepage() {
 	const baseLocation = await resolveHomeLocation()
 	const initialUnits = await readWeatherUnitsFromCookies()
-	let initialLocation: LocationState = baseLocation
+	// 라벨은 쿠키·기본값(카카오/수동)만 사용하고 WeatherAPI location으로 채우지 않습니다.
+	const initialLocation: LocationState = baseLocation
 	let initialWeather: WeatherSummary | null = null
 	let initialError: AppApiError | null = null
 
 	try {
 		initialWeather = await loadWeatherSummary(baseLocation)
-
-		if (!baseLocation.label) {
-			initialLocation = {
-				...baseLocation,
-				label: formatWeatherLocationLabel(initialWeather.realtime.location)
-			}
-		}
 	} catch (error) {
 		if (isAppApiError(error)) {
 			initialError = error

@@ -8,7 +8,6 @@ import type { LocationControlProps } from '@/features/home/types/home-component.
 import WeatherUnitSettingsPopover from '@/features/weather/components/weather-unit-settings-popover'
 
 function CurrentLocation({ location, loading, isLocating, error, onRequestCurrentPosition }: LocationControlProps) {
-	// FIXME - label 수정 예정
 	const label = isLocating
 		? '현재 위치 확인 중...'
 		: loading && !location.label
@@ -16,7 +15,6 @@ function CurrentLocation({ location, loading, isLocating, error, onRequestCurren
 			: location.label || '위치 정보 없음'
 
 	return (
-		// FIXME - 에러메시지 관련 수정 예정
 		<div className="flex flex-col gap-1">
 			<div className="flex items-center justify-between">
 				{/* 위치 정보 */}
