@@ -110,14 +110,15 @@ features/weather/                  # 여러 페이지에서 재사용하는 날�
     ├── current-weather.tsx
     └── daily-weather-card.tsx
 
-features/home/                     # 홈 전용 (GPS 위치, 페이지 조합)
+features/home/                     # 홈 전용 (GPS 위치, 검색, 페이지 조합)
 ├── types/
 │   └── home-component.type.ts     # 홈 전용 props (LocationControl 등)
 ├── sections/
 │   ├── current-weather.section.tsx
 │   └── index.ts
 └── components/
-    └── current-location.tsx
+    ├── current-location.tsx       # 카카오 라벨 + GPS 버튼
+    └── location-search.tsx        # 카카오 Local 장소·주소 검색
 ```
 
 **넣을 것**
@@ -174,7 +175,9 @@ components/
 ```
 services/
 ├── weather.service.ts    # WeatherAPI 직접 호출 (current, forecast)
-└── weather.loader.ts     # page + API route 공통 파사드
+├── weather.loader.ts     # page + API route 공통 파사드
+├── kakao.service.ts      # Kakao Local REST (keyword, address, coord2address)
+└── kakao.loader.ts       # 검색 목록·좌표 라벨 정규화
 ```
 
 **넣을 것**
@@ -193,7 +196,7 @@ services/
 
 ```
 hooks/
-└── use-weather.ts    # GPS, 좌표 변경 시 refetch, 쿠키 저장
+└── use-weather.ts    # GPS·검색 좌표 변경 시 refetch, 카카오 라벨·쿠키 저장
 ```
 
 **넣을 것**
@@ -233,8 +236,14 @@ lib/
 │   ├── cookie.server.ts
 │   └── resolve-home.ts          # 쿠키 → 기본 좌표
 └── kakao/
+    ├── constants.ts             # 검색 최소 글자·debounce
+    ├── api-url.ts               # /api/kakao 클라이언트 URL
+    ├── api-route-errors.ts
+    ├── parse-api-query.ts
+    ├── map-search-item.ts       # Local 응답 → LocationSearchItem / 라벨
     ├── error-rules.ts
-    └── normalize-error.ts
+    ├── normalize-error.ts
+    └── load-kakao-maps-sdk.ts   # 지도 JS SDK (REST와 별개)
 ```
 
 **넣을 것**
@@ -388,6 +397,7 @@ app/page.tsx, app/api/*/route.ts
 ```
 types/
 ├── weather-api.type.ts       # WeatherAPI 타입, WeatherSummary, WeatherFetchParams
+├── kakao-local.type.ts       # Local REST 응답 + LocationSearchItem
 ├── location.type.ts
 └── error.type.ts
 ```

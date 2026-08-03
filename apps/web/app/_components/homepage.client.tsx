@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 
 import Loading from '@/components/loading'
 import { WeatherUnitsProvider } from '@/contexts/weather-units.context'
+import LocationSearch from '@/features/home/components/location-search'
 import { CurrentWeatherSection, WeatherRadarSection } from '@/features/home/sections'
 import type { HomepageClientProps } from '@/features/home/types/home-component.type'
 import {
@@ -17,10 +18,10 @@ import { splitForecast } from '@/lib/weather/split-forecast'
 
 /**
  * 홈 페이지 client 조합기.
- * 서버 SSR 데이터로 첫 페인트 후, 마운트 직후 클라이언트 refetch·GPS·좌표 변경을 처리합니다.
+ * 서버 SSR 데이터로 첫 페인트 후, 마운트 직후 클라이언트 refetch·GPS·검색·좌표 변경을 처리합니다.
  */
 function HomepageClient({ initialLocation, initialWeather, initialUnits, initialError }: HomepageClientProps) {
-	const { location, weather, loading, isLocating, error, requestCurrentPosition } = useWeather({
+	const { location, weather, loading, isLocating, error, requestCurrentPosition, selectLocation } = useWeather({
 		initialLocation,
 		initialWeather,
 		initialError
@@ -50,7 +51,7 @@ function HomepageClient({ initialLocation, initialWeather, initialUnits, initial
 					<DailyWeatherSection days={forecastSplit?.days ?? []} />
 				</div>
 				<div className="flex w-1/3 flex-col gap-6">
-					<section>검색</section>
+					<LocationSearch onSelect={selectLocation} />
 					<UvIndexSection current={current} />
 					<AstroScheduleSections astros={forecastSplit?.astros ?? []} coordinates={location} />
 					<WeatherRadarSection />
