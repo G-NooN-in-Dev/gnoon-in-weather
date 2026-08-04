@@ -28,4 +28,5 @@ function normalizeKakaoApiError(payload: KakaoErrorPayload): AppApiError {
 	}
 }
 
-export { type KakaoErrorPayload, normalizeKakaoApiError }
+export { normalizeKakaoApiError }
+export type { KakaoErrorPayload }

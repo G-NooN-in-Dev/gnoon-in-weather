@@ -280,16 +280,18 @@ export {
 	KOREA_VIEW_BOUNDS,
 	KOREA_WEATHER_MAP_MOSAIC,
 	KOREA_WEATHER_MAP_TILE_ALLOWANCE,
-	type LatLngBoundsLiteral,
 	WEATHER_MAP_LAYER_LABEL,
 	WEATHER_MAP_LAYERS,
 	WEATHER_MAP_TILE_BASE_URL,
 	WEATHER_MAP_TILE_SIZE,
 	WEATHER_MAP_VIEW_VARIANTS,
-	WEATHER_MAP_ZOOM,
-	type WeatherMapLayer,
-	type WeatherMapMosaic,
-	type WeatherMapTileCoord,
-	type WeatherMapTimeSlot,
-	type WeatherMapViewVariant
+	WEATHER_MAP_ZOOM
+}
+export type {
+	LatLngBoundsLiteral,
+	WeatherMapLayer,
+	WeatherMapMosaic,
+	WeatherMapTileCoord,
+	WeatherMapTimeSlot,
+	WeatherMapViewVariant
 }

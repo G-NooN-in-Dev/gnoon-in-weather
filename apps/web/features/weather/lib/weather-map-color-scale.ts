@@ -160,11 +160,5 @@ function getWeatherMapColorScaleView(
 	}
 }
 
-export {
-	getWeatherMapColorScaleView,
-	WEATHER_MAP_COLOR_SCALE_BY_LAYER,
-	type WeatherMapColorScaleDefinition,
-	type WeatherMapColorScaleTick,
-	type WeatherMapColorScaleView,
-	type WeatherMapLegendCrop
-}
+export { getWeatherMapColorScaleView, WEATHER_MAP_COLOR_SCALE_BY_LAYER }
+export type { WeatherMapColorScaleDefinition, WeatherMapColorScaleTick, WeatherMapColorScaleView, WeatherMapLegendCrop }

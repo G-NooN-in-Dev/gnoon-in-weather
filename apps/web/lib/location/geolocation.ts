@@ -135,4 +135,5 @@ async function requestCurrentGeolocation(
 	}
 }
 
-export { type GeolocationResult, requestCurrentGeolocation }
+export { requestCurrentGeolocation }
+export type { GeolocationResult }

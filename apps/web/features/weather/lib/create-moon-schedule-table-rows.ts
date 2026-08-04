@@ -65,8 +65,5 @@ function createMoonScheduleTableRows(
 	})
 }
 
-export default createMoonScheduleTableRows
-
-export { shouldUseYesterdayBasedMoonSchedule }
-
+export { createMoonScheduleTableRows, shouldUseYesterdayBasedMoonSchedule }
 export type { MoonScheduleTableRow }

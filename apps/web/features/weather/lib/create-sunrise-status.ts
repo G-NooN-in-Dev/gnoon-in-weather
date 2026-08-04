@@ -122,6 +122,5 @@ function createSunriseStatus(
 	}
 }
 
-export default createSunriseStatus
-
+export { createSunriseStatus }
 export type { SunriseStatus, SunriseStatusHeadline }

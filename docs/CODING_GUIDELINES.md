@@ -29,18 +29,24 @@
 ### 유틸/라이브러리 함수
 
 - 파일의 주요 함수는 `function` 선언 + 파일 하단 `export { fn }` 패턴을 사용합니다.
+- 값과 타입을 함께 내보낼 때는 `export`와 `export type` 블록을 분리합니다.
 
 ```ts
-function splitForecastDays(forecastday: WeatherApiForecastDay[]) {
+function createHourlyWeatherTimeline() {
 	// ...
 }
 
-export { splitForecastDays }
+type HourlyWeatherTimeline = {
+	// ...
+}
+
+export { createHourlyWeatherTimeline }
+export type { HourlyWeatherTimeline }
 ```
 
 ### 타입 정의 파일 (`*.type.ts` 등)
 
-- 공개 타입은 `type TypeName = ...`로 선언하고, 파일 하단에서 `export type { ... }`로 한 번만 보냅니다.
+- 공개 타입은 `type TypeName = ...`로 선언하고, 파일 하단에서 `export type { TypeName }`로 한 번만 보냅니다.
 - 선언부에 `export type`을 붙이지 않습니다.
 
 ```ts
@@ -64,12 +70,13 @@ const isNavActive = (pathname: string, href: string) => pathname === href
 
 ### 선택 기준 요약
 
-| 상황                        | 권장                          |
-| --------------------------- | ----------------------------- |
-| export 컴포넌트             | `function` + `export default` |
-| export 유틸 함수            | `function` + `export { fn }`  |
-| 파일 내부 짧은 헬퍼         | `const` 화살표 함수           |
-| `this` 바인딩이 필요한 경우 | `function` (실무에서는 드묾)  |
+| 상황                        | 권장                                               |
+| --------------------------- | -------------------------------------------------- |
+| export 컴포넌트             | `function` + `export default`                      |
+| export 유틸 함수            | `function` + `export { fn }` + `export type { T }` |
+| 타입 전용 파일              | `export type { T }`                                |
+| 파일 내부 짧은 헬퍼         | `const` 화살표 함수                                |
+| `this` 바인딩이 필요한 경우 | `function` (실무에서는 드묾)                       |
 
 ---
 
@@ -81,6 +88,9 @@ const isNavActive = (pathname: string, href: string) => pathname === href
 - 파일 하단에서 `export default`로 보냅니다.
 - `export default function ...` 인라인 export는 사용하지 않습니다.
 - 클래스 컴포넌트·레거시 string ref·function component의 `defaultProps`는 사용하지 않습니다.
+
+**예외 — `packages/ui` (`@shared/ui`)**  
+shadcn/ui 관례에 따라 **named export**(`export { Button }`)를 사용합니다. 앱(`apps/*`) 컴포넌트에만 위 default export 규칙을 적용합니다.
 
 ```tsx
 function ComponentName() {
@@ -180,22 +190,60 @@ function writeCookie({ lat, lng, label }: LocationState) {
 
 - 외부 JSON(`JSON.parse`, `fetch().json()`)은 **검증 후** 구조분해합니다.
 
-### `satisfies` vs `as`
+### `satisfies` vs `as` — 개념
 
-| 상황                                   | 권장                                                  |
-| -------------------------------------- | ----------------------------------------------------- |
-| 직접 만든 객체 리터럴의 형태 검증      | `satisfies`                                           |
-| `JSON.parse` / API 응답 등 외부 데이터 | 타입 가드·런타임 검증 (`as`/`satisfies`만으로는 부족) |
-| 제네릭 반환 좁히기 (`as T`)            | `as` (또는 검증 함수)                                 |
-| 리터럴 고정                            | `as const` (`satisfies`와 별개)                       |
+둘 다 “이 값이 이 타입이다”와 관련되지만 **역할이 다릅니다.**
+
+|               | `satisfies Type`                                                | `as Type` (타입 단언)                                           |
+| ------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
+| **하는 일**   | 값이 `Type`에 **맞는지 검사**하면서, 값 자체의 좁은 타입은 유지 | 컴파일러에게 “이건 `Type`이다”라고 **믿게 함** (검사 거의 없음) |
+| **틀렸을 때** | 컴파일 에러                                                     | 대부분 통과 → **런타임 버그 위험**                              |
+| **비유**      | 출고 전 스펙 검사                                               | “스펙 맞다고 스티커만 붙임”                                     |
 
 ```ts
-// ✅ 객체 리터럴 — satisfies
+type RecentLocationCookie = { lat: number; lng: number; label?: string }
+
+// ✅ satisfies — 객체를 직접 만들 때. 필드 오타·타입 불일치면 컴파일 단계에서 잡힘.
+//    값은 여전히 { lat, lng, label } 리터럴로 추론됨.
 const payload = JSON.stringify({ lat, lng, label } satisfies RecentLocationCookie)
 
-// ⚠️ JSON.parse — satisfies로 바꿔도 any라 실질 검증 없음
-const parsed = JSON.parse(value) // 이후 타입 가드 + 구조분해
+// ❌ as — 검사 없이 통과. lat를 문자열로 넣어도 컴파일이 될 수 있음.
+const bad = { lat: '37', lng: 127 } as RecentLocationCookie
 ```
+
+`as const`는 또 다른 문법입니다. 객·배열을 **읽기 전용 리터럴**로 고정할 때 씁니다 (`satisfies`와 목적이 다름).
+
+```ts
+const TEMP_UNITS = ['C', 'F'] as const
+// 타입: readonly ["C", "F"]
+```
+
+### 언제 무엇을 쓰나
+
+| 상황                                                              | 권장                                                              |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------- |
+| 직접 만든 객체 리터럴의 형태 검증                                 | `satisfies`                                                       |
+| `JSON.parse` / `fetch().json()` / localStorage 등 **외부 데이터** | 타입 가드·런타임 검증 후 사용 (`as`/`satisfies`만으로는 **부족**) |
+| DOM/라이브러리가 `unknown`·넓은 타입을 줄 때 좁히기               | 가능하면 가드. 불가피하면 `as` + 근거 주석                        |
+| 제네릭 헬퍼 반환을 구체 타입으로 좁히기                           | `as T` 또는 검증 함수                                             |
+| 리터럴 튜플/객체 고정                                             | `as const`                                                        |
+
+```ts
+// ❌ 외부 JSON에 as만 — 깨진 데이터도 ForecastAstroEntry로 믿게 됨
+const parsed = JSON.parse(cached) as ForecastAstroEntry
+
+// ✅ unknown으로 받은 뒤 가드로 좁힘
+const parsed: unknown = JSON.parse(cached)
+if (!isForecastAstroEntry(parsed)) return
+// 여기서부터 parsed는 ForecastAstroEntry
+```
+
+```ts
+// ⚠️ satisfies를 JSON.parse 결과에 붙여도 런타임 검증은 안 됨 (any/unknown 기반)
+const parsed = JSON.parse(value) satisfies RecentLocationCookie // 실질 안전하지 않음
+```
+
+서비스 레이어에서 API 에러 shape만 확인한 뒤 본문을 제네릭 `T`로 넘기는 경우는 단계적으로 가드를 보강합니다. **클라·쿠키·localStorage 경계**는 가드를 우선 적용합니다.
 
 ---
 

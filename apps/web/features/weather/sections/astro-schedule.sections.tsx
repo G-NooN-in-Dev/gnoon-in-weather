@@ -1,10 +1,9 @@
 'use client'
 
 import dayjs from 'dayjs'
-import { useMemo } from 'react'
 
 import useYesterdayMoonAstro from '@/features/weather/hooks/use-yesterday-moon-astro'
-import shouldPreferMoonriseSection from '@/features/weather/lib/should-prefer-moonrise-section'
+import { shouldPreferMoonriseSection } from '@/features/weather/lib/should-prefer-moonrise-section'
 import MoonriseMoonsetSection from '@/features/weather/sections/moonrise-moonset.section'
 import SunriseSunsetSection from '@/features/weather/sections/sunrise-sunset.section'
 import useIsClient from '@/hooks/use-is-client'
@@ -27,10 +26,7 @@ function AstroScheduleSections({ astros, coordinates }: AstroScheduleSectionsPro
 		astros,
 		coordinates: isClient ? coordinates : null
 	})
-	const moonStatusAstros = useMemo(
-		() => (yesterdayAstro ? [yesterdayAstro, ...astros] : astros),
-		[yesterdayAstro, astros]
-	)
+	const moonStatusAstros = yesterdayAstro ? [yesterdayAstro, ...astros] : astros
 
 	// hydrate 전엔 기본 순서(일출 → 월출). 클라에서만 렌더 시각으로 순서를 바꿉니다.
 	const preferMoonrise =

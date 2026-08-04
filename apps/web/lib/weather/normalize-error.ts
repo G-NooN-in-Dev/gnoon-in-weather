@@ -29,4 +29,5 @@ function normalizeWeatherApiError(payload: WeatherApiErrorPayload): AppApiError 
 	}
 }
 
-export { normalizeWeatherApiError, type WeatherApiErrorPayload }
+export { normalizeWeatherApiError }
+export type { WeatherApiErrorPayload }

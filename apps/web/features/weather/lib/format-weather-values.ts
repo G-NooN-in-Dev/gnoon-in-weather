@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 
-import createUvIndexGuide from '@/features/weather/lib/create-uv-index-guide'
+import { createUvIndexGuide } from '@/features/weather/lib/create-uv-index-guide'
 import { WIND_DIRECTIONS } from '@/lib/weather/constants'
 import { WeatherApiCurrent, WeatherApiDay, WeatherApiHour } from '@/types/weather-api.type'
 import { WeatherUnits } from '@/types/weather-units.type'
@@ -262,8 +262,6 @@ function formatHourlyTimeLabel(hour: WeatherApiHour, baseDate: string): string {
 	return `${String(hourValue).padStart(2, '0')}시`
 }
 
-export type { WeatherConditionIconSize, WeatherConditionPeriod }
-
 export {
 	formatAstroScheduleTime,
 	formatCurrentLabelSpeedAndDistance,
@@ -290,3 +288,4 @@ export {
 	TODAY_DAY_LABEL_OFFSET,
 	YESTERDAY_DAY_LABEL_OFFSET
 }
+export type { WeatherConditionIconSize, WeatherConditionPeriod }

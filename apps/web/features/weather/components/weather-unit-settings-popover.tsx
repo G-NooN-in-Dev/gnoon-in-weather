@@ -12,7 +12,7 @@ import {
 } from '@shared/ui/popover'
 import { Tabs, TabsList, TabsTrigger } from '@shared/ui/tabs'
 import { RotateCcwIcon } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 
 import { useWeatherUnits } from '@/contexts/weather-units.context'
 import type { WeatherUnitOption } from '@/lib/weather/units'
@@ -69,9 +69,9 @@ function WeatherUnitSettingsPopover() {
 		setDraftUnits((prev) => ({ ...prev, [key]: value }))
 	}
 
-	const resetUnits = useCallback(() => {
+	const resetUnits = () => {
 		setDraftUnits(units)
-	}, [units])
+	}
 
 	const handleClose = () => {
 		setOpen(false)

@@ -4,7 +4,7 @@ import { cn } from '@shared/ui/utils'
 import { SearchX } from 'lucide-react'
 
 import EmptyState from '@/components/empty-state'
-import createUvIndexGuide, { type UvIndexLevel } from '@/features/weather/lib/create-uv-index-guide'
+import { createUvIndexGuide, type UvIndexLevel } from '@/features/weather/lib/create-uv-index-guide'
 import type { CurrentWeatherProps } from '@/features/weather/types/weather-component.type'
 
 /**

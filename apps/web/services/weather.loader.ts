@@ -1,6 +1,11 @@
 import { isForecastStale } from '@/lib/weather/is-forecast-stale'
 import { isRealtimeStale } from '@/lib/weather/is-realtime-stale'
-import { getForecastWeather, getRealtimeWeather, type WeatherFetchOptions } from '@/services/weather.service'
+import {
+	getAstronomyWeather,
+	getForecastWeather,
+	getRealtimeWeather,
+	type WeatherFetchOptions
+} from '@/services/weather.service'
 import type { WeatherApiRealtimeResponse, WeatherFetchParams, WeatherSummary } from '@/types/weather-api.type'
 
 const HOME_FORECAST_DAYS = 3
@@ -58,4 +63,12 @@ async function loadRealtimeWeather(
 	return getRealtimeWeather({ lat, lng, lang }, options)
 }
 
-export { HOME_FORECAST_DAYS, HOME_WEATHER_LANG, loadRealtimeWeather, loadWeatherSummary }
+/**
+ * 특정 날짜의 천체 정보(월출/월몰 등)를 조회합니다.
+ * route·훅은 service를 직접 부르지 않고 이 loader를 사용합니다.
+ */
+async function loadAstronomyWeather(params: WeatherFetchParams, date: string, options?: WeatherFetchOptions) {
+	return getAstronomyWeather(params, date, options)
+}
+
+export { HOME_FORECAST_DAYS, HOME_WEATHER_LANG, loadAstronomyWeather, loadRealtimeWeather, loadWeatherSummary }

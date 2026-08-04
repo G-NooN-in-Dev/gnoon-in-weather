@@ -14,10 +14,20 @@ type RecentLocationCookie = {
 /** 쿠키 JSON을 LocationState로 안전하게 변환합니다. */
 function parseLatestSearchedLocationCookie(value: string): LocationState | null {
 	try {
-		const parsed = JSON.parse(value) as RecentLocationCookie
-		const { lat, lng, label } = parsed
+		const parsed: unknown = JSON.parse(value)
 
-		if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+		if (!parsed || typeof parsed !== 'object') {
+			return null
+		}
+
+		const { lat, lng, label } = parsed as Record<string, unknown>
+
+		if (typeof lat !== 'number' || typeof lng !== 'number' || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+			return null
+		}
+
+		// label이 있으면 문자열이어야 하고, 없으면 빈 문자열로 맞춥니다.
+		if (label !== undefined && typeof label !== 'string') {
 			return null
 		}
 

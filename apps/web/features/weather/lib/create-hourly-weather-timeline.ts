@@ -75,6 +75,5 @@ function createHourlyWeatherTimeline(hours: WeatherApiHour[], astros: ForecastAs
 	return { timeline, baseDate }
 }
 
-export default createHourlyWeatherTimeline
-
+export { createHourlyWeatherTimeline }
 export type { HourlyWeatherTimeline }

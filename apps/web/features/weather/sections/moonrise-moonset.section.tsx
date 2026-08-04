@@ -3,13 +3,12 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@shared/ui/card'
 import dayjs from 'dayjs'
 import { SearchX } from 'lucide-react'
-import { useMemo } from 'react'
 
 import EmptyState from '@/components/empty-state'
 import AstroScheduleTable from '@/features/weather/components/astro-schedule-table'
 import MoonriseStatus from '@/features/weather/components/moonrise-status'
-import createMoonScheduleTableRows from '@/features/weather/lib/create-moon-schedule-table-rows'
-import createMoonriseStatus from '@/features/weather/lib/create-moonrise-status'
+import { createMoonScheduleTableRows } from '@/features/weather/lib/create-moon-schedule-table-rows'
+import { createMoonriseStatus } from '@/features/weather/lib/create-moonrise-status'
 import type { MoonriseMoonsetSectionProps } from '@/features/weather/types/weather-component.type'
 import useIsClient from '@/hooks/use-is-client'
 
@@ -22,19 +21,15 @@ import WeatherApiCredit from '../components/weather-api-credit'
  */
 function MoonriseMoonsetSection({ astros, yesterdayAstro = null }: MoonriseMoonsetSectionProps) {
 	const isClient = useIsClient()
-	const statusAstros = useMemo(() => (yesterdayAstro ? [yesterdayAstro, ...astros] : astros), [yesterdayAstro, astros])
+	const statusAstros = yesterdayAstro ? [yesterdayAstro, ...astros] : astros
 	const forecastTodayDate = astros[0]?.date
 	const moonriseStatus =
 		isClient && statusAstros.length > 0 ? createMoonriseStatus(statusAstros, dayjs(), forecastTodayDate) : null
 
 	// hydrate 전엔 오늘 기준 3일. 클라에서만 어제 월몰 경과 여부로 윈도우를 바꿉니다.
-	const tableRows = useMemo(() => {
-		if (!isClient) {
-			return createMoonScheduleTableRows(astros, null)
-		}
-
-		return createMoonScheduleTableRows(astros, yesterdayAstro, dayjs())
-	}, [isClient, astros, yesterdayAstro])
+	const tableRows = isClient
+		? createMoonScheduleTableRows(astros, yesterdayAstro, dayjs())
+		: createMoonScheduleTableRows(astros, null)
 
 	return (
 		<section>

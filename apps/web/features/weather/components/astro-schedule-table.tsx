@@ -58,5 +58,5 @@ function AstroScheduleTable({ data, leftHeader, rightHeader }: AstroScheduleTabl
 	)
 }
 
-export type { AstroScheduleTableRow }
 export default AstroScheduleTable
+export type { AstroScheduleTableRow }

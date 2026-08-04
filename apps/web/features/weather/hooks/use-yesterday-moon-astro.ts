@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
 import { buildWeatherApiUrl } from '@/lib/weather/api-url'
+import { isForecastAstroEntry } from '@/lib/weather/is-forecast-astro-entry'
 import type { ForecastAstroEntry } from '@/types/weather-api.type'
 
 type Coordinates = {
@@ -16,15 +17,8 @@ type UseYesterdayMoonAstroOptions = {
 	astros: ForecastAstroEntry[]
 }
 
-type AstronomyApiResponse = {
-	astro?: ForecastAstroEntry
-}
-
-function buildCacheKey(coordinates: Coordinates, date: string) {
-	const lat = coordinates.lat.toFixed(4)
-	const lng = coordinates.lng.toFixed(4)
-
-	return `moon-astro:${lat},${lng}:${date}`
+function buildCacheKey({ lat, lng }: Coordinates, date: string) {
+	return `moon-astro:${lat.toFixed(4)},${lng.toFixed(4)}:${date}`
 }
 
 /**
@@ -77,30 +71,31 @@ function useYesterdayMoonAstro({ coordinates, astros }: UseYesterdayMoonAstroOpt
 				const cached = localStorage.getItem(cacheKey)
 
 				if (cached) {
-					const parsed = JSON.parse(cached) as ForecastAstroEntry
+					const parsed: unknown = JSON.parse(cached)
 
-					if (isMounted) {
+					if (isForecastAstroEntry(parsed) && isMounted) {
 						setYesterdayAstro(parsed)
+						return
 					}
-
-					return
 				}
 			} catch {
 				// 캐시 파싱 실패 시 네트워크 보강으로 넘어갑니다.
 			}
 
 			try {
+				const { lat, lng } = activeCoordinates
 				const response = await fetch(
 					buildWeatherApiUrl('astronomy', {
-						lat: activeCoordinates.lat,
-						lng: activeCoordinates.lng,
+						lat,
+						lng,
 						date: yesterdayDate
 					})
 				)
 
-				const data = (await response.json()) as AstronomyApiResponse
+				const data: unknown = await response.json()
+				const astro = data && typeof data === 'object' && 'astro' in data ? (data as { astro: unknown }).astro : null
 
-				if (!response.ok || !data.astro) {
+				if (!response.ok || !isForecastAstroEntry(astro)) {
 					if (isMounted) {
 						setYesterdayAstro(null)
 					}
@@ -109,11 +104,11 @@ function useYesterdayMoonAstro({ coordinates, astros }: UseYesterdayMoonAstroOpt
 				}
 
 				if (isMounted) {
-					setYesterdayAstro(data.astro)
+					setYesterdayAstro(astro)
 				}
 
 				try {
-					localStorage.setItem(cacheKey, JSON.stringify(data.astro))
+					localStorage.setItem(cacheKey, JSON.stringify(astro))
 				} catch {
 					// 저장 실패는 무시합니다.
 				}

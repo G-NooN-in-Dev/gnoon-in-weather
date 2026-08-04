@@ -273,4 +273,5 @@ function useWeather({
 	}
 }
 
-export { useWeather, type UseWeatherOptions, type UseWeatherResult }
+export { useWeather }
+export type { UseWeatherOptions, UseWeatherResult }

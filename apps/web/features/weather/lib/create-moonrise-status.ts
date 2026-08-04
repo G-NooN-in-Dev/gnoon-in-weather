@@ -134,8 +134,5 @@ function createMoonriseStatus(
 	}
 }
 
-export default createMoonriseStatus
-
-export { createMoonEvents }
-
+export { createMoonEvents, createMoonriseStatus }
 export type { AstroEvent, MoonriseStatus, MoonriseStatusHeadline }

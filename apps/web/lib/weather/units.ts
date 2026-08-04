@@ -41,8 +41,6 @@ const DEFAULT_WEATHER_UNITS = {
 	snowDepth: 'cm'
 } satisfies WeatherUnits
 
-export type { WeatherUnitOption }
-
 export {
 	DEFAULT_WEATHER_UNITS,
 	DISTANCE_UNITS,
@@ -52,3 +50,4 @@ export {
 	WEATHER_UNITS_COOKIE_MAX_AGE_SECONDS,
 	WEATHER_UNITS_COOKIE_NAME
 }
+export type { WeatherUnitOption }

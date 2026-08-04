@@ -1,7 +1,7 @@
 import dayjs, { type Dayjs } from 'dayjs'
 
-import createMoonriseStatus from '@/features/weather/lib/create-moonrise-status'
-import createSunriseStatus from '@/features/weather/lib/create-sunrise-status'
+import { createMoonriseStatus } from '@/features/weather/lib/create-moonrise-status'
+import { createSunriseStatus } from '@/features/weather/lib/create-sunrise-status'
 import type { ForecastAstroEntry } from '@/types/weather-api.type'
 
 type ShouldPreferMoonriseSectionParams = {
@@ -40,4 +40,4 @@ function shouldPreferMoonriseSection({
 	return moonStatus?.showMoon === true
 }
 
-export default shouldPreferMoonriseSection
+export { shouldPreferMoonriseSection }

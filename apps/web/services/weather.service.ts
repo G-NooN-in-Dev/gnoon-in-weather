@@ -94,4 +94,5 @@ async function getAstronomyWeather(
 	return fetchWeatherApi<WeatherApiAstronomyResponse>(url, FORECAST_REVALIDATE_SECONDS, options)
 }
 
-export { getAstronomyWeather, getForecastWeather, getRealtimeWeather, type WeatherFetchOptions }
+export { getAstronomyWeather, getForecastWeather, getRealtimeWeather }
+export type { WeatherFetchOptions }

@@ -4,8 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { isAppApiError } from '@/lib/api-error'
 import { WEATHER_INVALID_COORDINATES_ERROR } from '@/lib/weather/api-route-errors'
 import { parseCoordinates } from '@/lib/weather/parse-api-query'
-import { HOME_WEATHER_LANG } from '@/services/weather.loader'
-import { getAstronomyWeather } from '@/services/weather.service'
+import { HOME_WEATHER_LANG, loadAstronomyWeather } from '@/services/weather.loader'
 import type { AppApiError } from '@/types/error.type'
 import type { ForecastAstroEntry } from '@/types/weather-api.type'
 
@@ -46,7 +45,7 @@ async function GET(request: NextRequest) {
 	const lang = request.nextUrl.searchParams.get('lang') ?? HOME_WEATHER_LANG
 
 	try {
-		const astronomy = await getAstronomyWeather({ ...coordinates, lang }, date, { fresh: true })
+		const astronomy = await loadAstronomyWeather({ ...coordinates, lang }, date, { fresh: true })
 		const astroEntry: ForecastAstroEntry = {
 			date,
 			date_epoch: dayjs(date).unix(),

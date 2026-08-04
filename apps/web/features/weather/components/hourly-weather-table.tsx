@@ -11,8 +11,9 @@ import { ReactNode } from 'react'
 import EmptyState from '@/components/empty-state'
 import HorizontalScrollContainer from '@/components/horizontal-scroll-container'
 import { useWeatherUnits } from '@/contexts/weather-units.context'
-import createHourlyWeatherTimeline, {
-	HourlyWeatherTimeline
+import {
+	createHourlyWeatherTimeline,
+	type HourlyWeatherTimeline
 } from '@/features/weather/lib/create-hourly-weather-timeline'
 import {
 	formatDistanceUnitLabel,
@@ -36,8 +37,8 @@ type TimelineRowConfig = {
 	render: (item: HourlyWeatherTimeline, units: WeatherUnits) => ReactNode
 }
 
-const stickyTableHeadClassName = 'sticky left-0 z-[1] bg-background min-w-24 w-24 '
-const hourlyTablePrevButtonClassName = 'left-[calc(6rem+0.25rem)]'
+const stickyTableHeadClassName = 'sticky left-0 z-1 bg-background min-w-24 w-24 '
+const hourlyTablePrevButtonClassName = 'left-25'
 const timelineBorderClassName = 'border-l border-border'
 const tableHeadClassName = 'font-semibold'
 const unitLabelClassName = 'text-muted-foreground text-sm'

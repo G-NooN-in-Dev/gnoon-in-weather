@@ -70,5 +70,5 @@ function createUvIndexGuide(uv: number): UvIndexGuide {
 	}
 }
 
-export default createUvIndexGuide
+export { createUvIndexGuide }
 export type { UvIndexGuide, UvIndexLevel }
