@@ -64,6 +64,7 @@ function canUseInitialWeatherWithoutFetch(
  * - SSR 데이터가 5분 이내이고 forecast 날짜가 기준 오늘이면 refetch 생략
  * - realtime만 stale이고 forecast는 오늘이면 current.json만 fresh 조회
  * - forecast 날짜 stale·좌표 변경·SSR 실패 시 전체 조회 (SSR stale면 fresh 우회)
+ * - 검색/현재위치 재선택은 fetchCount를 올려 동일 좌표여도 fresh refetch합니다.
  */
 function useWeather({
 	initialLocation,
@@ -76,11 +77,10 @@ function useWeather({
 		lat: initialLat,
 		lng: initialLng
 	}))
+	const [fetchCount, setFetchCount] = useState(0)
 	const [locationLabel, setLocationLabel] = useState(label)
 	const [weather, setWeather] = useState<WeatherSummary | null>(initialWeather)
-	const [loading, setLoading] = useState(
-		() => !canUseInitialWeatherWithoutFetch(initialLat, initialLng, initialLat, initialLng, initialWeather)
-	)
+	const [loading, setLoading] = useState(() => initialWeather === null && initialError === null)
 	const [isLocating, setIsLocating] = useState(false)
 	const [error, setError] = useState<AppApiError | null>(initialError)
 
@@ -97,6 +97,7 @@ function useWeather({
 	useEffect(() => {
 		const controller = new AbortController()
 		const isSameAsInitial = isSameCoordinates({ lat: fetchLat, lng: fetchLng }, { lat: initialLat, lng: initialLng })
+		const isUserInitiated = fetchCount > 0
 
 		/** 날씨만 반영하고, 라벨은 카카오/쿠키 값을 유지한 채 쿠키에 저장합니다. */
 		function applyWeatherSummary(summary: WeatherSummary, coordinates: Coordinates) {
@@ -112,7 +113,11 @@ function useWeather({
 		}
 
 		async function fetchWeather() {
-			if (canUseInitialWeatherWithoutFetch(fetchLat, fetchLng, initialLat, initialLng, initialWeather)) {
+			// 마운트 직후 SSR 데이터만 단축 사용. 사용자 재선택은 항상 다시 조회합니다.
+			if (
+				!isUserInitiated &&
+				canUseInitialWeatherWithoutFetch(fetchLat, fetchLng, initialLat, initialLng, initialWeather)
+			) {
 				setLoading(false)
 				return
 			}
@@ -122,7 +127,13 @@ function useWeather({
 
 			try {
 				// realtime만 stale이고 forecast 날짜는 기준 오늘이면 current.json만 fresh 조회
-				if (isSameAsInitial && initialWeather && isRealtimeStale(initialWeather) && !isForecastStale(initialWeather)) {
+				if (
+					!isUserInitiated &&
+					isSameAsInitial &&
+					initialWeather &&
+					isRealtimeStale(initialWeather) &&
+					!isForecastStale(initialWeather)
+				) {
 					const response = await fetch(
 						buildWeatherApiUrl('realtime', {
 							lat: fetchLat,
@@ -150,11 +161,12 @@ function useWeather({
 					return
 				}
 
-				// SSR이 stale이었으면 Data Cache를 우회해 한 번에 fresh 조회합니다.
+				// 사용자 재선택·SSR stale이면 Data Cache를 우회해 fresh 조회합니다.
 				const shouldFetchFresh =
-					isSameAsInitial &&
-					initialWeather !== null &&
-					(isRealtimeStale(initialWeather) || isForecastStale(initialWeather))
+					isUserInitiated ||
+					(isSameAsInitial &&
+						initialWeather !== null &&
+						(isRealtimeStale(initialWeather) || isForecastStale(initialWeather)))
 
 				const response = await fetch(
 					buildWeatherApiUrl(undefined, {
@@ -199,7 +211,7 @@ function useWeather({
 		return () => {
 			controller.abort()
 		}
-	}, [fetchLat, fetchLng, initialLat, initialLng, initialWeather])
+	}, [fetchLat, fetchLng, fetchCount, initialLat, initialLng, initialWeather])
 
 	/** 검색 결과 선택 — 카카오 label을 먼저 고정한 뒤 좌표로 날씨를 조회합니다. */
 	const selectLocation = useCallback((item: LocationSearchItem) => {
@@ -209,6 +221,7 @@ function useWeather({
 		setLoading(true)
 		setLocationLabel(label)
 		setFetchParams({ lat, lng })
+		setFetchCount((count) => count + 1)
 	}, [])
 
 	const requestCurrentPosition = useCallback(() => {
@@ -248,6 +261,7 @@ function useWeather({
 				setLoading(true)
 				setLocationLabel(nextLabel || '현재 위치')
 				setFetchParams({ lat: latitude, lng: longitude })
+				setFetchCount((count) => count + 1)
 			} catch {
 				setIsLocating(false)
 				setError({
