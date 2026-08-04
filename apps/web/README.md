@@ -36,4 +36,5 @@ pnpm dev
 ## 참고
 
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — 디렉터리 구조 가이드
+- [docs/CODING_GUIDELINES.md](../../docs/CODING_GUIDELINES.md) — 코딩 컨벤션
 - [Next.js 문서](https://nextjs.org/docs)

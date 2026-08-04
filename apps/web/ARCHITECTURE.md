@@ -490,6 +490,6 @@ features/theme-maps/
 ## 관련 문서
 
 - [README.md](./README.md) — 실행 방법
-- [루트 AGENTS.md](../../AGENTS.md) — 모노레포·스타일 공통 규칙
-- `.cursor/rules/react-component-template.mdc` — 섹션 컴포넌트 네이밍
-- `.cursor/rules/web-services-utils-layers.mdc` — service/loader, `.server.ts` 레이어 규칙
+- [루트 AGENTS.md](../../AGENTS.md) — 에이전트 문서 인덱스
+- [docs/CODING_GUIDELINES.md](../../docs/CODING_GUIDELINES.md) — 컴포넌트 네이밍·레이어·코딩 컨벤션
+- [docs/README.md](../../docs/README.md) — 문서 맵
