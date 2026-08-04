@@ -4,7 +4,7 @@ import { Input } from '@shared/ui/input'
 import { Spinner } from '@shared/ui/spinner'
 import { cn } from '@shared/ui/utils'
 import { Search } from 'lucide-react'
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 
 import LocationRecentSearches from '@/features/home/components/location-recent-searches'
 import LocationSearchPanel from '@/features/home/components/location-search-panel'
@@ -31,6 +31,7 @@ type LocationSearchProps = {
  */
 function LocationSearch({ onSelect, className }: LocationSearchProps) {
 	const listId = useId()
+	const inputRef = useRef<HTMLInputElement>(null)
 	const recent = useRecentSearches()
 	const [query, setQuery] = useState('')
 	const [items, setItems] = useState<LocationSearchItem[]>([])
@@ -126,11 +127,12 @@ function LocationSearch({ onSelect, className }: LocationSearchProps) {
 	function handleSelect(item: LocationSearchItem) {
 		recent.add(item)
 		onSelect(item)
-		setQuery(item.label)
+		setQuery('')
 		setIsOpen(false)
 		setItems([])
 		setErrorMessage(null)
 		setLoading(false)
+		inputRef.current?.blur()
 	}
 
 	function handleClose() {
@@ -142,6 +144,7 @@ function LocationSearch({ onSelect, className }: LocationSearchProps) {
 			<div className="relative">
 				<Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
 				<Input
+					ref={inputRef}
 					type="search"
 					value={query}
 					placeholder="장소·주소를 검색하세요"
