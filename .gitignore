@@ -37,3 +37,6 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Cursor — 로컬 전용 (에이전트 규칙)
+.cursor/rules/
