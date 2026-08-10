@@ -29,7 +29,7 @@ type AstroEvent = {
 	at: Dayjs
 }
 
-/** status 표시 기준 날짜의 moon_phase를 찾습니다. */
+/** status 기준 날짜의 `moon_phase`를 찾습니다. */
 function findMoonPhaseByDate(astros: ForecastAstroEntry[], date: string): string | null {
 	const target = astros.find((astro) => astro.date === date)
 
@@ -37,8 +37,8 @@ function findMoonPhaseByDate(astros: ForecastAstroEntry[], date: string): string
 }
 
 /**
- * 여러 날짜에 흩어진 월출/월몰을 절대 시각 이벤트로 펼칩니다.
- * 자정 경계를 넘는 월출 status는 "같은 날짜 행"이 아니라 이 타임라인으로 계산해야 안정적입니다.
+ * 날짜별 월출/월몰을 절대 시각 타임라인으로 펼칩니다.
+ * 자정을 넘는 구간은 날짜 행이 아니라 이 순서로 판정합니다.
  */
 function createMoonEvents(astros: ForecastAstroEntry[]): AstroEvent[] {
 	return astros
@@ -62,10 +62,10 @@ function createMoonEvents(astros: ForecastAstroEntry[]): AstroEvent[] {
 
 /**
  * 월출 현황(남은 시간 + 달 progress)을 만듭니다.
- * - 달이 떠 있는 구간: 가장 최근 moonrise ~ 다음 moonset
- * - 달이 안 떠 있는 구간: 다음 moonrise까지
+ * - 떠 있음: 최근 월출 ~ 그 월출의 바로 다음 월몰(아직 안 지난 경우) → 「월몰까지」
+ * - 안 떠 있음: 다음 월출까지 → 「월출까지」
  *
- * `forecastTodayDate`가 있으면 기기 오늘과 다를 때(stale forecast) null을 반환합니다.
+ * `forecastTodayDate`가 있으면 기기 오늘과 다를 때(stale forecast) null입니다.
  */
 function createMoonriseStatus(
 	astros: ForecastAstroEntry[],
@@ -84,17 +84,19 @@ function createMoonriseStatus(
 	}
 
 	const previousMoonrise = [...events].reverse().find((event) => event.kind === 'moonrise' && !event.at.isAfter(now))
-	const nextMoonset = events.find((event) => event.kind === 'moonset' && event.at.isAfter(now))
+	// 최근 월출에 짝이 되는 바로 다음 월몰. (아직 안 지났을 때만 「떠 있음」)
+	const pairedMoonset = previousMoonrise
+		? events.find((event) => event.kind === 'moonset' && event.at.isAfter(previousMoonrise.at))
+		: undefined
 
-	// 현재 시각이 월출~월몰 구간 안이면 progress를 계산합니다.
-	if (previousMoonrise && nextMoonset && previousMoonrise.at.isBefore(nextMoonset.at)) {
-		const remaining = calculateAstroDiffTime(now, nextMoonset.at)
+	if (previousMoonrise && pairedMoonset && pairedMoonset.at.isAfter(now)) {
+		const remaining = calculateAstroDiffTime(now, pairedMoonset.at)
 
 		if (!remaining) {
 			return null
 		}
 
-		const totalMs = nextMoonset.at.diff(previousMoonrise.at)
+		const totalMs = pairedMoonset.at.diff(previousMoonrise.at)
 		const elapsedMs = now.diff(previousMoonrise.at)
 		const progress = totalMs > 0 ? elapsedMs / totalMs : 0
 		const moonPhase = findMoonPhaseByDate(astros, previousMoonrise.at.format('YYYY-MM-DD'))
