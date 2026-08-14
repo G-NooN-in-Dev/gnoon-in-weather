@@ -1,7 +1,8 @@
 const THEME_MAPS_ROUTES = {
 	home: '/theme-maps',
 	airports: '/theme-maps/airports',
-	baseball: '/theme-maps/baseball'
+	baseball: '/theme-maps/baseball',
+	airportDetail: (iata: string) => `/theme-maps/airports/${iata.toUpperCase()}`
 } as const
 
 const THEME_MAPS_NAV_ITEMS = [
