@@ -4,7 +4,7 @@ import { createUvIndexGuide } from '@/features/weather/lib/create-uv-index-guide
 import { WIND_DIRECTIONS } from '@/lib/weather/constants'
 import { WeatherApiCurrent, WeatherApiDay, WeatherApiHour } from '@/types/weather-api.type'
 import { WeatherUnits } from '@/types/weather-units.type'
-import { formatTime12To24 } from '@/utils/format'
+import { formatTime12To24, normalizeNumber } from '@/utils/format'
 
 const ASTRO_UNAVAILABLE_MESSAGE = /^Does not (rise|set) today$/i
 
@@ -114,8 +114,8 @@ function formatCurrentLabelSpeedAndDistance(current: WeatherApiCurrent, units: W
 	const useMiles = distance === 'miles'
 
 	return {
-		wind: useMiles ? wind_mph : formatKphToMps(wind_kph),
-		visibility: useMiles ? vis_miles : vis_km
+		wind: useMiles ? normalizeNumber(wind_mph) : formatKphToMps(normalizeNumber(wind_kph)),
+		visibility: useMiles ? normalizeNumber(vis_miles) : normalizeNumber(vis_km)
 	}
 }
 
@@ -127,8 +127,8 @@ function formatHourLabelSpeedAndDistance(hour: WeatherApiHour, units: WeatherUni
 	const useMiles = distance === 'miles'
 
 	return {
-		wind: useMiles ? wind_mph : formatKphToMps(wind_kph),
-		visibility: useMiles ? vis_miles : vis_km
+		wind: useMiles ? normalizeNumber(wind_mph) : formatKphToMps(normalizeNumber(wind_kph)),
+		visibility: useMiles ? normalizeNumber(vis_miles) : normalizeNumber(vis_km)
 	}
 }
 
@@ -140,8 +140,8 @@ function formatForecastLabelSpeedAndDistance(day: WeatherApiDay, units: WeatherU
 	const useMiles = distance === 'miles'
 
 	return {
-		maxwind: useMiles ? maxwind_mph : formatKphToMps(maxwind_kph),
-		avgvisibility: useMiles ? avgvis_miles : avgvis_km
+		maxwind: useMiles ? normalizeNumber(maxwind_mph) : formatKphToMps(normalizeNumber(maxwind_kph)),
+		avgvisibility: useMiles ? normalizeNumber(avgvis_miles) : normalizeNumber(avgvis_km)
 	}
 }
 
@@ -170,9 +170,11 @@ function formatCurrentPrecipitationAndSnowDepth(current: WeatherApiCurrent, unit
 	const useInch = precipitation === 'inch'
 	const useCm = snowDepth === 'cm'
 
+	const snowCm = normalizeNumber(snow_cm)
+
 	return {
-		precip: useInch ? precip_in : precip_mm,
-		snowDepth: useCm ? snow_cm : formatCmToInch(snow_cm)
+		precip: normalizeNumber(useInch ? precip_in : precip_mm),
+		snowDepth: useCm ? snowCm : formatCmToInch(snowCm)
 	}
 }
 
@@ -183,10 +185,11 @@ function formatHourPrecipitationAndSnowDepth(hour: WeatherApiHour, units: Weathe
 
 	const useInch = precipitation === 'inch'
 	const useCm = snowDepth === 'cm'
+	const snowCm = normalizeNumber(snow_cm)
 
 	return {
-		precip: useInch ? precip_in : precip_mm,
-		snowDepth: useCm ? snow_cm : formatCmToInch(snow_cm)
+		precip: normalizeNumber(useInch ? precip_in : precip_mm),
+		snowDepth: useCm ? snowCm : formatCmToInch(snowCm)
 	}
 }
 
@@ -197,10 +200,11 @@ function formatForecastPrecipitationAndSnowDepth(day: WeatherApiDay, units: Weat
 
 	const useInch = precipitation === 'inch'
 	const useCm = snowDepth === 'cm'
+	const snowCm = normalizeNumber(totalsnow_cm)
 
 	return {
-		totalprecip: useInch ? totalprecip_in : totalprecip_mm,
-		totalsnowDepth: useCm ? totalsnow_cm : formatCmToInch(totalsnow_cm)
+		totalprecip: normalizeNumber(useInch ? totalprecip_in : totalprecip_mm),
+		totalsnowDepth: useCm ? snowCm : formatCmToInch(snowCm)
 	}
 }
 

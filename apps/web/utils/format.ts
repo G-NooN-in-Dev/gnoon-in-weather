@@ -13,11 +13,22 @@ type FormatLocaleNumberOptions = Intl.NumberFormatOptions & {
 	locale?: string
 }
 
-/** 숫자를 로케일 형식 문자열로 변환합니다. */
-function formatLocaleNumber(value: number, options?: FormatLocaleNumberOptions): string {
+/** API 생략·파싱 실패까지 포함한 표시용 숫자 입력 */
+type NumericInput = number | null | undefined
+
+/**
+ * 표시에 쓸 수 있는 숫자로 정규화합니다.
+ * `null` / `undefined` / `NaN` / `Infinity`는 fallback(기본 `0`)으로 바꿉니다.
+ */
+function normalizeNumber(value: NumericInput, fallback: number = 0): number {
+	return typeof value === 'number' && Number.isFinite(value) ? value : fallback
+}
+
+/** 숫자를 로케일 형식 문자열로 변환합니다. 비정상 값은 `normalizeNumber`로 보정합니다. */
+function formatLocaleNumber(value: NumericInput, options?: FormatLocaleNumberOptions): string {
 	const { locale = DEFAULT_DISPLAY_LOCALE, ...numberFormatOptions } = options ?? {}
 
-	return value.toLocaleString(locale, numberFormatOptions)
+	return normalizeNumber(value).toLocaleString(locale, numberFormatOptions)
 }
 
 /** 날짜를 포맷팅합니다. */
@@ -42,4 +53,4 @@ function formatTime12To24(time: string): string {
 	return parsed.format('HH:mm')
 }
 
-export { DEFAULT_DISPLAY_LOCALE, formatDate, formatLocaleNumber, formatTime12To24 }
+export { DEFAULT_DISPLAY_LOCALE, formatDate, formatLocaleNumber, formatTime12To24, normalizeNumber }
