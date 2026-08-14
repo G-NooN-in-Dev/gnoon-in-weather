@@ -18,6 +18,7 @@ declare global {
 
 			class LatLngBounds {
 				constructor(sw: LatLng, ne: LatLng)
+				extend(latlng: LatLng): LatLngBounds
 				getSouthWest(): LatLng
 				getNorthEast(): LatLng
 			}
@@ -48,6 +49,34 @@ declare global {
 				disableDoubleClick?: boolean
 				disableDoubleClickZoom?: boolean
 				keyboardShortcuts?: boolean
+			}
+
+			interface CustomOverlayOptions {
+				map?: Map | null
+				clickable?: boolean
+				content: HTMLElement | string
+				position: LatLng
+				xAnchor?: number
+				yAnchor?: number
+				zIndex?: number
+			}
+
+			class CustomOverlay {
+				constructor(options: CustomOverlayOptions)
+				setMap(map: Map | null): void
+				getMap(): Map | null
+				setPosition(position: LatLng): void
+				getPosition(): LatLng
+				setContent(content: HTMLElement | string): void
+				getContent(): HTMLElement | string
+				setVisible(visible: boolean): void
+				getVisible(): boolean
+				setZIndex(zIndex: number): void
+			}
+
+			namespace event {
+				function addListener(target: Map | CustomOverlay, type: string, handler: (...args: unknown[]) => void): void
+				function removeListener(target: Map | CustomOverlay, type: string, handler: (...args: unknown[]) => void): void
 			}
 		}
 	}
