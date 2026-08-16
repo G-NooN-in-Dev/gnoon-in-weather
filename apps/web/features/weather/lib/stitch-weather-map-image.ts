@@ -68,12 +68,12 @@ async function stitchKoreaWeatherMapImage(
 	}
 
 	const images = await Promise.all(
-		mosaic.tiles.map((tile) =>
-			loadImage(buildProxiedTileUrl(layer, dateKey, hourKey, tile.x, tile.y, tile.z)).then((image) => ({
-				tile,
-				image
-			}))
-		)
+		mosaic.tiles.map(async (tile) => {
+			const { x, y, z } = tile
+			const url = buildProxiedTileUrl(layer, dateKey, hourKey, x, y, z)
+			const image = await loadImage(url)
+			return { tile, image }
+		})
 	)
 
 	for (const { tile, image } of images) {

@@ -89,13 +89,21 @@ function ensureAirportMarkerStyles() {
 	document.head.appendChild(style)
 }
 
+/* eslint-disable no-unused-vars -- 콜백 시그니처의 파라미터명은 문서용입니다. */
 type AirportSelectHandler = (iata: string) => void
+type AirportHoverChangeHandler = (hovered: boolean) => void
+/* eslint-enable no-unused-vars */
 
 /**
  * 공항 CustomOverlay용 DOM을 만듭니다.
  * 호버·포커스·선택 시 아이콘 상단에 공항 이름 툴팁을 표시합니다.
+ * 툴팁이 다른 마커에 가리지 않도록 호버 변경은 지도 쪽 오버레이 zIndex와 맞춰 씁니다.
  */
-function createAirportMarkerContent(airport: Airport, onSelect: AirportSelectHandler): HTMLElement {
+function createAirportMarkerContent(
+	airport: Airport,
+	onSelect: AirportSelectHandler,
+	onHoverChange?: AirportHoverChangeHandler
+): HTMLElement {
 	const { iata, name } = airport
 
 	ensureAirportMarkerStyles()
@@ -131,6 +139,21 @@ function createAirportMarkerContent(airport: Airport, onSelect: AirportSelectHan
 			select(event)
 		}
 	})
+
+	if (onHoverChange) {
+		root.addEventListener('mouseenter', () => {
+			onHoverChange(true)
+		})
+		root.addEventListener('mouseleave', () => {
+			onHoverChange(false)
+		})
+		root.addEventListener('focus', () => {
+			onHoverChange(true)
+		})
+		root.addEventListener('blur', () => {
+			onHoverChange(false)
+		})
+	}
 
 	return root
 }

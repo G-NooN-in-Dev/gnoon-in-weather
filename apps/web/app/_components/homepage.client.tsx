@@ -32,11 +32,10 @@ function HomepageClient({ initialLocation, initialWeather, initialUnits, initial
 
 	const current = activeWeather?.realtime.current ?? null
 	const activeError = error ?? initialError
-	const isPageLoading = loading
 
 	return (
 		<WeatherUnitsProvider initialUnits={initialUnits}>
-			{isPageLoading ? <Loading /> : null}
+			{loading ? <Loading /> : null}
 			<div className="flex gap-10">
 				<div className="flex w-2/3 flex-col gap-6">
 					<CurrentWeatherSection

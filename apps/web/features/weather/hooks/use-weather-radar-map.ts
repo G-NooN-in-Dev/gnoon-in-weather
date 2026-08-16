@@ -104,22 +104,26 @@ function useWeatherRadarMap(): WeatherRadarMapState {
 
 		const controller = new AbortController()
 
-		ensureWeatherMapFrame({
-			layer,
-			slot: previewSlot,
-			variant: 'preview',
-			isCached: (key) => Boolean(frameUrlsRef.current[key]),
-			onReady: (key, url) => {
-				putFrame(key, url)
-				setPreviewError(null)
-			},
-			signal: controller.signal
-		}).catch((error: unknown) => {
-			if (controller.signal.aborted) {
-				return
+		void (async () => {
+			try {
+				await ensureWeatherMapFrame({
+					layer,
+					slot: previewSlot,
+					variant: 'preview',
+					isCached: (key) => Boolean(frameUrlsRef.current[key]),
+					onReady: (key, url) => {
+						putFrame(key, url)
+						setPreviewError(null)
+					},
+					signal: controller.signal
+				})
+			} catch (error: unknown) {
+				if (controller.signal.aborted) {
+					return
+				}
+				setPreviewError(error instanceof Error ? error.message : '날씨 맵을 불러오지 못했습니다.')
 			}
-			setPreviewError(error instanceof Error ? error.message : '날씨 맵을 불러오지 못했습니다.')
-		})
+		})()
 
 		return () => {
 			controller.abort()
@@ -134,22 +138,26 @@ function useWeatherRadarMap(): WeatherRadarMapState {
 
 		const controller = new AbortController()
 
-		preloadWeatherMapFrames({
-			layer,
-			slots,
-			variant: 'detail',
-			signal: controller.signal,
-			isCached: (frameKey) => Boolean(frameUrlsRef.current[frameKey]),
-			onFrameReady: (frameKey, objectUrl) => {
-				putFrame(frameKey, objectUrl)
-				setDetailError(null)
+		void (async () => {
+			try {
+				await preloadWeatherMapFrames({
+					layer,
+					slots,
+					variant: 'detail',
+					signal: controller.signal,
+					isCached: (frameKey) => Boolean(frameUrlsRef.current[frameKey]),
+					onFrameReady: (frameKey, objectUrl) => {
+						putFrame(frameKey, objectUrl)
+						setDetailError(null)
+					}
+				})
+			} catch (error: unknown) {
+				if (controller.signal.aborted) {
+					return
+				}
+				setDetailError(error instanceof Error ? error.message : '날씨 맵을 불러오지 못했습니다.')
 			}
-		}).catch((error: unknown) => {
-			if (controller.signal.aborted) {
-				return
-			}
-			setDetailError(error instanceof Error ? error.message : '날씨 맵을 불러오지 못했습니다.')
-		})
+		})()
 
 		return () => {
 			controller.abort()
