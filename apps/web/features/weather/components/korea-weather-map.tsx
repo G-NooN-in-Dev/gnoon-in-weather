@@ -69,8 +69,9 @@ function KoreaWeatherMap({
 		let cancelled = false
 		const retryTimeouts: number[] = []
 
-		loadKakaoMapsSdk()
-			.then((kakaoMap) => {
+		void (async () => {
+			try {
+				const kakaoMap = await loadKakaoMapsSdk()
 				if (cancelled || !containerRef.current) {
 					return
 				}
@@ -114,13 +115,13 @@ function KoreaWeatherMap({
 				for (const delayMs of [80, 200, 400]) {
 					retryTimeouts.push(window.setTimeout(syncView, delayMs))
 				}
-			})
-			.catch((error: unknown) => {
+			} catch (error: unknown) {
 				if (cancelled) {
 					return
 				}
 				setMapError(error instanceof Error ? error.message : '카카오맵을 불러오지 못했습니다.')
-			})
+			}
+		})()
 
 		return () => {
 			cancelled = true
