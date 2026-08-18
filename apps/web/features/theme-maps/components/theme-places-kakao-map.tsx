@@ -7,7 +7,8 @@ import {
 	createPlacesLatLngBounds,
 	DEFAULT_MARKER_Z_INDEX,
 	getThemeMapMarkerZIndex,
-	THEME_MAP_METRO_BOUNDS_PADDING,
+	setBoundsThenShiftSouth,
+	THEME_MAP_MAINLAND_BOUNDS_PADDING,
 	type ThemeMapBoundsPadding,
 	type ThemeMapPlace
 } from '@/features/theme-maps/lib/theme-map-place'
@@ -31,6 +32,8 @@ type ThemePlacesKakaoMapProps<TPlace extends ThemeMapPlace> = {
 	boundsPadding?: ThemeMapBoundsPadding
 	/** bounds 계산 기준이 바뀌면 지도를 다시 만듭니다. */
 	boundsKey?: string
+	/** 양수면 setBounds 이후 중심만 남쪽으로 옮깁니다. 줌은 유지합니다. */
+	southOffsetDeg?: number
 	selectedId: string | null
 	onSelect: ThemePlaceSelectHandler
 	onClear?: () => void
@@ -56,8 +59,9 @@ type MarkerEntry<TPlace extends ThemeMapPlace> = {
 function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 	places,
 	boundsPlaces,
-	boundsPadding = THEME_MAP_METRO_BOUNDS_PADDING,
+	boundsPadding = THEME_MAP_MAINLAND_BOUNDS_PADDING,
 	boundsKey,
+	southOffsetDeg = 0,
 	selectedId,
 	onSelect,
 	onClear,
@@ -81,6 +85,7 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 	const placesRef = useRef(places)
 	const boundsPlacesRef = useRef(boundsPlaces)
 	const boundsPaddingRef = useRef(boundsPadding)
+	const southOffsetDegRef = useRef(southOffsetDeg)
 
 	const [mapError, setMapError] = useState<string | null>(null)
 	const [mapReady, setMapReady] = useState(false)
@@ -95,6 +100,7 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 		placesRef.current = places
 		boundsPlacesRef.current = boundsPlaces
 		boundsPaddingRef.current = boundsPadding
+		southOffsetDegRef.current = southOffsetDeg
 	}, [
 		onSelect,
 		onClear,
@@ -104,7 +110,8 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 		setMarkerSelected,
 		places,
 		boundsPlaces,
-		boundsPadding
+		boundsPadding,
+		southOffsetDeg
 	])
 
 	useEffect(() => {
@@ -124,7 +131,7 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 				}
 
 				const { maps } = kakaoMap
-				const { top, right, bottom, left } = boundsPaddingRef.current
+				const padding = boundsPaddingRef.current
 				const bounds = createPlacesLatLngBounds(maps, boundsPlacesRef.current)
 				const southWest = bounds.getSouthWest()
 				const northEast = bounds.getNorthEast()
@@ -145,7 +152,7 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 					keyboardShortcuts: true
 				})
 
-				map.setBounds(bounds, top, right, bottom, left)
+				setBoundsThenShiftSouth(maps, map, bounds, padding, southOffsetDegRef.current)
 				mapRef.current = map
 
 				const markers: MarkerEntry<TPlace>[] = placesRef.current.map((place) => {
@@ -196,7 +203,7 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 						return
 					}
 					map.relayout()
-					map.setBounds(bounds, top, right, bottom, left)
+					setBoundsThenShiftSouth(maps, map, bounds, padding, southOffsetDegRef.current)
 				})
 
 				setMapError(null)
@@ -225,7 +232,7 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 			mapRef.current = null
 			setMapReady(false)
 		}
-	}, [boundsKey])
+	}, [boundsKey, southOffsetDeg])
 
 	useEffect(() => {
 		if (!mapReady) {
