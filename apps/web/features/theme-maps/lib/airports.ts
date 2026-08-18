@@ -3,27 +3,133 @@ type AirportKind = 'international' | 'domestic'
 type Airport = {
 	iata: string
 	name: string
+	address: string
 	lat: number
 	lng: number
 	kind: AirportKind
 }
 
 const AIRPORTS = [
-	{ iata: 'ICN', name: '인천국제공항', lat: 37.4602, lng: 126.4407, kind: 'international' },
-	{ iata: 'GMP', name: '김포국제공항', lat: 37.5583, lng: 126.7906, kind: 'international' },
-	{ iata: 'PUS', name: '김해국제공항', lat: 35.1795, lng: 128.9382, kind: 'international' },
-	{ iata: 'CJU', name: '제주국제공항', lat: 33.5113, lng: 126.4928, kind: 'international' },
-	{ iata: 'TAE', name: '대구국제공항', lat: 35.8941, lng: 128.6589, kind: 'international' },
-	{ iata: 'CJJ', name: '청주국제공항', lat: 36.7166, lng: 127.4991, kind: 'international' },
-	{ iata: 'MWX', name: '무안국제공항', lat: 34.9914, lng: 126.3828, kind: 'international' },
-	{ iata: 'YNY', name: '양양국제공항', lat: 38.0613, lng: 128.6692, kind: 'international' },
-	{ iata: 'KWJ', name: '광주공항', lat: 35.1264, lng: 126.8089, kind: 'domestic' },
-	{ iata: 'USN', name: '울산공항', lat: 35.5935, lng: 129.352, kind: 'domestic' },
-	{ iata: 'RSU', name: '여수공항', lat: 34.8423, lng: 127.6169, kind: 'domestic' },
-	{ iata: 'KPO', name: '포항경주공항', lat: 35.9879, lng: 129.4205, kind: 'domestic' },
-	{ iata: 'HIN', name: '사천공항', lat: 35.0886, lng: 128.0704, kind: 'domestic' },
-	{ iata: 'KUV', name: '군산공항', lat: 35.9038, lng: 126.6159, kind: 'domestic' },
-	{ iata: 'WJU', name: '원주공항', lat: 37.4412, lng: 127.9639, kind: 'domestic' }
+	{
+		iata: 'ICN',
+		name: '인천국제공항',
+		address: '인천 중구 공항로 272',
+		lat: 37.4602,
+		lng: 126.4407,
+		kind: 'international'
+	},
+	{
+		iata: 'GMP',
+		name: '김포국제공항',
+		address: '서울 강서구 하늘길 38',
+		lat: 37.558056,
+		lng: 126.790556,
+		kind: 'international'
+	},
+	{
+		iata: 'PUS',
+		name: '김해국제공항',
+		address: '부산 강서구 공항진입로 108',
+		lat: 35.179444,
+		lng: 128.938056,
+		kind: 'international'
+	},
+	{
+		iata: 'CJU',
+		name: '제주국제공항',
+		address: '제주 제주시 공항로 2',
+		lat: 33.511111,
+		lng: 126.492778,
+		kind: 'international'
+	},
+	{
+		iata: 'TAE',
+		name: '대구국제공항',
+		address: '대구 동구 공항로 221',
+		lat: 35.9,
+		lng: 128.638,
+		kind: 'international'
+	},
+	{
+		iata: 'CJJ',
+		name: '청주국제공항',
+		address: '충북 청주시 내수읍 오창대로 980 5-4',
+		lat: 36.7221,
+		lng: 127.4958,
+		kind: 'international'
+	},
+	{
+		iata: 'MWX',
+		name: '무안국제공항',
+		address: '전남광주 무안군 망운면 공항로 970-260',
+		lat: 34.991406,
+		lng: 126.382814,
+		kind: 'international'
+	},
+	{
+		iata: 'YNY',
+		name: '양양국제공항',
+		address: '강원 양양군 손양면 공항로 201',
+		lat: 38.061111,
+		lng: 128.668889,
+		kind: 'international'
+	},
+	{
+		iata: 'KWJ',
+		name: '광주공항',
+		address: '전남광주 광산구 상무대로 420-25',
+		lat: 35.1397,
+		lng: 126.8106,
+		kind: 'domestic'
+	},
+	{
+		iata: 'USN',
+		name: '울산공항',
+		address: '울산 북구 산업로 1103',
+		lat: 35.593333,
+		lng: 129.351667,
+		kind: 'domestic'
+	},
+	{
+		iata: 'RSU',
+		name: '여수공항',
+		address: '전남광주 여수시 율촌면 여순로 386',
+		lat: 34.842222,
+		lng: 127.616667,
+		kind: 'domestic'
+	},
+	{
+		iata: 'KPO',
+		name: '포항경주공항',
+		address: '경북 포항시 남구 동해면 일월로 18',
+		lat: 35.9865,
+		lng: 129.4335,
+		kind: 'domestic'
+	},
+	{
+		iata: 'HIN',
+		name: '사천공항',
+		address: '경남 사천시 사천읍 사천대로 1971',
+		lat: 35.092,
+		lng: 128.0867,
+		kind: 'domestic'
+	},
+	{
+		iata: 'KUV',
+		name: '군산공항',
+		address: '전북 군산시 옥서면 산동길 2',
+		lat: 35.926,
+		lng: 126.6158,
+		kind: 'domestic'
+	},
+	{
+		iata: 'WJU',
+		name: '원주공항',
+		address: '강원 횡성군 횡성읍 횡성로 42',
+		lat: 37.4591,
+		lng: 127.977,
+		kind: 'domestic'
+	}
 ] as const satisfies readonly Airport[]
 
 type AirportIata = (typeof AIRPORTS)[number]['iata']
