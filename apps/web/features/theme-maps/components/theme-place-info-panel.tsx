@@ -6,9 +6,11 @@ import { Spinner } from '@shared/ui/spinner'
 import { ArrowBigUp, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import type { ReactNode } from 'react'
 
 import EmptyState from '@/components/empty-state'
 import { useWeatherUnits } from '@/contexts/weather-units.context'
+import usePlaceRealtimeWeather from '@/features/theme-maps/hooks/use-place-realtime-weather'
 import {
 	formatCurrentLabelSpeedAndDistance,
 	formatCurrentLabelTemperature,
@@ -19,53 +21,58 @@ import {
 	formatSpeedUnitLabel,
 	formatWeatherIconUrl
 } from '@/features/weather/lib/format-weather-values'
-import { AppApiError } from '@/types/error.type'
-import { WeatherApiRealtimeResponse } from '@/types/weather-api.type'
+import type { AppApiError } from '@/types/error.type'
+import type { WeatherApiRealtimeResponse } from '@/types/weather-api.type'
 import { formatLocaleNumber } from '@/utils/format'
 
-import useAirportRealtimeWeather from '../hooks/use-airport-realtime-weather'
-import { Airport } from '../lib/airports'
-import { THEME_MAPS_ROUTES } from '../lib/theme-maps-routes'
-
-type AirportInfoPanelContentProps = {
-	airport: Airport
-	onClose: () => void
+type ThemePlaceInfoTarget = {
+	id: string
+	lat: number
+	lng: number
 }
 
-type AirportInfoContentProps = {
+type ThemePlaceInfoPanelProps = {
+	title: string
+	subtitle?: string
+	description?: string
+	place: ThemePlaceInfoTarget
+	onClose: () => void
+	errorDescription: string
+	spinnerClassName?: string
+	detailHref?: string
+	detailLabel?: string
+}
+
+type ThemePlaceWeatherContentProps = {
 	realtimeWeather: WeatherApiRealtimeResponse
 }
 
-function AirportInfoPlaceholder() {
+function ThemePlaceInfoPlaceholder({ children }: { children: ReactNode }) {
 	return (
 		<div className="bg-background/90 text-grayscale-600 border-grayscale-200 rounded-md border px-4 py-3 text-sm shadow-sm backdrop-blur-sm">
-			지도에서 공항을 선택하세요.
+			{children}
 		</div>
 	)
 }
 
-function AirportInfoLoadingContent() {
+function ThemePlaceInfoLoadingContent({ spinnerClassName }: { spinnerClassName: string }) {
 	return (
 		<div className="flex flex-col items-center justify-center gap-2">
-			<Spinner className="text-pastel-blue-600 size-10" />
+			<Spinner className={spinnerClassName} />
 			<p className="text-grayscale-600 animate-pulse text-sm">날씨 정보를 불러오는 중입니다.</p>
 		</div>
 	)
 }
 
-function AirportInfoErrorContent({ error }: { error: AppApiError | null }) {
+function ThemePlaceInfoErrorContent({ error, description }: { error: AppApiError | null; description: string }) {
 	return (
-		<EmptyState
-			title="날씨 정보를 불러오지 못했습니다."
-			description="공항 날씨 정보를 불러오는 데 오류가 발생했습니다."
-			className="border-none p-0"
-		>
-			{error ? <p className="text-danger text-sm">{error?.message}</p> : null}
+		<EmptyState title="날씨 정보를 불러오지 못했습니다." description={description} className="border-none p-0">
+			{error ? <p className="text-danger text-sm">{error.message}</p> : null}
 		</EmptyState>
 	)
 }
 
-function AirportInfoContent({ realtimeWeather }: AirportInfoContentProps) {
+function ThemePlaceWeatherContent({ realtimeWeather }: ThemePlaceWeatherContentProps) {
 	const { units } = useWeatherUnits()
 	const { current } = realtimeWeather
 	const { wind_degree } = current
@@ -120,38 +127,56 @@ function AirportInfoContent({ realtimeWeather }: AirportInfoContentProps) {
 	)
 }
 
-function AirportInfoPanelContent({ airport, onClose }: AirportInfoPanelContentProps) {
-	const { realtimeWeather, loading, error } = useAirportRealtimeWeather(airport)
-
-	const { iata, name } = airport
+function ThemePlaceInfoPanel({
+	title,
+	subtitle,
+	description,
+	place,
+	onClose,
+	errorDescription,
+	spinnerClassName = 'text-pastel-blue-600 size-10',
+	detailHref,
+	detailLabel = '자세히 보기'
+}: ThemePlaceInfoPanelProps) {
+	const { realtimeWeather, loading, error } = usePlaceRealtimeWeather(place)
 
 	return (
-		<Card className="bg-background/95 w-full max-w-sm shadow-md backdrop-blur-sm">
-			<CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0 pb-2">
-				<div className="flex items-baseline gap-2">
-					<CardTitle className="truncate text-lg font-semibold">{name}</CardTitle>
-					<CardDescription className="text-grayscale-600 text-sm tracking-wide">{iata}</CardDescription>
+		<Card className="bg-background/95 w-full max-w-sm gap-4 shadow-md backdrop-blur-sm">
+			<CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
+				<div className="min-w-0">
+					<div className="flex items-baseline gap-2">
+						<CardTitle className="truncate text-lg font-semibold">{title}</CardTitle>
+						{subtitle ? (
+							<CardDescription className="text-grayscale-600 shrink-0 text-sm tracking-wide">
+								{subtitle}
+							</CardDescription>
+						) : null}
+					</div>
+					{description ? <p className="text-grayscale-500 text-xs leading-5">{description}</p> : null}
 				</div>
 				<Button type="button" variant="ghost" size="icon-sm" aria-label="닫기" onClick={onClose} className="shrink-0">
 					<X />
 				</Button>
 			</CardHeader>
 			<CardContent className="min-h-20">
-				{loading && <AirportInfoLoadingContent />}
-				{!loading && (error || !realtimeWeather) && <AirportInfoErrorContent error={error} />}
-				{!loading && !error && realtimeWeather && <AirportInfoContent realtimeWeather={realtimeWeather} />}
+				{loading && <ThemePlaceInfoLoadingContent spinnerClassName={spinnerClassName} />}
+				{!loading && (error || !realtimeWeather) && (
+					<ThemePlaceInfoErrorContent error={error} description={errorDescription} />
+				)}
+				{!loading && !error && realtimeWeather && <ThemePlaceWeatherContent realtimeWeather={realtimeWeather} />}
 			</CardContent>
-			{realtimeWeather && (
+			{realtimeWeather && detailHref ? (
 				<CardFooter>
-					<Link href={THEME_MAPS_ROUTES.airportDetail(iata)} className="w-full">
+					<Link href={detailHref} className="w-full">
 						<Button type="button" className="w-full">
-							자세히 보기
+							{detailLabel}
 						</Button>
 					</Link>
 				</CardFooter>
-			)}
+			) : null}
 		</Card>
 	)
 }
 
-export { AirportInfoPanelContent, AirportInfoPlaceholder }
+export { ThemePlaceInfoPlaceholder }
+export default ThemePlaceInfoPanel

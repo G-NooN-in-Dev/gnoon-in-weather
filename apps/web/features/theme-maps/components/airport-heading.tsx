@@ -3,7 +3,7 @@ import WeatherUnitSettingsPopover from '@/features/weather/components/weather-un
 import type { AirportHeadingProps } from '../types/airport-detail-component.type'
 
 function AirportHeading({ airport, error }: AirportHeadingProps) {
-	const { name, iata } = airport
+	const { name, iata, address } = airport
 
 	return (
 		<div className="flex flex-col gap-1">
@@ -14,6 +14,7 @@ function AirportHeading({ airport, error }: AirportHeadingProps) {
 				</div>
 				<WeatherUnitSettingsPopover />
 			</div>
+			<p className="text-grayscale-500 text-sm">{address}</p>
 			{error ? <p className="text-destructive text-sm">{error.message}</p> : null}
 		</div>
 	)

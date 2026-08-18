@@ -2,7 +2,9 @@ import AirportInfoPanel from '@/features/theme-maps/components/airport-info-pane
 import AirportsKakaoMap from '@/features/theme-maps/components/airports-kakao-map'
 import { getAirportByIata } from '@/features/theme-maps/lib/airports'
 
+/* eslint-disable no-unused-vars -- 콜백 시그니처의 파라미터명은 문서용입니다. */
 type AirportSelectHandler = (iata: string) => void
+/* eslint-enable no-unused-vars */
 
 type AirportsMapSectionProps = {
 	selectedIata: string | null
