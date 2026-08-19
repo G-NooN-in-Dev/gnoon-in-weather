@@ -33,7 +33,7 @@ type ThemePlaceInfoTarget = {
 
 type ThemePlaceInfoPanelProps = {
 	title: string
-	subtitle?: string
+	subtitle?: ReactNode
 	description?: string
 	place: ThemePlaceInfoTarget
 	onClose: () => void
@@ -144,7 +144,7 @@ function ThemePlaceInfoPanel({
 		<Card className="bg-background/95 w-full max-w-sm gap-4 shadow-md backdrop-blur-sm">
 			<CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
 				<div className="min-w-0">
-					<div className="flex items-baseline gap-2">
+					<div className="flex items-center gap-2">
 						<CardTitle className="truncate text-lg font-semibold">{title}</CardTitle>
 						{subtitle ? (
 							<CardDescription className="text-grayscale-600 shrink-0 text-sm tracking-wide">

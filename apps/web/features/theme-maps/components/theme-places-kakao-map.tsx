@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react'
 
 import {
 	createPlacesLatLngBounds,
-	DEFAULT_MARKER_Z_INDEX,
 	getThemeMapMarkerZIndex,
 	setBoundsThenShiftSouth,
 	THEME_MAP_MAINLAND_BOUNDS_PADDING,
@@ -171,7 +170,7 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 							}
 
 							hoveredIdRef.current = hovered ? id : hoveredIdRef.current === id ? null : hoveredIdRef.current
-							overlay.setZIndex(getThemeMapMarkerZIndex(id, selectedIdRef.current, hoveredIdRef.current))
+							overlay.setZIndex(getThemeMapMarkerZIndex(place, selectedIdRef.current, hoveredIdRef.current))
 						}
 					)
 
@@ -184,7 +183,7 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 						position: new LatLng(lat, lng),
 						xAnchor: 0.5,
 						yAnchor: 0.5,
-						zIndex: DEFAULT_MARKER_Z_INDEX
+						zIndex: getThemeMapMarkerZIndex(place, selectedIdRef.current, hoveredIdRef.current)
 					})
 					overlayHolder.overlay = overlay
 
@@ -249,7 +248,7 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 		for (const marker of markersRef.current) {
 			const visible = isPlaceVisibleRef.current?.(marker.place) ?? true
 			marker.overlay.setMap(visible ? map : null)
-			marker.overlay.setZIndex(getThemeMapMarkerZIndex(marker.place.id, selectedIdRef.current, null))
+			marker.overlay.setZIndex(getThemeMapMarkerZIndex(marker.place, selectedIdRef.current, null))
 		}
 	}, [mapReady, visibilityKey])
 
@@ -261,7 +260,7 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 		for (const marker of markersRef.current) {
 			const selected = marker.place.id === selectedId
 			setMarkerSelectedRef.current(marker.content, selected)
-			marker.overlay.setZIndex(getThemeMapMarkerZIndex(marker.place.id, selectedId, hoveredIdRef.current))
+			marker.overlay.setZIndex(getThemeMapMarkerZIndex(marker.place, selectedId, hoveredIdRef.current))
 		}
 	}, [mapReady, selectedId])
 

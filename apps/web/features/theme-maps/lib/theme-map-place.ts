@@ -3,6 +3,8 @@ type ThemeMapPlace = {
 	name: string
 	lat: number
 	lng: number
+	/** CustomOverlay 기본 zIndex. 없으면 DEFAULT_MARKER_Z_INDEX. */
+	markerZIndex?: number
 }
 
 type ThemeMapBoundsPadding = {
@@ -61,12 +63,24 @@ const SELECTED_MARKER_Z_INDEX = 10
 /** 툴팁이 이웃 마커 오버레이 위에 오도록 호버 중인 마커만 더 올립니다. */
 const HOVERED_MARKER_Z_INDEX = 20
 
-function getThemeMapMarkerZIndex(id: string, selectedId: string | null, hoveredId: string | null): number {
-	if (id === hoveredId) {
+function getThemeMapPlaceBaseZIndex(place: ThemeMapPlace): number {
+	return place.markerZIndex ?? DEFAULT_MARKER_Z_INDEX
+}
+
+function getThemeMapMarkerZIndex(
+	place: ThemeMapPlace,
+	selectedId: string | null,
+	hoveredId: string | null
+): number {
+	if (place.id === hoveredId) {
 		return HOVERED_MARKER_Z_INDEX
 	}
 
-	return id === selectedId ? SELECTED_MARKER_Z_INDEX : DEFAULT_MARKER_Z_INDEX
+	if (place.id === selectedId) {
+		return SELECTED_MARKER_Z_INDEX
+	}
+
+	return getThemeMapPlaceBaseZIndex(place)
 }
 
 /** 지정 장소들로 LatLngBounds를 만듭니다. */
@@ -110,7 +124,6 @@ function setBoundsThenShiftSouth(
 
 export {
 	createPlacesLatLngBounds,
-	DEFAULT_MARKER_Z_INDEX,
 	getThemeMapBoundsView,
 	getThemeMapMarkerZIndex,
 	setBoundsThenShiftSouth,

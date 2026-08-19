@@ -19,12 +19,7 @@ function AirportsMapSection({ selectedIata, onSelect, onClear }: AirportsMapSect
 	const selectedAirport = selectedIata ? (getAirportByIata(selectedIata) ?? null) : null
 
 	return (
-		<section className="relative h-[calc(100dvh-6.5rem)] w-full overflow-hidden">
-			<div className="pointer-events-none absolute top-3 right-3 z-20 w-[min(100%-1.5rem,20rem)] sm:top-4 sm:right-4">
-				<div className="pointer-events-auto">
-					<AirportInfoPanel airport={selectedAirport} onClose={onClear} />
-				</div>
-			</div>
+		<section className="relative h-[calc(100dvh-6.5rem)] w-full">
 			<AirportsKakaoMap
 				selectedIata={selectedIata}
 				onSelect={onSelect}
@@ -32,6 +27,11 @@ function AirportsMapSection({ selectedIata, onSelect, onClear }: AirportsMapSect
 				className="size-full"
 				mapClassName="size-full rounded-none"
 			/>
+			<div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex justify-end p-3 sm:p-4">
+				<div className="pointer-events-auto w-[min(100%,20rem)]">
+					<AirportInfoPanel airport={selectedAirport} onClose={onClear} />
+				</div>
+			</div>
 		</section>
 	)
 }
