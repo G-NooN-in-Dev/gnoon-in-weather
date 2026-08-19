@@ -5,7 +5,13 @@ import {
 	setBaseballMarkerSelected
 } from '@/features/theme-maps/components/baseball-marker-content'
 import ThemePlacesKakaoMap from '@/features/theme-maps/components/theme-places-kakao-map'
-import { BASEBALL_PARKS, type BaseballPark, hasFirstTeamParkLevel } from '@/features/theme-maps/lib/baseball-parks'
+import {
+	BASEBALL_PARKS,
+	type BaseballPark,
+	type BaseballParkMapFilter,
+	hasFirstTeamParkLevel,
+	isBaseballParkVisibleForFilter
+} from '@/features/theme-maps/lib/baseball-parks'
 import { getThemeMapBoundsView } from '@/features/theme-maps/lib/theme-map-place'
 
 /** 1군 홈구장 마커. 줌 아웃에서 2군보다 위에 둡니다. */
@@ -28,15 +34,23 @@ type BaseballKakaoMapProps = {
 	selectedParkId: string | null
 	onSelect: BaseballParkSelectHandler
 	onClear?: () => void
+	/** all이면 전체, first·second면 해당 군 홈이 있는 구장만 보여 줍니다. */
+	filter?: BaseballParkMapFilter
 	className?: string
 	mapClassName?: string
 }
 
 /**
  * 카카오맵 + 야구장 마커.
- * 제주 구장이 없어 mainland(서울~부산) 뷰를 씁니다. 이후 야구장 피커도 같은 뷰를 씁니다.
  */
-function BaseballKakaoMap({ selectedParkId, onSelect, onClear, className, mapClassName }: BaseballKakaoMapProps) {
+function BaseballKakaoMap({
+	selectedParkId,
+	onSelect,
+	onClear,
+	filter = 'all',
+	className,
+	mapClassName
+}: BaseballKakaoMapProps) {
 	const boundsView = getThemeMapBoundsView('mainland')
 
 	return (
@@ -49,6 +63,8 @@ function BaseballKakaoMap({ selectedParkId, onSelect, onClear, className, mapCla
 			selectedId={selectedParkId}
 			onSelect={onSelect}
 			onClear={onClear}
+			isPlaceVisible={(place) => isBaseballParkVisibleForFilter(place, filter)}
+			visibilityKey={filter}
 			createMarkerContent={createBaseballMarkerContent}
 			setMarkerSelected={setBaseballMarkerSelected}
 			className={className}

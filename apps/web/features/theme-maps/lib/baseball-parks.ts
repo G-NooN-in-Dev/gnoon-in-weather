@@ -7,6 +7,9 @@ import {
 
 type BaseballParkLevel = BaseballTeamLevel
 
+/** 야구장 지도 필터. 1군·2군 홈이 같이 있는 구장은 양쪽 탭에 모두 나옵니다. */
+type BaseballParkMapFilter = 'all' | BaseballParkLevel
+
 type BaseballParkHomeTeam = {
 	teamId: BaseballTeamId
 	level: BaseballParkLevel
@@ -219,8 +222,18 @@ function getBaseballParkById(id: string): BaseballPark | undefined {
 	return BASEBALL_PARKS_BY_ID.get(id)
 }
 
+const BASEBALL_PARK_MAP_FILTER_OPTIONS = [
+	{ value: 'all', label: '전체' },
+	{ value: 'first', label: '1군' },
+	{ value: 'second', label: '2군' }
+] as const satisfies ReadonlyArray<{ value: BaseballParkMapFilter; label: string }>
+
 function hasFirstTeamParkLevel(park: BaseballPark): boolean {
 	return park.homeTeams.some(({ level }) => level === 'first')
+}
+
+function isBaseballParkVisibleForFilter(park: BaseballPark, filter: BaseballParkMapFilter): boolean {
+	return filter === 'all' || park.homeTeams.some(({ level }) => level === filter)
 }
 
 function getBaseballParkHomeTeamIds(park: BaseballPark): BaseballTeamId[] {
@@ -246,10 +259,12 @@ function getBaseballParkHomeTeamLabel(park: BaseballPark): string {
 }
 
 export {
+	BASEBALL_PARK_MAP_FILTER_OPTIONS,
 	BASEBALL_PARKS,
 	getBaseballParkById,
 	getBaseballParkHomeTeamIds,
 	getBaseballParkHomeTeamLabel,
-	hasFirstTeamParkLevel
+	hasFirstTeamParkLevel,
+	isBaseballParkVisibleForFilter
 }
-export type { BaseballPark, BaseballParkHomeTeam, BaseballParkId, BaseballParkLevel }
+export type { BaseballPark, BaseballParkHomeTeam, BaseballParkId, BaseballParkLevel, BaseballParkMapFilter }

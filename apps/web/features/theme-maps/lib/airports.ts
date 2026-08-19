@@ -1,5 +1,8 @@
 type AirportKind = 'international' | 'domestic'
 
+/** 공항 지도 필터. 국제선 공항은 국내선도 운항하므로 국내선 전용 탭은 두지 않습니다. */
+type AirportMapFilter = 'all' | 'international'
+
 type Airport = {
 	iata: string
 	name: string
@@ -140,10 +143,19 @@ function getAirportByIata(iata: string): Airport | undefined {
 	return AIRPORTS_BY_IATA.get(iata.toUpperCase())
 }
 
+const AIRPORT_MAP_FILTER_OPTIONS = [
+	{ value: 'all', label: '전체' },
+	{ value: 'international', label: '국제선' }
+] as const satisfies ReadonlyArray<{ value: AirportMapFilter; label: string }>
+
 /** 스위치가 켜지면 국제공항만, 꺼지면 전체 공항 마커를 보여 줍니다. */
 function setOnlyInternationalMode(kind: AirportKind, internationalOnly: boolean): boolean {
 	return !internationalOnly || kind === 'international'
 }
 
-export { AIRPORTS, getAirportByIata, setOnlyInternationalMode }
-export type { Airport, AirportIata, AirportKind }
+function isAirportVisibleForFilter(airport: Airport, filter: AirportMapFilter): boolean {
+	return setOnlyInternationalMode(airport.kind, filter === 'international')
+}
+
+export { AIRPORT_MAP_FILTER_OPTIONS, AIRPORTS, getAirportByIata, isAirportVisibleForFilter, setOnlyInternationalMode }
+export type { Airport, AirportIata, AirportKind, AirportMapFilter }
