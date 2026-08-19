@@ -12,8 +12,9 @@ import { THEME_MAPS_ROUTES } from '@/features/theme-maps/lib/theme-maps-routes'
 const INTERNATIONAL_SWITCH_ID = 'airport-picker-international'
 
 /**
- * 공항 상세 우측의 공항 선택 섹션.
- * 한반도 전체에 마커를 두고, 국제공항 스위치로 마커만 걸러 해당 공항 상세로 이동합니다.
+ * 공항 상세 우측의 공항 선택 섹션
+ * 한반도 전체에 마커를 두고, 마커를 선택하여 해당 공항의 상세 페이지로 이동합니다.
+ * 국제선 스위치로 국제선을 운영하는 공항만 표시할 수 있습니다
  */
 function AirportPickerSection() {
 	const router = useRouter()
@@ -35,7 +36,7 @@ function AirportPickerSection() {
 									}
 								}}
 							/>
-							<Label htmlFor={INTERNATIONAL_SWITCH_ID}>국제선만</Label>
+							<Label htmlFor={INTERNATIONAL_SWITCH_ID}>국제선</Label>
 						</div>
 					</div>
 				</CardHeader>
