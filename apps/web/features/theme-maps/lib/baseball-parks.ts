@@ -7,8 +7,8 @@ import {
 
 type BaseballParkLevel = BaseballTeamLevel
 
-/** 야구장 지도 필터. 1군·2군 홈이 같이 있는 구장은 양쪽 탭에 모두 나옵니다. */
-type BaseballParkMapFilter = 'all' | BaseballParkLevel
+/** 야구장 지도·피커 필터. 1군·2군만 둡니다. */
+type BaseballParkMapFilter = BaseballParkLevel
 
 type BaseballParkHomeTeam = {
 	teamId: BaseballTeamId
@@ -223,17 +223,56 @@ function getBaseballParkById(id: string): BaseballPark | undefined {
 }
 
 const BASEBALL_PARK_MAP_FILTER_OPTIONS = [
-	{ value: 'all', label: '전체' },
 	{ value: 'first', label: '1군' },
 	{ value: 'second', label: '2군' }
 ] as const satisfies ReadonlyArray<{ value: BaseballParkMapFilter; label: string }>
 
+function hasBaseballParkLevel(park: BaseballPark, level: BaseballParkLevel): boolean {
+	return park.homeTeams.some((homeTeam) => homeTeam.level === level)
+}
+
 function hasFirstTeamParkLevel(park: BaseballPark): boolean {
-	return park.homeTeams.some(({ level }) => level === 'first')
+	return hasBaseballParkLevel(park, 'first')
 }
 
 function isBaseballParkVisibleForFilter(park: BaseballPark, filter: BaseballParkMapFilter): boolean {
-	return filter === 'all' || park.homeTeams.some(({ level }) => level === filter)
+	return hasBaseballParkLevel(park, filter)
+}
+
+/**
+ * 구장에 맞는 필터 탭을 고릅니다.
+ * 1군·2군 모두면 preferred를 쓰고, 없거나 해당 없으면 1군을 우선합니다.
+ */
+function resolveBaseballParkMapFilter(
+	park: BaseballPark,
+	preferred: BaseballParkMapFilter | null = null
+): BaseballParkMapFilter {
+	const hasFirst = hasBaseballParkLevel(park, 'first')
+	const hasSecond = hasBaseballParkLevel(park, 'second')
+
+	if (preferred === 'first' && hasFirst) {
+		return 'first'
+	}
+
+	if (preferred === 'second' && hasSecond) {
+		return 'second'
+	}
+
+	if (hasFirst) {
+		return 'first'
+	}
+
+	return 'second'
+}
+
+function parseBaseballParkMapFilter(value: string | string[] | undefined | null): BaseballParkMapFilter | null {
+	const raw = Array.isArray(value) ? value[0] : value
+
+	if (raw === 'first' || raw === 'second') {
+		return raw
+	}
+
+	return null
 }
 
 function getBaseballParkHomeTeamIds(park: BaseballPark): BaseballTeamId[] {
@@ -264,7 +303,10 @@ export {
 	getBaseballParkById,
 	getBaseballParkHomeTeamIds,
 	getBaseballParkHomeTeamLabel,
+	hasBaseballParkLevel,
 	hasFirstTeamParkLevel,
-	isBaseballParkVisibleForFilter
+	isBaseballParkVisibleForFilter,
+	parseBaseballParkMapFilter,
+	resolveBaseballParkMapFilter
 }
 export type { BaseballPark, BaseballParkHomeTeam, BaseballParkId, BaseballParkLevel, BaseballParkMapFilter }
