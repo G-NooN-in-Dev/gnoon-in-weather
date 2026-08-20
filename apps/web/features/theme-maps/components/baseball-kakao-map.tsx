@@ -65,7 +65,9 @@ function BaseballKakaoMap({
 			onClear={onClear}
 			isPlaceVisible={(place) => isBaseballParkVisibleForFilter(place, filter)}
 			visibilityKey={filter}
-			createMarkerContent={createBaseballMarkerContent}
+			createMarkerContent={(place, handleSelect, onHoverChange) =>
+				createBaseballMarkerContent(place, filter, handleSelect, onHoverChange)
+			}
 			setMarkerSelected={setBaseballMarkerSelected}
 			className={className}
 			mapClassName={mapClassName}

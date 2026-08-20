@@ -1,4 +1,5 @@
 import {
+	type BaseballTeam,
 	type BaseballTeamId,
 	type BaseballTeamLevel,
 	getBaseballTeamById,
@@ -279,6 +280,21 @@ function getBaseballParkHomeTeamIds(park: BaseballPark): BaseballTeamId[] {
 	return park.homeTeams.map(({ teamId }) => teamId)
 }
 
+/** 지도 필터(1군/2군)에 해당하는 홈팀. 잠실처럼 같은 군에 둘이면 모두 반환합니다. */
+function getBaseballParkHomeTeamsForFilter(
+	park: BaseballPark,
+	filter: BaseballParkMapFilter
+): BaseballTeam[] {
+	return park.homeTeams.flatMap((homeTeam) => {
+		if (homeTeam.level !== filter) {
+			return []
+		}
+
+		const team = getBaseballTeamById(homeTeam.teamId)
+		return team ? [team] : []
+	})
+}
+
 function getBaseballParkHomeTeamLabel(park: BaseballPark): string {
 	return park.homeTeams
 		.flatMap((homeTeam) => {
@@ -303,6 +319,7 @@ export {
 	getBaseballParkById,
 	getBaseballParkHomeTeamIds,
 	getBaseballParkHomeTeamLabel,
+	getBaseballParkHomeTeamsForFilter,
 	hasBaseballParkLevel,
 	hasFirstTeamParkLevel,
 	isBaseballParkVisibleForFilter,

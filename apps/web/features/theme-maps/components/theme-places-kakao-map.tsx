@@ -41,6 +41,8 @@ type ThemePlacesKakaoMapProps<TPlace extends ThemeMapPlace> = {
 	visibilityKey?: string | boolean
 	createMarkerContent: ThemePlaceMarkerContentFactory<TPlace>
 	setMarkerSelected: ThemePlaceMarkerSelectedHandler
+	/** false면 스크롤·더블클릭·핀치 줌을 막고 초기 bounds 줌을 유지합니다. */
+	zoomable?: boolean
 	className?: string
 	mapClassName?: string
 }
@@ -49,6 +51,38 @@ type MarkerEntry<TPlace extends ThemeMapPlace> = {
 	place: TPlace
 	overlay: kakao.maps.CustomOverlay
 	content: HTMLElement
+}
+
+function attachThemePlaceMarkerContent<TPlace extends ThemeMapPlace>({
+	place,
+	overlayHolder,
+	createMarkerContent,
+	onSelect,
+	selectedIdRef,
+	hoveredIdRef
+}: {
+	place: TPlace
+	overlayHolder: { overlay: kakao.maps.CustomOverlay | null }
+	createMarkerContent: ThemePlaceMarkerContentFactory<TPlace>
+	onSelect: ThemePlaceSelectHandler
+	selectedIdRef: { current: string | null }
+	hoveredIdRef: { current: string | null }
+}): HTMLElement {
+	const { id } = place
+
+	return createMarkerContent(
+		place,
+		onSelect,
+		(hovered) => {
+			const overlay = overlayHolder.overlay
+			if (!overlay) {
+				return
+			}
+
+			hoveredIdRef.current = hovered ? id : hoveredIdRef.current === id ? null : hoveredIdRef.current
+			overlay.setZIndex(getThemeMapMarkerZIndex(place, selectedIdRef.current, hoveredIdRef.current))
+		}
+	)
 }
 
 /**
@@ -68,6 +102,7 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 	visibilityKey,
 	createMarkerContent,
 	setMarkerSelected,
+	zoomable = true,
 	className,
 	mapClassName
 }: ThemePlacesKakaoMapProps<TPlace>) {
@@ -146,33 +181,31 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 					center,
 					level: 10,
 					draggable: true,
-					scrollwheel: true,
-					disableDoubleClickZoom: false,
+					scrollwheel: zoomable,
+					disableDoubleClickZoom: !zoomable,
 					keyboardShortcuts: true
 				})
 
 				setBoundsThenShiftSouth(maps, map, bounds, padding, southOffsetDegRef.current)
+				if (!zoomable) {
+					map.setZoomable(false)
+				}
 				mapRef.current = map
 
 				const markers: MarkerEntry<TPlace>[] = placesRef.current.map((place) => {
 					const overlayHolder: { overlay: kakao.maps.CustomOverlay | null } = { overlay: null }
-					const { id, lat, lng } = place
+					const { lat, lng } = place
 
-					const content = createMarkerContentRef.current(
+					const content = attachThemePlaceMarkerContent({
 						place,
-						(selectedPlaceId) => {
+						overlayHolder,
+						createMarkerContent: createMarkerContentRef.current,
+						onSelect: (selectedPlaceId) => {
 							onSelectRef.current(selectedPlaceId)
 						},
-						(hovered) => {
-							const overlay = overlayHolder.overlay
-							if (!overlay) {
-								return
-							}
-
-							hoveredIdRef.current = hovered ? id : hoveredIdRef.current === id ? null : hoveredIdRef.current
-							overlay.setZIndex(getThemeMapMarkerZIndex(place, selectedIdRef.current, hoveredIdRef.current))
-						}
-					)
+						selectedIdRef,
+						hoveredIdRef
+					})
 
 					const visible = isPlaceVisibleRef.current?.(place) ?? true
 
@@ -231,7 +264,7 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 			mapRef.current = null
 			setMapReady(false)
 		}
-	}, [boundsKey, southOffsetDeg])
+	}, [boundsKey, southOffsetDeg, zoomable])
 
 	useEffect(() => {
 		if (!mapReady) {
@@ -245,11 +278,38 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 
 		hoveredIdRef.current = null
 
+		const nextMarkers: MarkerEntry<TPlace>[] = []
+
 		for (const marker of markersRef.current) {
+			const overlayHolder = { overlay: marker.overlay }
+			const content = attachThemePlaceMarkerContent({
+				place: marker.place,
+				overlayHolder,
+				createMarkerContent: createMarkerContentRef.current,
+				onSelect: (selectedPlaceId) => {
+					onSelectRef.current(selectedPlaceId)
+				},
+				selectedIdRef,
+				hoveredIdRef
+			})
+
+			marker.overlay.setContent(content)
+
+			const selected = marker.place.id === selectedIdRef.current
+			setMarkerSelectedRef.current(content, selected)
+
 			const visible = isPlaceVisibleRef.current?.(marker.place) ?? true
 			marker.overlay.setMap(visible ? map : null)
 			marker.overlay.setZIndex(getThemeMapMarkerZIndex(marker.place, selectedIdRef.current, null))
+
+			nextMarkers.push({
+				place: marker.place,
+				overlay: marker.overlay,
+				content
+			})
 		}
+
+		markersRef.current = nextMarkers
 	}, [mapReady, visibilityKey])
 
 	useEffect(() => {
