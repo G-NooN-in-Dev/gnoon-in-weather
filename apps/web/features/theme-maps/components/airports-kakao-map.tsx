@@ -25,6 +25,8 @@ type AirportsKakaoMapProps = {
 	boundsMode?: ThemeMapBoundsMode
 	/** true면 국제선 운영하는 공항만. bounds는 바꾸지 않고 마커만 보이거나 숨깁니다. */
 	internationalOnly?: boolean
+	/** false면 줌을 막고 초기 bounds 줌을 유지합니다. */
+	zoomable?: boolean
 	className?: string
 	mapClassName?: string
 }
@@ -52,6 +54,7 @@ function AirportsKakaoMap({
 	onClear,
 	boundsMode = 'mainland',
 	internationalOnly = false,
+	zoomable = true,
 	className,
 	mapClassName
 }: AirportsKakaoMapProps) {
@@ -71,6 +74,7 @@ function AirportsKakaoMap({
 			visibilityKey={internationalOnly}
 			createMarkerContent={createAirportMarkerContent}
 			setMarkerSelected={setAirportMarkerSelected}
+			zoomable={zoomable}
 			className={className}
 			mapClassName={mapClassName}
 		/>

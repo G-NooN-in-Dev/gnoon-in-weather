@@ -21,4 +21,14 @@ type AirportDetailClientProps = {
 	initialError: AppApiError | null
 }
 
-export type { AirportCurrentWeatherSectionProps, AirportDetailClientProps, AirportHeadingProps }
+/** 공항 상세 우측의 공항 선택 지도 */
+type AirportPickerSectionProps = {
+	selectedIata: string
+}
+
+export type {
+	AirportCurrentWeatherSectionProps,
+	AirportDetailClientProps,
+	AirportHeadingProps,
+	AirportPickerSectionProps
+}
