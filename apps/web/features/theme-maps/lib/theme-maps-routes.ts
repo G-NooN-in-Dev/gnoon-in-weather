@@ -1,8 +1,18 @@
+import type { BaseballParkMapFilter } from './baseball-parks'
+
 const THEME_MAPS_ROUTES = {
 	home: '/theme-maps',
 	airports: '/theme-maps/airports',
 	baseball: '/theme-maps/baseball',
-	airportDetail: (iata: string) => `/theme-maps/airports/${iata.toUpperCase()}`
+	airportDetail: (iata: string) => `/theme-maps/airports/${iata.toUpperCase()}`,
+	baseballDetail: (id: string, level?: BaseballParkMapFilter) => {
+		const path = `/theme-maps/baseball/${id}`
+		if (!level) {
+			return path
+		}
+
+		return `${path}?level=${level}`
+	}
 } as const
 
 const THEME_MAPS_NAV_ITEMS = [
