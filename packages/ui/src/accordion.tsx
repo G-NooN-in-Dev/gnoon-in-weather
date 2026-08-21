@@ -1,3 +1,5 @@
+'use client'
+
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 
@@ -38,16 +40,20 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
 	)
 }
 
+/**
+ * Base UI `--accordion-panel-height` + starting/ending style로 높이 전환합니다.
+ * @see https://base-ui.com/react/components/accordion
+ */
 function AccordionContent({ className, children, ...props }: AccordionPrimitive.Panel.Props) {
 	return (
 		<AccordionPrimitive.Panel
 			data-slot="accordion-content"
-			className="data-open:animate-accordion-down data-closed:animate-accordion-up overflow-hidden text-sm"
+			className="ease-standard-productive h-(--accordion-panel-height) overflow-hidden text-sm transition-[height] duration-200 data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none"
 			{...props}
 		>
 			<div
 				className={cn(
-					'[&_a]:hover:text-foreground h-(--accordion-panel-height) pt-0 pb-4 data-ending-style:h-0 data-starting-style:h-0 [&_a]:underline [&_a]:underline-offset-3 [&_p:not(:last-child)]:mb-4',
+					'[&_a]:hover:text-foreground pt-0 pb-4 [&_a]:underline [&_a]:underline-offset-3 [&_p:not(:last-child)]:mb-4',
 					className
 				)}
 			>

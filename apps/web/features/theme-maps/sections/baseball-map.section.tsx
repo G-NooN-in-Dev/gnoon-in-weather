@@ -23,7 +23,7 @@ type BaseballMapSectionProps = {
 }
 
 function BaseballMapSection({ selectedParkId, onSelect, onClear }: BaseballMapSectionProps) {
-	const [filter, setFilter] = useState<BaseballParkMapFilter>('all')
+	const [filter, setFilter] = useState<BaseballParkMapFilter>('first')
 	const selectedPark = selectedParkId ? (getBaseballParkById(selectedParkId) ?? null) : null
 
 	const handleFilterChange = (next: BaseballParkMapFilter) => {
@@ -54,7 +54,7 @@ function BaseballMapSection({ selectedParkId, onSelect, onClear }: BaseballMapSe
 					/>
 				</div>
 				<div className="pointer-events-auto w-[min(100%,20rem)] min-w-0">
-					<BaseballInfoPanel park={selectedPark} onClose={onClear} />
+					<BaseballInfoPanel park={selectedPark} mapFilter={filter} onClose={onClear} />
 				</div>
 			</div>
 		</section>

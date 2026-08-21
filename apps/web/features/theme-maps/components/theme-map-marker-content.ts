@@ -6,6 +6,10 @@ type ThemeMapMarkerTheme = {
 	focusRingColor: string
 	iconHtml: string
 	iconRotateDeg?: number
+	/** 원형 아이콘 박스 한 변(px). 기본 32. */
+	iconSizePx?: number
+	/** styleId별 CSS에 이어 붙입니다. 로고 이미지 등 테마 전용 규칙용입니다. */
+	extraCss?: string
 }
 
 /* eslint-disable no-unused-vars -- 콜백 시그니처의 파라미터명은 문서용입니다. */
@@ -35,8 +39,10 @@ function ensureThemeMapMarkerStyles(theme: ThemeMapMarkerTheme) {
 		return
 	}
 
-	const { rootClassName, color, activeColor, focusRingColor, iconRotateDeg = 0 } = theme
+	const { rootClassName, color, activeColor, focusRingColor, iconRotateDeg = 0, iconSizePx = 32 } =
+		theme
 	const iconTransform = iconRotateDeg === 0 ? 'none' : `rotate(${iconRotateDeg}deg)`
+	const svgSizePx = Math.round(iconSizePx / 2)
 
 	const style = document.createElement('style')
 	style.id = theme.styleId
@@ -83,27 +89,28 @@ function ensureThemeMapMarkerStyles(theme: ThemeMapMarkerTheme) {
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			width: 32px;
-			height: 32px;
+			width: ${iconSizePx}px;
+			height: ${iconSizePx}px;
 			border-radius: 9999px;
 			background: #fff;
-			border: 2px solid ${color};
-			color: ${color};
+			border: 2px solid var(--marker-color, ${color});
+			color: var(--marker-color, ${color});
 			box-shadow: 0 2px 8px rgba(15, 23, 42, 0.16);
 			transition: transform 120ms ease, background-color 120ms ease, border-color 120ms ease, color 120ms ease;
 		}
 		.${rootClassName}-icon svg {
-			width: 16px;
-			height: 16px;
+			width: ${svgSizePx}px;
+			height: ${svgSizePx}px;
 			transform: ${iconTransform};
 		}
 		.${rootClassName}:hover .${rootClassName}-icon,
 		.${rootClassName}[data-selected='true'] .${rootClassName}-icon {
 			transform: scale(1.08);
 			background: #fff;
-			border-color: ${activeColor};
-			color: ${activeColor};
+			border-color: var(--marker-active-color, ${activeColor});
+			color: var(--marker-active-color, ${activeColor});
 		}
+		${theme.extraCss ?? ''}
 	`
 	document.head.appendChild(style)
 }

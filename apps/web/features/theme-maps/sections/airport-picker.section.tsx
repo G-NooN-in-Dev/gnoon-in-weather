@@ -8,6 +8,7 @@ import { useState } from 'react'
 
 import AirportsKakaoMap from '@/features/theme-maps/components/airports-kakao-map'
 import { THEME_MAPS_ROUTES } from '@/features/theme-maps/lib/theme-maps-routes'
+import type { AirportPickerSectionProps } from '@/features/theme-maps/types/airport-detail-component.type'
 
 const INTERNATIONAL_SWITCH_ID = 'airport-picker-international'
 
@@ -16,7 +17,7 @@ const INTERNATIONAL_SWITCH_ID = 'airport-picker-international'
  * 한반도 전체에 마커를 두고, 마커를 선택하여 해당 공항의 상세 페이지로 이동합니다.
  * 국제선 스위치로 국제선을 운영하는 공항만 표시할 수 있습니다
  */
-function AirportPickerSection() {
+function AirportPickerSection({ selectedIata }: AirportPickerSectionProps) {
 	const router = useRouter()
 	const [internationalOnly, setInternationalOnly] = useState(false)
 
@@ -42,12 +43,16 @@ function AirportPickerSection() {
 				</CardHeader>
 				<CardContent>
 					<AirportsKakaoMap
-						selectedIata={null}
+						selectedIata={selectedIata}
 						onSelect={(iata) => {
+							if (iata === selectedIata) {
+								return
+							}
 							router.push(THEME_MAPS_ROUTES.airportDetail(iata))
 						}}
 						boundsMode="korea"
 						internationalOnly={internationalOnly}
+						zoomable={false}
 						className="h-72"
 						mapClassName="size-full rounded-lg"
 					/>

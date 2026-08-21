@@ -34,7 +34,7 @@ type BaseballKakaoMapProps = {
 	selectedParkId: string | null
 	onSelect: BaseballParkSelectHandler
 	onClear?: () => void
-	/** all이면 전체, first·second면 해당 군 홈이 있는 구장만 보여 줍니다. */
+	/** 선택한 군의 홈 구장만 보여 줍니다. */
 	filter?: BaseballParkMapFilter
 	className?: string
 	mapClassName?: string
@@ -47,7 +47,7 @@ function BaseballKakaoMap({
 	selectedParkId,
 	onSelect,
 	onClear,
-	filter = 'all',
+	filter = 'first',
 	className,
 	mapClassName
 }: BaseballKakaoMapProps) {
@@ -65,7 +65,9 @@ function BaseballKakaoMap({
 			onClear={onClear}
 			isPlaceVisible={(place) => isBaseballParkVisibleForFilter(place, filter)}
 			visibilityKey={filter}
-			createMarkerContent={createBaseballMarkerContent}
+			createMarkerContent={(place, handleSelect, onHoverChange) =>
+				createBaseballMarkerContent(place, filter, handleSelect, onHoverChange)
+			}
 			setMarkerSelected={setBaseballMarkerSelected}
 			className={className}
 			mapClassName={mapClassName}

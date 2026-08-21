@@ -4,24 +4,6 @@
  */
 @custom-variant dark (&:where(.dark, .dark *));
 
-@keyframes accordion-down {
-	from {
-		height: 0;
-	}
-	to {
-		height: var(--radix-accordion-content-height);
-	}
-}
-
-@keyframes accordion-up {
-	from {
-		height: var(--radix-accordion-content-height);
-	}
-	to {
-		height: 0;
-	}
-}
-
 @theme {
 	--breakpoint-xxs: 320px;
 	--breakpoint-xs: 480px;
@@ -259,7 +241,4 @@
 		radial-gradient(circle at 20% 20%, rgb(255 135 194 / 0.18), transparent 40%),
 		radial-gradient(circle at 80% 0%, rgb(132 202 255 / 0.18), transparent 42%),
 		radial-gradient(circle at 50% 80%, rgb(147 229 127 / 0.16), transparent 42%);
-
-	--animate-accordion-down: accordion-down 0.2s ease-out;
-	--animate-accordion-up: accordion-up 0.2s ease-out;
 }

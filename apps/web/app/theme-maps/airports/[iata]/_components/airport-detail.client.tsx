@@ -39,7 +39,7 @@ function AirportDetailClient({ airport, initialWeather, initialUnits, initialErr
 					<DailyWeatherSection days={forecastSplit?.days ?? []} />
 				</div>
 				<div className="flex w-1/3 flex-col gap-6">
-					<AirportPickerSection />
+					<AirportPickerSection selectedIata={airport.iata} />
 					<AstroScheduleSections astros={forecastSplit?.astros ?? []} coordinates={airport} />
 				</div>
 			</div>

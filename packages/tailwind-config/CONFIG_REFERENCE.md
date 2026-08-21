@@ -100,5 +100,6 @@
 
 ## keyframes / animation
 
-- `accordion-down`, `accordion-up`
-- `animate-accordion-down`, `animate-accordion-up`
+- Accordion·Collapsible 패널 높이 전환은 Base UI CSS 변수
+  (`--accordion-panel-height`, `--collapsible-panel-height`) +
+  `data-starting-style` / `data-ending-style` 를 사용합니다. (Radix accordion keyframe 미사용)
