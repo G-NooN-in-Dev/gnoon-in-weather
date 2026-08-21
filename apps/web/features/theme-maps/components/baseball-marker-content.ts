@@ -6,7 +6,6 @@ import {
 import {
 	type BaseballPark,
 	type BaseballParkMapFilter,
-	getBaseballParkHomeTeamLabel,
 	getBaseballParkHomeTeamsForFilter
 } from '@/features/theme-maps/lib/baseball-parks'
 import type { BaseballTeam } from '@/features/theme-maps/lib/baseball-teams'
@@ -101,10 +100,7 @@ function createBaseballMarkerContent(
 	const root = createThemeMapMarkerContent({
 		id,
 		label: name,
-		ariaLabel:
-			teams.length > 0
-				? `${name} (${teams.map((team) => team.name).join(' / ')})`
-				: `${name} (${getBaseballParkHomeTeamLabel(park)})`,
+		ariaLabel: `${name} (${teams.map((team) => team.name).join(' / ')})`,
 		theme: {
 			...BASEBALL_MARKER_THEME,
 			iconHtml: buildBaseballMarkerIconHtml(teams)
@@ -114,7 +110,7 @@ function createBaseballMarkerContent(
 	})
 
 	const icon = root.querySelector<HTMLElement>('.baseball-marker-icon')
-	if (icon && teams.length > 0) {
+	if (icon) {
 		icon.dataset.logoCount = String(Math.min(teams.length, 2))
 	}
 

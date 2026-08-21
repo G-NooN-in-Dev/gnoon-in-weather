@@ -51,7 +51,7 @@ function BaseballInfoPanel({ park, mapFilter, onClose }: BaseballInfoPanelProps)
 		<ThemePlaceInfoPanel
 			key={id}
 			title={name}
-			subtitle={homeTeams.length > 0 ? <BaseballHomeTeamLogos teams={homeTeams} /> : undefined}
+			subtitle={<BaseballHomeTeamLogos teams={homeTeams} />}
 			description={address}
 			place={{ id, lat, lng }}
 			onClose={onClose}
