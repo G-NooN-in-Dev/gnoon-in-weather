@@ -1,9 +1,14 @@
 /** 숫자·단위·URL 등 화면 표시용 변환 유틸. 서버·클라이언트 공용입니다. */
 
+import 'dayjs/locale/ko'
+
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(customParseFormat)
+dayjs.extend(relativeTime)
+dayjs.locale('ko')
 
 /** 숫자 천 단위 구분 등에 쓰는 기본 로케일 */
 const DEFAULT_DISPLAY_LOCALE = 'ko-KR'
@@ -44,13 +49,29 @@ function formatDate(date: string, format?: string, includeTime?: boolean): strin
 
 /** `05:32 AM` → `05:32`. 파싱 실패 시 `-`를 반환합니다. */
 function formatTime12To24(time: string): string {
-	const parsed = dayjs(time, 'hh:mm A')
+	const parsedTime = dayjs(time, 'hh:mm A')
 
-	if (!parsed.isValid()) {
+	if (!parsedTime.isValid()) {
 		return '-'
 	}
 
-	return parsed.format('HH:mm')
+	return parsedTime.format('HH:mm')
 }
 
-export { DEFAULT_DISPLAY_LOCALE, formatDate, formatLocaleNumber, formatTime12To24, normalizeNumber }
+/**
+ * 시각을 상대 시간 문자열로 변환합니다. (예: `2시간 전`)
+ * 파싱 실패 시 빈 문자열을 반환합니다.
+ */
+function formatRelativeTime(date: string): string {
+	const parsedTime = dayjs(date)
+
+	if (!parsedTime.isValid()) {
+		return ''
+	}
+
+	const relativeTime = parsedTime.fromNow()
+
+	return relativeTime === '한 시간 전' ? '1시간 전' : relativeTime
+}
+
+export { DEFAULT_DISPLAY_LOCALE, formatDate, formatLocaleNumber, formatRelativeTime, formatTime12To24, normalizeNumber }
