@@ -2,7 +2,8 @@ import dayjs from 'dayjs'
 
 import { ForecastAstroEntry, WeatherApiAstro, WeatherApiHour } from '@/types/weather-api.type'
 
-import { formatAstroScheduleTime, formatHourlyTimeLabel } from './format-weather-values'
+import { parseAstroDateTime } from './astro-status-utils'
+import { formatHourlyTimeLabel } from './format-weather-values'
 
 type SunStatusKind = keyof Pick<WeatherApiAstro, 'sunrise' | 'sunset'>
 type HourlyTimeline = {
@@ -21,22 +22,25 @@ type AstroTimeline = {
 
 type HourlyWeatherTimeline = HourlyTimeline | AstroTimeline
 
+/** 시간 예보와 일출·일몰이 같은 epoch여도 React key가 겹치지 않도록 kind를 포함합니다. */
+function getHourlyTimelineItemKey(item: Pick<HourlyWeatherTimeline, 'kind' | 'epoch'>) {
+	return `${item.kind}-${item.epoch}`
+}
+
 function createAstroTimeline(astro: ForecastAstroEntry, kind: SunStatusKind) {
 	const { date, sunrise, sunset } = astro
 	const time = kind === 'sunrise' ? sunrise : sunset
-	const astroTime = formatAstroScheduleTime(time)
+	const parsedTime = parseAstroDateTime(date, time)
 
-	if (astroTime === '-') {
+	if (!parsedTime) {
 		return null
 	}
 
-	const epoch = dayjs(`${date} ${time}`).unix()
-
 	return {
 		kind,
-		epoch,
+		epoch: parsedTime.unix(),
 		date,
-		time: astroTime,
+		time: parsedTime.format('HH:mm'),
 		timeLabel: kind === 'sunrise' ? `일출${'\u2191'}` : `일몰${'\u2193'}`
 	}
 }
@@ -75,5 +79,5 @@ function createHourlyWeatherTimeline(hours: WeatherApiHour[], astros: ForecastAs
 	return { timeline, baseDate }
 }
 
-export { createHourlyWeatherTimeline }
+export { createHourlyWeatherTimeline, getHourlyTimelineItemKey }
 export type { HourlyWeatherTimeline }

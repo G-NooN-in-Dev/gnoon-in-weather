@@ -13,6 +13,7 @@ import HorizontalScrollContainer from '@/components/horizontal-scroll-container'
 import { useWeatherUnits } from '@/contexts/weather-units.context'
 import {
 	createHourlyWeatherTimeline,
+	getHourlyTimelineItemKey,
 	type HourlyWeatherTimeline
 } from '@/features/weather/lib/create-hourly-weather-timeline'
 import {
@@ -255,11 +256,12 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 					<TableRow>
 						<TableHead className={cn(stickyTableHeadClassName, tableHeadClassName)}>시간</TableHead>
 						{timeline.map((item) => {
-							const { date, epoch, kind, time, timeLabel } = item
+							const { date, kind, time, timeLabel } = item
+							const cellKey = getHourlyTimelineItemKey(item)
 
 							if (kind !== 'hour')
 								return (
-									<TableCell key={epoch} className={cn(timelineBorderClassName, 'font-semibold')}>
+									<TableCell key={cellKey} className={cn(timelineBorderClassName, 'font-semibold')}>
 										<span className="text-destructive">{time}</span>
 									</TableCell>
 								)
@@ -268,7 +270,7 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 								case '오늘':
 									return (
 										<TableCell
-											key={epoch}
+											key={cellKey}
 											className={cn(timelineBorderClassName, 'flex items-center justify-center font-semibold')}
 										>
 											<Badge className="size-fit text-base font-bold">내일</Badge>
@@ -277,7 +279,7 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 								case '내일':
 									return (
 										<TableCell
-											key={epoch}
+											key={cellKey}
 											className={cn(timelineBorderClassName, 'flex items-center justify-center font-semibold')}
 										>
 											<Badge className="bg-pastel-purple-600 size-fit text-base font-bold">내일</Badge>
@@ -286,7 +288,7 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 								case '모레':
 									return (
 										<TableCell
-											key={epoch}
+											key={cellKey}
 											className={cn(timelineBorderClassName, 'flex items-center justify-center font-semibold')}
 										>
 											<Badge className="bg-pastel-blue-600 size-fit text-base font-bold">모레</Badge>
@@ -296,7 +298,7 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 									const dayDiff = dayjs(date).diff(dayjs(baseDate), 'day')
 									return (
 										<TableCell
-											key={epoch}
+											key={cellKey}
 											className={cn(
 												timelineBorderClassName,
 												'font-semibold',
@@ -315,11 +317,12 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 					<TableRow>
 						<TableHead className={stickyTableHeadClassName} />
 						{timeline.map((item) => {
-							const { epoch, kind, timeLabel } = item
+							const { kind, timeLabel } = item
+							const cellKey = getHourlyTimelineItemKey(item)
 
 							if (kind !== 'hour') {
 								return (
-									<TableCell key={epoch} className={cn(timelineBorderClassName, 'py-0 font-semibold')}>
+									<TableCell key={cellKey} className={cn(timelineBorderClassName, 'py-0 font-semibold')}>
 										<Badge variant="destructive" className="size-fit font-bold">
 											{timeLabel}
 										</Badge>
@@ -330,7 +333,7 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 							const { condition } = item
 							const { icon, text } = condition
 							return (
-								<TableCell key={epoch} className={(cn(timelineBorderClassName), 'py-0')}>
+								<TableCell key={cellKey} className={(cn(timelineBorderClassName), 'py-0')}>
 									<Image src={icon} alt={text} width={32} height={32} className="mx-auto" priority />
 								</TableCell>
 							)
@@ -343,14 +346,11 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 						return (
 							<TableRow key={id}>
 								<TableHead className={stickyTableHeadClassName}>{label(units)}</TableHead>
-								{timeline.map((item) => {
-									const { epoch } = item
-									return (
-										<TableCell key={epoch} className={timelineBorderClassName}>
-											{render(item, units)}
-										</TableCell>
-									)
-								})}
+								{timeline.map((item) => (
+									<TableCell key={getHourlyTimelineItemKey(item)} className={timelineBorderClassName}>
+										{render(item, units)}
+									</TableCell>
+								))}
 							</TableRow>
 						)
 					})}
