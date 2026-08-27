@@ -35,8 +35,8 @@ function appendNewsItems(target: WeatherNewsListItem[], incoming: WeatherNewsLis
 
 /**
  * 날씨 관련 네이버 뉴스를 조회합니다. (더 보기용 nextCursor 포함)
- * 기상·예보 등 날씨 정보 기사만 남기고, 한 페이지당 최대 6건을 최신순(pubDate)으로 반환합니다.
- * 6건이 모일 때까지 네이버 API를 추가 호출하며, 남은 항목은 nextCursor 버퍼에 담습니다.
+ * 기상·예보 등 날씨 정보 기사만 남기고, 한 페이지당 최대 PAGE_SIZE건을 최신순(pubDate)으로 반환합니다.
+ * PAGE_SIZE건이 모일 때까지 네이버 API를 추가 호출하며, 남은 항목은 nextCursor 버퍼에 담습니다.
  * page·route는 service를 직접 부르지 않고 이 loader를 사용합니다.
  */
 async function loadWeatherNews(options?: LoadWeatherNewsOptions): Promise<WeatherNewsFeedPage> {

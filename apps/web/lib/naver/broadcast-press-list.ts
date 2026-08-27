@@ -68,6 +68,32 @@ const pressList = [
 	...LOCAL_PRESS_LIST
 ]
 
+type PressEntry = {
+	domain: string
+	name: string
+}
+
+type PressFilterGroup = {
+	id: string
+	label: string
+	items: PressEntry[]
+}
+
+/** `{ domain: name }` 배열을 UI용 `{ domain, name }` 목록으로 변환합니다. */
+function toPressEntries(list: readonly object[]): PressEntry[] {
+	return list.flatMap((entry) =>
+		Object.entries(entry as Record<string, string>).map(([domain, name]) => ({ domain, name }))
+	)
+}
+
+/** 우측 필터 UI에 그릴 언론사 그룹 */
+const PRESS_FILTER_GROUPS = [
+	{ id: 'main-broadcast', label: '주요 방송사', items: toPressEntries(MAIN_BROADCAST_LIST) },
+	{ id: 'local-broadcast', label: '지역 방송사', items: toPressEntries(LOCAL_BROADCAST_LIST) },
+	{ id: 'main-press', label: '종합 언론사', items: toPressEntries([...COMBINED_PRESS_LIST, ...MAIN_PRESS_LIST]) },
+	{ id: 'local-press', label: '지역 언론사', items: toPressEntries(LOCAL_PRESS_LIST) }
+] as const satisfies readonly PressFilterGroup[]
+
 const resolvePressName = (link: string): string => {
 	for (const entry of pressList) {
 		for (const [domain, name] of Object.entries(entry)) {
@@ -85,6 +111,9 @@ export {
 	LOCAL_PRESS_LIST,
 	MAIN_BROADCAST_LIST,
 	MAIN_PRESS_LIST,
+	PRESS_FILTER_GROUPS,
 	pressList,
-	resolvePressName
+	resolvePressName,
+	toPressEntries
 }
+export type { PressEntry, PressFilterGroup }

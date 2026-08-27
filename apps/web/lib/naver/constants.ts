@@ -2,10 +2,10 @@
 const NAVER_WEATHER_NEWS_QUERY = '날씨'
 
 /** 화면에 한 번에 보여줄 필터링된 뉴스 개수 */
-const WEATHER_NEWS_PAGE_SIZE = 6
+const WEATHER_NEWS_PAGE_SIZE = 20
 
 /** 네이버 API 1회 요청당 가져올 원본 뉴스 개수 (1~100) */
-const NAVER_NEWS_FETCH_BATCH = 30
+const NAVER_NEWS_FETCH_BATCH = 100
 
 /** 정렬 기준 */
 const NAVER_NEWS_SORT = 'date' as const
