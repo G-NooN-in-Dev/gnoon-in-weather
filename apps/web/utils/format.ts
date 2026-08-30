@@ -49,7 +49,8 @@ function formatDate(date: string, format?: string, includeTime?: boolean): strin
 
 /** `05:32 AM` → `05:32`. 파싱 실패 시 `-`를 반환합니다. */
 function formatTime12To24(time: string): string {
-	const parsedTime = dayjs(time, 'hh:mm A')
+	// WeatherAPI는 영문 AM/PM을 쓰므로, 전역 ko locale과 분리해 en으로만 파싱합니다.
+	const parsedTime = dayjs(time, 'hh:mm A', 'en', true)
 
 	if (!parsedTime.isValid()) {
 		return '-'
