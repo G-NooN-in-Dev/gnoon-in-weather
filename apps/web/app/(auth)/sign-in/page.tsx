@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 	title: '로그인'
 }
 
-async function SignInPage() {
+function SignInPage() {
 	return (
 		<div className="min-h-screen-safe flex w-full flex-1 font-sans">
 			<main className="flex w-full flex-1">
