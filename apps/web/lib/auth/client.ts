@@ -1,4 +1,4 @@
-import { signInSchema, signUpSchema, updateNicknameSchema } from '@/lib/auth/schemas'
+import { signInSchema, signUpSchema, updateNicknameSchema, updatePasswordSchema } from '@/lib/auth/schemas'
 import { fieldErrorsFromZod } from '@/lib/auth/zod-utils'
 import type { AuthApiError, AuthErrorResponse, AuthSuccessResponse, PublicUser } from '@/types/auth.type'
 
@@ -95,10 +95,31 @@ async function requestUpdateNickname(input: unknown): Promise<AuthFormResult> {
 	return parseAuthResponse(response)
 }
 
+/** 클라이언트에서 비밀번호 변경 API를 호출합니다. */
+async function requestUpdatePassword(input: unknown): Promise<AuthFormResult> {
+	const parsedUserData = updatePasswordSchema.safeParse(input)
+
+	if (!parsedUserData.success) {
+		return {
+			ok: false,
+			message: '입력값을 확인해 주세요.',
+			fieldErrors: fieldErrorsFromZod(parsedUserData.error)
+		}
+	}
+
+	const response = await fetch(`${AUTH_API_BASE_URL}/password`, {
+		method: 'PATCH',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(parsedUserData.data)
+	})
+
+	return parseAuthResponse(response)
+}
+
 /** 클라이언트에서 로그아웃 API를 호출합니다. */
 async function requestSignOut(): Promise<void> {
 	await fetch(`${AUTH_API_BASE_URL}/sign-out`, { method: 'POST' })
 }
 
-export { requestSignIn, requestSignOut, requestSignUp, requestUpdateNickname }
+export { requestSignIn, requestSignOut, requestSignUp, requestUpdateNickname, requestUpdatePassword }
 export type { AuthFormResult }

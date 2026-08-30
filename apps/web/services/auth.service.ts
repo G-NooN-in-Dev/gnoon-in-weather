@@ -2,7 +2,7 @@ import { type Collection, MongoServerError, ObjectId, type WithId } from 'mongod
 
 import { createAuthError, isAuthApiError } from '@/lib/auth/errors'
 import { hashPassword, verifyPassword } from '@/lib/auth/password'
-import type { SignInInput, SignUpInput } from '@/lib/auth/schemas'
+import type { SignInInput, SignUpInput, UpdatePasswordInput } from '@/lib/auth/schemas'
 import { getDb } from '@/lib/mongodb/client'
 import { USERS_COLLECTION } from '@/lib/mongodb/constants'
 import type { PublicUser } from '@/types/auth.type'
@@ -214,4 +214,69 @@ async function updateUserNickname(userId: string, nickname: string): Promise<Pub
 	}
 }
 
-export { getUserById, signInUser, signUpUser, updateUserNickname }
+/** 로그인 사용자의 비밀번호를 변경합니다. 현재 비밀번호가 맞아야 합니다. */
+async function updateUserPassword(
+	userId: string,
+	{ currentPassword, newPassword }: Pick<UpdatePasswordInput, 'currentPassword' | 'newPassword'>
+): Promise<PublicUser> {
+	if (!ObjectId.isValid(userId)) {
+		throw createAuthError({
+			key: 'AUTH_UNAUTHORIZED',
+			message: '로그인이 필요합니다.',
+			status: 401
+		})
+	}
+
+	const users = await getUsersCollection()
+	const userObjectId = new ObjectId(userId)
+	const current = await users.findOne({ _id: userObjectId })
+
+	if (!current) {
+		throw createAuthError({
+			key: 'AUTH_UNAUTHORIZED',
+			message: '로그인이 필요합니다.',
+			status: 401
+		})
+	}
+
+	const matched = await verifyPassword(currentPassword, current.passwordHash)
+
+	if (!matched) {
+		throw createAuthError({
+			key: 'AUTH_INVALID_CREDENTIALS',
+			message: '현재 비밀번호가 올바르지 않습니다.',
+			status: 401,
+			fieldErrors: { currentPassword: '현재 비밀번호가 올바르지 않습니다.' }
+		})
+	}
+
+	const sameAsCurrent = await verifyPassword(newPassword, current.passwordHash)
+
+	if (sameAsCurrent) {
+		throw createAuthError({
+			key: 'AUTH_VALIDATION_ERROR',
+			message: '현재 비밀번호와 같습니다.',
+			status: 400,
+			fieldErrors: { newPassword: '현재 비밀번호와 같습니다.' }
+		})
+	}
+
+	const passwordHash = await hashPassword(newPassword)
+	const updated = await users.findOneAndUpdate(
+		{ _id: userObjectId },
+		{ $set: { passwordHash, updatedAt: new Date() } },
+		{ returnDocument: 'after' }
+	)
+
+	if (!updated) {
+		throw createAuthError({
+			key: 'AUTH_UNAUTHORIZED',
+			message: '로그인이 필요합니다.',
+			status: 401
+		})
+	}
+
+	return toPublicUser(updated)
+}
+
+export { getUserById, signInUser, signUpUser, updateUserNickname, updateUserPassword }
