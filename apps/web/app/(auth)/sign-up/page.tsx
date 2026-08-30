@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 	title: '회원가입'
 }
 
-async function SignUpPage() {
+function SignUpPage() {
 	return (
 		<div className="min-h-screen-safe flex w-full flex-1 font-sans">
 			<main className="flex w-full flex-1">
