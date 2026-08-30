@@ -1,6 +1,6 @@
 import { type Collection, MongoServerError, ObjectId, type WithId } from 'mongodb'
 
-import { createAuthError } from '@/lib/auth/errors'
+import { createAuthError, isAuthApiError } from '@/lib/auth/errors'
 import { hashPassword, verifyPassword } from '@/lib/auth/password'
 import type { SignInInput, SignUpInput } from '@/lib/auth/schemas'
 import { getDb } from '@/lib/mongodb/client'
@@ -124,4 +124,94 @@ async function signUpUser({ email, nickname, password }: SignUpInput): Promise<P
 	}
 }
 
-export { getUserById, signInUser, signUpUser }
+/** 닉네임의 중복 여부를 확인합니다. */
+async function isTakenNickname(nickname: string, excludeUserId: string): Promise<boolean> {
+	const users = await getUsersCollection()
+	const existing = await users.findOne(
+		{ nickname, _id: { $ne: new ObjectId(excludeUserId) } },
+		{ projection: { _id: 1 } }
+	)
+
+	return existing !== null
+}
+
+/** 로그인 사용자의 닉네임을 변경합니다. 중복이면 갱신하지 않습니다. */
+async function updateUserNickname(userId: string, nickname: string): Promise<PublicUser> {
+	if (!ObjectId.isValid(userId)) {
+		throw createAuthError({
+			key: 'AUTH_UNAUTHORIZED',
+			message: '로그인이 필요합니다.',
+			status: 401
+		})
+	}
+
+	const users = await getUsersCollection()
+	const userObjectId = new ObjectId(userId)
+	const current = await users.findOne({ _id: userObjectId })
+
+	if (!current) {
+		throw createAuthError({
+			key: 'AUTH_UNAUTHORIZED',
+			message: '로그인이 필요합니다.',
+			status: 401
+		})
+	}
+
+	const trimmedNickname = nickname.trim()
+
+	if (current.nickname === trimmedNickname) {
+		throw createAuthError({
+			key: 'AUTH_VALIDATION_ERROR',
+			message: '현재 닉네임과 같습니다.',
+			status: 400,
+			fieldErrors: { nickname: '현재 닉네임과 같습니다.' }
+		})
+	}
+
+	// 변경 전 중복을 먼저 확인하고, unique 인덱스는 동시 요청 안전망으로 둡니다.
+	const taken = await isTakenNickname(trimmedNickname, userId)
+
+	if (taken) {
+		throw createAuthError({
+			key: 'AUTH_NICKNAME_TAKEN',
+			message: '이미 사용 중인 닉네임입니다.',
+			status: 409,
+			fieldErrors: { nickname: '이미 사용 중인 닉네임입니다.' }
+		})
+	}
+
+	try {
+		const updated = await users.findOneAndUpdate(
+			{ _id: userObjectId },
+			{ $set: { nickname: trimmedNickname, updatedAt: new Date() } },
+			{ returnDocument: 'after' }
+		)
+
+		if (!updated) {
+			throw createAuthError({
+				key: 'AUTH_UNAUTHORIZED',
+				message: '로그인이 필요합니다.',
+				status: 401
+			})
+		}
+
+		return toPublicUser(updated)
+	} catch (error) {
+		if (isAuthApiError(error)) {
+			throw error
+		}
+
+		if (error instanceof MongoServerError && error.code === 11000) {
+			throw createAuthError({
+				key: 'AUTH_NICKNAME_TAKEN',
+				message: '이미 사용 중인 닉네임입니다.',
+				status: 409,
+				fieldErrors: { nickname: '이미 사용 중인 닉네임입니다.' }
+			})
+		}
+
+		throw error
+	}
+}
+
+export { getUserById, signInUser, signUpUser, updateUserNickname }

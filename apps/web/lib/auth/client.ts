@@ -1,6 +1,5 @@
-import { flattenError } from 'zod'
-
-import { signInSchema, signUpSchema } from '@/lib/auth/schemas'
+import { signInSchema, signUpSchema, updateNicknameSchema } from '@/lib/auth/schemas'
+import { fieldErrorsFromZod } from '@/lib/auth/zod-utils'
 import type { AuthApiError, AuthErrorResponse, AuthSuccessResponse, PublicUser } from '@/types/auth.type'
 
 import { AUTH_API_BASE_URL } from './constants'
@@ -38,14 +37,10 @@ async function requestSignIn(input: unknown): Promise<AuthFormResult> {
 	const parsedUserData = signInSchema.safeParse(input)
 
 	if (!parsedUserData.success) {
-		const flattenedErrors = flattenError(parsedUserData.error)
-
 		return {
 			ok: false,
 			message: '입력값을 확인해 주세요.',
-			fieldErrors: Object.fromEntries(
-				Object.entries(flattenedErrors.fieldErrors).map(([key, messages]) => [key, messages?.[0] ?? ''])
-			)
+			fieldErrors: fieldErrorsFromZod(parsedUserData.error)
 		}
 	}
 
@@ -63,14 +58,10 @@ async function requestSignUp(input: unknown): Promise<AuthFormResult> {
 	const parsedUserData = signUpSchema.safeParse(input)
 
 	if (!parsedUserData.success) {
-		const flattenedErrors = flattenError(parsedUserData.error)
-
 		return {
 			ok: false,
 			message: '입력값을 확인해 주세요.',
-			fieldErrors: Object.fromEntries(
-				Object.entries(flattenedErrors.fieldErrors).map(([key, messages]) => [key, messages?.[0] ?? ''])
-			)
+			fieldErrors: fieldErrorsFromZod(parsedUserData.error)
 		}
 	}
 
@@ -83,10 +74,31 @@ async function requestSignUp(input: unknown): Promise<AuthFormResult> {
 	return parseAuthResponse(response)
 }
 
+/** 클라이언트에서 닉네임 변경 API를 호출합니다. */
+async function requestUpdateNickname(input: unknown): Promise<AuthFormResult> {
+	const parsedUserData = updateNicknameSchema.safeParse(input)
+
+	if (!parsedUserData.success) {
+		return {
+			ok: false,
+			message: '입력값을 확인해 주세요.',
+			fieldErrors: fieldErrorsFromZod(parsedUserData.error)
+		}
+	}
+
+	const response = await fetch(`${AUTH_API_BASE_URL}/nickname`, {
+		method: 'PATCH',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(parsedUserData.data)
+	})
+
+	return parseAuthResponse(response)
+}
+
 /** 클라이언트에서 로그아웃 API를 호출합니다. */
 async function requestSignOut(): Promise<void> {
 	await fetch(`${AUTH_API_BASE_URL}/sign-out`, { method: 'POST' })
 }
 
-export { requestSignIn, requestSignOut, requestSignUp }
+export { requestSignIn, requestSignOut, requestSignUp, requestUpdateNickname }
 export type { AuthFormResult }

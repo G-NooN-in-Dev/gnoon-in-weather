@@ -4,11 +4,12 @@ import { toast } from '@shared/ui/sonner'
 import { type ChangeEvent, type FormEvent, useState } from 'react'
 
 import type { AuthFormResult } from '@/lib/auth/client'
+import type { PublicUser } from '@/types/auth.type'
 
 type UseAuthFormOptions<T extends Record<string, string>> = {
 	initial: T
 	submit: (value: T) => Promise<AuthFormResult>
-	onSuccess: () => void
+	onSuccess: (user: PublicUser) => void
 }
 
 /**
@@ -44,7 +45,7 @@ function useAuthForm<T extends Record<string, string>>({ initial, submit, onSucc
 				return
 			}
 
-			onSuccess()
+			onSuccess(result.user)
 		} finally {
 			setIsSubmitting(false)
 		}
