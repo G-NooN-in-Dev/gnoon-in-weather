@@ -1,4 +1,5 @@
 import NicknameEditDialog from '@/features/my/components/nickname-edit-dialog'
+import PasswordEditDialog from '@/features/my/components/password-edit-dialog'
 import type { UserInfoEditSectionProps } from '@/features/my/types/my-page-component.type'
 
 /**
@@ -14,6 +15,7 @@ function UserInfoEditSection({ user }: UserInfoEditSectionProps) {
 			</h2>
 			<div className="flex items-start gap-2">
 				<NicknameEditDialog currentNickname={nickname} />
+				<PasswordEditDialog />
 			</div>
 		</section>
 	)
