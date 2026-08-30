@@ -9,7 +9,10 @@
 		"KAKAO_LOCAL_API_BASE_URL",
 		"NAVER_CLIENT_ID",
 		"NAVER_CLIENT_SECRET",
-		"NAVER_API_BASE_URL"
+		"NAVER_API_BASE_URL",
+		"MONGODB_URI",
+		"AUTH_SECRET",
+		"NODE_ENV"
 	],
 	"tasks": {
 		"build": {

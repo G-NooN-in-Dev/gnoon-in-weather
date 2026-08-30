@@ -13,17 +13,22 @@
 		"@meteocons/svg-static": "^0.1.0",
 		"@phosphor-icons/react": "^2.1.10",
 		"@shared/ui": "workspace:*",
+		"bcryptjs": "^3.0.3",
 		"dayjs": "^1.11.21",
+		"jose": "^6.2.10",
 		"korean-lunar-calendar": "^0.4.0",
 		"lucide-react": "^1.17.0",
+		"mongodb": "^7.6.0",
 		"next": "16.2.4",
 		"react": "19.2.4",
-		"react-dom": "19.2.4"
+		"react-dom": "19.2.4",
+		"zod": "^4.4.3"
 	},
 	"devDependencies": {
 		"@shared/eslint-config": "workspace:*",
 		"@shared/tailwind-config": "workspace:*",
 		"@shared/typescript-config": "workspace:*",
+		"@types/bcryptjs": "^3.0.0",
 		"@types/node": "^25.6.0",
 		"@types/react": "19.2.14",
 		"@types/react-dom": "19.2.3",
