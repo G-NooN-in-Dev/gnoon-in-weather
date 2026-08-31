@@ -1,8 +1,10 @@
 import type { PressEntry } from '@/lib/naver/broadcast-press-list'
 import type { AppApiError } from '@/types/error.type'
+import type { FavoritePressList } from '@/types/favorite-press-list.type'
 import type { WeatherNewsFeedPage, WeatherNewsListItem } from '@/types/naver-news.type'
 
 type WeatherNewsClientProps = {
+	isLoggedIn: boolean
 	initialPage: WeatherNewsFeedPage | null
 	initialError: AppApiError | null
 }
@@ -24,11 +26,21 @@ type NewsListItemProps = {
 }
 
 type PressFilterSectionProps = {
+	isLoggedIn: boolean
+	favoriteLists: FavoritePressList[]
+	appliedListId: string | null
+	isFavoriteListsLoading: boolean
 	selectedPresses: PressEntry[]
 	maxSelection: number
+	/** 선호목록 개수 한도 도달 등으로 추가 버튼이 비활성인지 */
+	isAddDisabled: boolean
+	isPending: boolean
 	onToggle: (press: PressEntry) => void
 	onRemove: (domain: string) => void
 	onReset: () => void
+	onAddClick: () => void
+	onEditClick: () => void
+	onApplyClick: (list: FavoritePressList) => void
 }
 
 export type { NewsFeedSectionProps, NewsListItemProps, PressFilterSectionProps, WeatherNewsClientProps }
