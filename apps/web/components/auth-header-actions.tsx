@@ -15,7 +15,7 @@ function AuthHeaderActions({ nickname }: AuthHeaderActionsProps) {
 	const router = useRouter()
 	const [isSigningOut, setIsSigningOut] = useState(false)
 
-	async function handleSignOut() {
+	const handleSignOut = async () => {
 		setIsSigningOut(true)
 		await requestSignOut()
 		setIsSigningOut(false)

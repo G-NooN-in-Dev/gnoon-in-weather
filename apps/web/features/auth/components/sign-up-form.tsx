@@ -55,6 +55,8 @@ function SignUpForm() {
 						onChange={handleChange}
 						aria-invalid={Boolean(fieldErrors.nickname) || undefined}
 						placeholder="2~20자"
+						minLength={2}
+						maxLength={20}
 					/>
 					<FieldError>{fieldErrors.nickname}</FieldError>
 				</Field>
