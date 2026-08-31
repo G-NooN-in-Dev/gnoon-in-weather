@@ -26,7 +26,7 @@ function AuthHeaderActions({ nickname }: AuthHeaderActionsProps) {
 		<div className="flex items-center gap-3">
 			<span className="text-grayscale-900 hidden text-sm sm:inline">{nickname} 님</span>
 			<Button type="button" className="cursor-pointer p-3" disabled={isSigningOut} onClick={handleSignOut}>
-				{isSigningOut ? <Spinner className="mx-auto size-4" /> : '로그아웃'}
+				{isSigningOut ? <Spinner /> : '로그아웃'}
 			</Button>
 		</div>
 	)

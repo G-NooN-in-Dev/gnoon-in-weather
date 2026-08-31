@@ -68,7 +68,7 @@ function NewsFeedSection({
 
 			{loadingMore && (
 				<div className="flex items-center justify-center py-4">
-					<Spinner className="text-grayscale-500 size-8 animate-spin" />
+					<Spinner className="text-grayscale-500 size-8" />
 				</div>
 			)}
 

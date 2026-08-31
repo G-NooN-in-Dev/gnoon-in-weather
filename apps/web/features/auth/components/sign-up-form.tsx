@@ -91,7 +91,7 @@ function SignUpForm() {
 			</FieldGroup>
 
 			<Button type="submit" className="w-full" disabled={isSubmitting}>
-				{isSubmitting ? <Spinner className="mx-auto size-4" /> : '회원가입'}
+				{isSubmitting ? <Spinner /> : '회원가입'}
 			</Button>
 		</form>
 	)

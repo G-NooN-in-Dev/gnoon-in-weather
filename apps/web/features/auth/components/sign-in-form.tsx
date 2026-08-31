@@ -59,7 +59,7 @@ function SignInForm() {
 			</FieldGroup>
 
 			<Button type="submit" className="w-full" disabled={isSubmitting}>
-				{isSubmitting ? <Spinner className="mx-auto size-4" /> : '로그인'}
+				{isSubmitting ? <Spinner /> : '로그인'}
 			</Button>
 		</form>
 	)
