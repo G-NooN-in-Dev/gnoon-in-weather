@@ -1,16 +1,13 @@
 'use client'
 
-import { Badge } from '@shared/ui/badge'
-import { Button } from '@shared/ui/button'
-import { Label } from '@shared/ui/label'
 import { useState } from 'react'
 
 import ConfirmAlertDialog from '@/components/confirm-alert-dialog'
 import FavoritePressListEditDialog from '@/features/favorite-press-list/components/favorite-press-list-edit-dialog'
 import type { FavoritePressListsSectionProps } from '@/features/my/types/my-page-component.type'
+import FavoritePressListsItem from '@/features/weather-news/components/favorite-press-lists-item'
 import { useFavoritePressLists } from '@/hooks/use-favorite-press-lists'
 import { FAVORITE_PRESS_LIST_MAX_ITEMS } from '@/lib/favorite-press-list/constants'
-import { resolvePressEntries } from '@/lib/favorite-press-list/domains'
 import type { FavoritePressList } from '@/types/favorite-press-list.type'
 
 /**
@@ -53,60 +50,14 @@ function FavoritePressListsSection({ initialItems, isLoggedIn }: FavoritePressLi
 			{items.length === 0 ? (
 				<p className="text-grayscale-400 text-sm">저장된 목록이 없습니다.</p>
 			) : (
-				<ul className="flex flex-col gap-4">
-					{items.map((list) => {
-						const { domains, id, name } = list
-
-						const presses = resolvePressEntries(domains)
-
-						return (
-							<li key={id} className="border-grayscale-200 flex flex-col gap-2 border-b pb-4 last:border-b-0 last:pb-0">
-								<div className="flex items-center justify-between gap-3">
-									<Label className="text-grayscale-900 text-lg font-semibold">{name}</Label>
-									<div className="flex items-center gap-2">
-										<Button
-											type="button"
-											variant="text"
-											className="border-border/20"
-											size="sm"
-											disabled={isPending}
-											onClick={() => setEditingList(list)}
-										>
-											편집
-										</Button>
-										<Button
-											type="button"
-											variant="text"
-											size="sm"
-											className="text-destructive hover:text-destructive/80"
-											disabled={isPending}
-											onClick={() => setDeletingList(list)}
-										>
-											삭제
-										</Button>
-									</div>
-								</div>
-
-								<div className="flex items-center gap-2">
-									<span className="text-grayscale-500 font-semibold">&mdash;</span>
-									<ul className="flex flex-wrap gap-2">
-										{presses.map((press) => {
-											const { domain, name: pressName } = press
-
-											return (
-												<li key={domain}>
-													<Badge variant="outline" className="h-7 bg-white px-2.5 text-sm">
-														{pressName}
-													</Badge>
-												</li>
-											)
-										})}
-									</ul>
-								</div>
-							</li>
-						)
-					})}
-				</ul>
+				<FavoritePressListsItem
+					items={items}
+					isPending={isPending}
+					editText="편집"
+					deleteText="삭제"
+					onEditStart={setEditingList}
+					onDelete={setDeletingList}
+				/>
 			)}
 
 			<FavoritePressListEditDialog

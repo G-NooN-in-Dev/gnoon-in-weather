@@ -1,13 +1,22 @@
 'use client'
 
-import { Dialog, DialogContent } from '@shared/ui/dialog'
+import { Button } from '@shared/ui/button'
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle
+} from '@shared/ui/dialog'
 import { useState } from 'react'
 
 import ConfirmAlertDialog from '@/components/confirm-alert-dialog'
 import FavoritePressListEditSession from '@/features/favorite-press-list/components/favorite-press-list-edit-session'
 import { FavoritePressList } from '@/types/favorite-press-list.type'
 
-import FavoritePressListsEditDialogDefaultContent from './favorite-press-lists-edit-dialog-content'
+import FavoritePressListsItem from './favorite-press-lists-item'
 
 type FavoritePressListsEditDialogProps = {
 	open: boolean
@@ -74,12 +83,29 @@ function FavoritePressListsEditDialog({
 							onUpdate={onUpdate}
 						/>
 					) : (
-						<FavoritePressListsEditDialogDefaultContent
-							lists={lists}
-							isPending={isPending}
-							onEditStart={setEditingList}
-							onDelete={setDeletingList}
-						/>
+						<>
+							<DialogHeader>
+								<DialogTitle>선호목록 편집</DialogTitle>
+								<DialogDescription>저장된 선호목록을 수정하거나 삭제할 수 있습니다.</DialogDescription>
+							</DialogHeader>
+
+							{lists.length === 0 ? (
+								<p className="text-grayscale-400 text-sm">저장된 목록이 없습니다.</p>
+							) : (
+								<FavoritePressListsItem
+									items={lists}
+									isPending={isPending}
+									editText="편집"
+									deleteText="삭제"
+									onEditStart={setEditingList}
+									onDelete={setDeletingList}
+								/>
+							)}
+
+							<DialogFooter>
+								<DialogClose render={<Button type="button" variant="outline" disabled={isPending} />}>닫기</DialogClose>
+							</DialogFooter>
+						</>
 					)}
 				</DialogContent>
 			</Dialog>
