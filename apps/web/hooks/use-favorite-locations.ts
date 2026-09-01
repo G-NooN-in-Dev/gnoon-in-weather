@@ -18,6 +18,7 @@ type UseFavoriteLocationsResult = {
 	items: FavoriteLocation[]
 	isFavorite: (location: LocationState) => boolean
 	isPending: boolean
+	removeById: (id: string) => Promise<boolean>
 	toggleFavorite: (location: LocationState) => Promise<void>
 }
 
@@ -40,6 +41,25 @@ function useFavoriteLocations({ initialItems, isLoggedIn }: UseFavoriteLocations
 			),
 		[items]
 	)
+
+	const removeById = useCallback(async (id: string) => {
+		setIsPending(true)
+
+		try {
+			const result = await requestRemoveFavoriteLocation(id)
+
+			if (!result.ok) {
+				toast.error(result.message)
+				return false
+			}
+
+			setItems((current) => current.filter((item) => item.id !== id))
+			toast.success(FAVORITE_LOCATION_TOAST.REMOVED)
+			return true
+		} finally {
+			setIsPending(false)
+		}
+	}, [])
 
 	const toggleFavorite = useCallback(
 		async (location: LocationState) => {
@@ -98,7 +118,7 @@ function useFavoriteLocations({ initialItems, isLoggedIn }: UseFavoriteLocations
 		[isLoggedIn, items]
 	)
 
-	return { items, isFavorite, isPending, toggleFavorite }
+	return { items, isFavorite, isPending, removeById, toggleFavorite }
 }
 
 export { useFavoriteLocations }
