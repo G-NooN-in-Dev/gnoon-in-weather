@@ -142,7 +142,7 @@ function FavoritePressListsEditDialog({
 				description={deletingList ? `'${deletingList.name}' 선호목록을 삭제하시겠습니까?` : ''}
 				isPending={isPending}
 				onConfirm={handleConfirmDelete}
-				confirmText="확인"
+				confirmText="삭제"
 			/>
 		</>
 	)
