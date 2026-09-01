@@ -1,15 +1,19 @@
 import HomepageClient from '@/app/_components/homepage.client'
 import { isAppApiError } from '@/lib/api-error'
+import { getCurrentUser } from '@/lib/auth/session.server'
 import { resolveHomeLocation } from '@/lib/location/resolve-home'
 import { readWeatherUnitsFromCookies } from '@/lib/weather/units-cookie.server'
+import { loadFavoriteLocations } from '@/services/favorite-location.loader'
 import { loadWeatherSummary } from '@/services/weather.loader'
 import type { AppApiError } from '@/types/error.type'
 import type { LocationState } from '@/types/location.type'
 import type { WeatherSummary } from '@/types/weather-api.type'
 
 async function Homepage() {
+	const user = await getCurrentUser()
 	const baseLocation = await resolveHomeLocation()
 	const initialUnits = await readWeatherUnitsFromCookies()
+	const initialFavoriteLocations = user ? await loadFavoriteLocations(user.id) : []
 	// 라벨은 쿠키·기본값(카카오/수동)만 사용하고 WeatherAPI location으로 채우지 않습니다.
 	const initialLocation: LocationState = baseLocation
 	let initialWeather: WeatherSummary | null = null
@@ -41,6 +45,8 @@ async function Homepage() {
 						initialWeather={initialWeather}
 						initialUnits={initialUnits}
 						initialError={initialError}
+						initialFavoriteLocations={initialFavoriteLocations}
+						isLoggedIn={user !== null}
 					/>
 				</div>
 			</main>

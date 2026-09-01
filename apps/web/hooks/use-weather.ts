@@ -71,7 +71,7 @@ function useWeather({
 	initialWeather = null,
 	initialError = null
 }: UseWeatherOptions): UseWeatherResult {
-	const { lat: initialLat, lng: initialLng, label } = initialLocation
+	const { lat: initialLat, lng: initialLng, label, placeId: initialPlaceId, address: initialAddress } = initialLocation
 
 	const [fetchParams, setFetchParams] = useState<Coordinates>(() => ({
 		lat: initialLat,
@@ -79,6 +79,8 @@ function useWeather({
 	}))
 	const [fetchCount, setFetchCount] = useState(0)
 	const [locationLabel, setLocationLabel] = useState(label)
+	const [locationPlaceId, setLocationPlaceId] = useState<string | null>(initialPlaceId ?? null)
+	const [locationAddress, setLocationAddress] = useState(initialAddress ?? '')
 	const [weather, setWeather] = useState<WeatherSummary | null>(initialWeather)
 	const [loading, setLoading] = useState(() => initialWeather === null && initialError === null)
 	const [isLocating, setIsLocating] = useState(false)
@@ -87,9 +89,11 @@ function useWeather({
 	const location = useMemo<LocationState>(
 		() => ({
 			...fetchParams,
-			label: locationLabel
+			label: locationLabel,
+			placeId: locationPlaceId,
+			address: locationAddress
 		}),
-		[fetchParams, locationLabel]
+		[fetchParams, locationLabel, locationPlaceId, locationAddress]
 	)
 
 	const { lat: fetchLat, lng: fetchLng } = fetchParams
@@ -215,11 +219,13 @@ function useWeather({
 
 	/** 검색 결과 선택 — 카카오 label을 먼저 고정한 뒤 좌표로 날씨를 조회합니다. */
 	const selectLocation = useCallback((item: LocationSearchItem) => {
-		const { label, lat, lng } = item
+		const { id, label, address, lat, lng } = item
 
 		setError(null)
 		setLoading(true)
 		setLocationLabel(label)
+		setLocationPlaceId(id)
+		setLocationAddress(address)
 		setFetchParams({ lat, lng })
 		setFetchCount((count) => count + 1)
 	}, [])
@@ -260,6 +266,8 @@ function useWeather({
 				setIsLocating(false)
 				setLoading(true)
 				setLocationLabel(nextLabel || '현재 위치')
+				setLocationPlaceId(null)
+				setLocationAddress('')
 				setFetchParams({ lat: latitude, lng: longitude })
 				setFetchCount((count) => count + 1)
 			} catch {
