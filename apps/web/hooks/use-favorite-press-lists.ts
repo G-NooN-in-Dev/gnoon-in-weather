@@ -14,6 +14,7 @@ import { arePressDomainsEqual } from '@/lib/favorite-press-list/domains'
 import type { FavoritePressList } from '@/types/favorite-press-list.type'
 
 type UseFavoritePressListsOptions = {
+	initialItems?: FavoritePressList[]
 	isLoggedIn: boolean
 }
 
@@ -30,9 +31,13 @@ type UseFavoritePressListsResult = {
  * 언론사 선호목록 CRUD를 관리합니다.
  * 성공·오류 토스트는 이 훅에서 처리합니다.
  */
-function useFavoritePressLists({ isLoggedIn }: UseFavoritePressListsOptions): UseFavoritePressListsResult {
-	const [items, setItems] = useState<FavoritePressList[]>([])
-	const [isLoading, setIsLoading] = useState(false)
+function useFavoritePressLists({
+	initialItems,
+	isLoggedIn
+}: UseFavoritePressListsOptions): UseFavoritePressListsResult {
+	const hasInitialItems = initialItems !== undefined
+	const [items, setItems] = useState(hasInitialItems ? initialItems : [])
+	const [isLoading, setIsLoading] = useState(!hasInitialItems)
 	const [isPending, setIsPending] = useState(false)
 	const [prevIsLoggedIn, setPrevIsLoggedIn] = useState(isLoggedIn)
 
@@ -44,7 +49,7 @@ function useFavoritePressLists({ isLoggedIn }: UseFavoritePressListsOptions): Us
 	}
 
 	useEffect(() => {
-		if (!isLoggedIn) {
+		if (!isLoggedIn || hasInitialItems) {
 			return
 		}
 
@@ -71,7 +76,7 @@ function useFavoritePressLists({ isLoggedIn }: UseFavoritePressListsOptions): Us
 		return () => {
 			cancelled = true
 		}
-	}, [isLoggedIn])
+	}, [hasInitialItems, isLoggedIn])
 
 	const createList = useCallback(
 		async ({ name, domains }: { name: string; domains: string[] }) => {

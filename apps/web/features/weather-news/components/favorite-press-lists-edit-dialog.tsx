@@ -4,15 +4,10 @@ import { Dialog, DialogContent } from '@shared/ui/dialog'
 import { useState } from 'react'
 
 import ConfirmAlertDialog from '@/components/confirm-alert-dialog'
-import { FAVORITE_PRESS_LIST_MAX_PRESSES } from '@/lib/favorite-press-list/constants'
-import { resolvePressEntries } from '@/lib/favorite-press-list/domains'
-import { PressEntry } from '@/lib/naver/broadcast-press-list'
+import FavoritePressListEditSession from '@/features/favorite-press-list/components/favorite-press-list-edit-session'
 import { FavoritePressList } from '@/types/favorite-press-list.type'
 
-import {
-	FavoritePressListsEditDialogDefaultContent,
-	FavoritePressListsEditDialogUpdateContent
-} from './favorite-press-lists-edit-dialog-content'
+import FavoritePressListsEditDialogDefaultContent from './favorite-press-lists-edit-dialog-content'
 
 type FavoritePressListsEditDialogProps = {
 	open: boolean
@@ -35,59 +30,19 @@ function FavoritePressListsEditDialog({
 	onDelete
 }: FavoritePressListsEditDialogProps) {
 	const [editingList, setEditingList] = useState<FavoritePressList | null>(null)
-	const [draftPresses, setDraftPresses] = useState<PressEntry[]>([])
 	const [deletingList, setDeletingList] = useState<FavoritePressList | null>(null)
-
-	const resetEditingState = () => {
-		setEditingList(null)
-		setDraftPresses([])
-	}
 
 	const handleOpenChange = (nextOpen: boolean) => {
 		if (!nextOpen) {
-			resetEditingState()
+			setEditingList(null)
 			setDeletingList(null)
 		}
 
 		onOpenChange(nextOpen)
 	}
 
-	const handleStartEdit = (list: FavoritePressList) => {
-		setEditingList(list)
-		setDraftPresses(resolvePressEntries(list.domains))
-	}
-
-	const handleToggleDraft = (press: PressEntry) => {
-		const { domain } = press
-
-		setDraftPresses((prev) => {
-			if (prev.some((item) => item.domain === domain)) {
-				return prev.filter((item) => item.domain !== domain)
-			}
-
-			if (prev.length >= FAVORITE_PRESS_LIST_MAX_PRESSES) {
-				return prev
-			}
-
-			return [...prev, press]
-		})
-	}
-
-	const handleRemoveDraft = (domain: string) => {
-		setDraftPresses((prev) => prev.filter((item) => item.domain !== domain))
-	}
-
-	const handleSave = async () => {
-		if (!editingList || draftPresses.length === 0) {
-			return
-		}
-
-		const domains = draftPresses.map((press) => press.domain)
-		const updated = await onUpdate(editingList, domains)
-
-		if (updated) {
-			resetEditingState()
-		}
+	const handleClose = () => {
+		setEditingList(null)
 	}
 
 	const handleConfirmDelete = async () => {
@@ -99,7 +54,7 @@ function FavoritePressListsEditDialog({
 
 		if (removed) {
 			if (editingList?.id === deletingList.id) {
-				resetEditingState()
+				setEditingList(null)
 			}
 
 			setDeletingList(null)
@@ -111,20 +66,18 @@ function FavoritePressListsEditDialog({
 			<Dialog open={open} onOpenChange={handleOpenChange}>
 				<DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-lg">
 					{editingList ? (
-						<FavoritePressListsEditDialogUpdateContent
-							editingList={editingList}
-							draftPresses={draftPresses}
-							onToggle={handleToggleDraft}
-							onRemove={handleRemoveDraft}
-							isSubmitting={isPending}
-							onCancel={resetEditingState}
-							onSave={handleSave}
+						<FavoritePressListEditSession
+							key={editingList.id}
+							list={editingList}
+							isPending={isPending}
+							onClose={handleClose}
+							onUpdate={onUpdate}
 						/>
 					) : (
 						<FavoritePressListsEditDialogDefaultContent
 							lists={lists}
 							isPending={isPending}
-							onEditStart={handleStartEdit}
+							onEditStart={setEditingList}
 							onDelete={setDeletingList}
 						/>
 					)}

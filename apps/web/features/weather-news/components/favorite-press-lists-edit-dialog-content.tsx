@@ -2,107 +2,9 @@ import { Badge } from '@shared/ui/badge'
 import { Button } from '@shared/ui/button'
 import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@shared/ui/dialog'
 import { Label } from '@shared/ui/label'
-import { Separator } from '@shared/ui/separator'
-import { Spinner } from '@shared/ui/spinner'
 
-import { FAVORITE_PRESS_LIST_MAX_PRESSES } from '@/lib/favorite-press-list/constants'
-import { arePressDomainsEqual, resolvePressEntries } from '@/lib/favorite-press-list/domains'
-import { PRESS_FILTER_GROUPS, PressEntry } from '@/lib/naver/broadcast-press-list'
+import { resolvePressEntries } from '@/lib/favorite-press-list/domains'
 import { FavoritePressList } from '@/types/favorite-press-list.type'
-
-import PressBadge from './press-badge'
-import SelectedPressLists from './selected-press-lists'
-
-type FavoritePressListsEditDialogUpdateContentProps = {
-	editingList: FavoritePressList
-	draftPresses: PressEntry[]
-	onToggle: (press: PressEntry) => void
-	onRemove: (domain: string) => void
-	isSubmitting: boolean
-	onCancel: () => void
-	onSave: () => void
-}
-
-function FavoritePressListsEditDialogUpdateContent({
-	editingList,
-	draftPresses,
-	onToggle,
-	onRemove,
-	isSubmitting,
-	onCancel,
-	onSave
-}: FavoritePressListsEditDialogUpdateContentProps) {
-	const draftDomainSet = new Set(draftPresses.map((press) => press.domain))
-	const isDraftAtLimit = draftPresses.length >= FAVORITE_PRESS_LIST_MAX_PRESSES
-
-	const isEditStatusDirty =
-		editingList !== null &&
-		!arePressDomainsEqual(
-			editingList.domains,
-			draftPresses.map((press) => press.domain)
-		)
-
-	return (
-		<>
-			<DialogHeader>
-				<DialogTitle>선호목록 수정</DialogTitle>
-				<DialogDescription>{`'${editingList.name} 에 포함될 언론사를 선택해주세요. (최대 ${FAVORITE_PRESS_LIST_MAX_PRESSES} 개)`}</DialogDescription>
-			</DialogHeader>
-
-			<div className="flex flex-col gap-4">
-				{PRESS_FILTER_GROUPS.map((group) => {
-					const { id, label, items } = group
-
-					return (
-						<div key={id} className="flex flex-col gap-2">
-							<h3 className="text-grayscale-600 text-sm font-medium">{label}</h3>
-							<ul className="flex flex-wrap gap-2">
-								{items.map((press) => {
-									const isSelected = draftDomainSet.has(press.domain)
-									const isDisabled = isDraftAtLimit && !isSelected
-
-									return (
-										<li key={press.domain}>
-											<PressBadge press={press} isSelected={isSelected} isDisabled={isDisabled} onToggle={onToggle} />
-										</li>
-									)
-								})}
-							</ul>
-						</div>
-					)
-				})}
-
-				<Separator />
-
-				<div className="flex flex-col gap-3">
-					<p className="text-grayscale-900 text-sm font-semibold">
-						선택됨 ({draftPresses.length}/{FAVORITE_PRESS_LIST_MAX_PRESSES})
-					</p>
-
-					<SelectedPressLists
-						selectedPresses={draftPresses}
-						selectedCount={draftPresses.length}
-						onRemove={onRemove}
-						isSubmitting={isSubmitting}
-					/>
-				</div>
-			</div>
-
-			<DialogFooter>
-				<Button type="button" variant="outline" disabled={isSubmitting} onClick={onCancel}>
-					뒤로
-				</Button>
-				<Button
-					type="button"
-					disabled={!isEditStatusDirty || draftPresses.length === 0 || isSubmitting}
-					onClick={onSave}
-				>
-					{isSubmitting ? <Spinner /> : '저장'}
-				</Button>
-			</DialogFooter>
-		</>
-	)
-}
 
 type FavoritePressListsEditDialogDefaultContentProps = {
 	lists: FavoritePressList[]
@@ -186,4 +88,5 @@ function FavoritePressListsEditDialogDefaultContent({
 	)
 }
 
-export { FavoritePressListsEditDialogDefaultContent, FavoritePressListsEditDialogUpdateContent }
+export default FavoritePressListsEditDialogDefaultContent
+export type { FavoritePressListsEditDialogDefaultContentProps }
