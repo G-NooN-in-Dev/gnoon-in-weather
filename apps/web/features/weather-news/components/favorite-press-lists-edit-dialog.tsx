@@ -3,12 +3,12 @@
 import { Dialog, DialogContent } from '@shared/ui/dialog'
 import { useState } from 'react'
 
+import ConfirmAlertDialog from '@/components/confirm-alert-dialog'
 import { FAVORITE_PRESS_LIST_MAX_PRESSES } from '@/lib/favorite-press-list/constants'
 import { resolvePressEntries } from '@/lib/favorite-press-list/domains'
 import { PressEntry } from '@/lib/naver/broadcast-press-list'
 import { FavoritePressList } from '@/types/favorite-press-list.type'
 
-import FavoritePressListsAlertDialog from './favorite-press-lists-alert-dialog'
 import {
 	FavoritePressListsEditDialogDefaultContent,
 	FavoritePressListsEditDialogUpdateContent
@@ -131,7 +131,7 @@ function FavoritePressListsEditDialog({
 				</DialogContent>
 			</Dialog>
 
-			<FavoritePressListsAlertDialog
+			<ConfirmAlertDialog
 				open={deletingList !== null}
 				onOpenChange={(nextOpen) => {
 					if (!nextOpen) {
