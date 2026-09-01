@@ -94,7 +94,7 @@ function PasswordEditForm({ onSuccess }: PasswordEditFormProps) {
 			<DialogFooter>
 				<DialogClose render={<Button type="button" variant="outline" />}>취소</DialogClose>
 				<Button type="submit" disabled={isSubmitting}>
-					{isSubmitting ? <Spinner className="size-4" /> : '변경'}
+					{isSubmitting ? <Spinner /> : '변경'}
 				</Button>
 			</DialogFooter>
 		</form>

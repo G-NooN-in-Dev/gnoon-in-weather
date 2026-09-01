@@ -75,6 +75,8 @@ function NicknameEditForm({ currentNickname, onSuccess }: NicknameEditFormProps)
 						onChange={handleChange}
 						aria-invalid={Boolean(fieldErrors.nickname) || undefined}
 						placeholder="2~20자"
+						minLength={2}
+						maxLength={20}
 					/>
 					<FieldError>{fieldErrors.nickname}</FieldError>
 				</Field>
@@ -82,7 +84,7 @@ function NicknameEditForm({ currentNickname, onSuccess }: NicknameEditFormProps)
 			<DialogFooter>
 				<DialogClose render={<Button type="button" variant="outline" />}>취소</DialogClose>
 				<Button type="submit" disabled={isSubmitting}>
-					{isSubmitting ? <Spinner className="size-4" /> : '변경'}
+					{isSubmitting ? <Spinner /> : '변경'}
 				</Button>
 			</DialogFooter>
 		</form>

@@ -55,6 +55,8 @@ function SignUpForm() {
 						onChange={handleChange}
 						aria-invalid={Boolean(fieldErrors.nickname) || undefined}
 						placeholder="2~20자"
+						minLength={2}
+						maxLength={20}
 					/>
 					<FieldError>{fieldErrors.nickname}</FieldError>
 				</Field>
@@ -91,7 +93,7 @@ function SignUpForm() {
 			</FieldGroup>
 
 			<Button type="submit" className="w-full" disabled={isSubmitting}>
-				{isSubmitting ? <Spinner className="mx-auto size-4" /> : '회원가입'}
+				{isSubmitting ? <Spinner /> : '회원가입'}
 			</Button>
 		</form>
 	)

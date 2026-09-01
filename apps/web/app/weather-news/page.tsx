@@ -1,10 +1,13 @@
 import WeatherNewsClient from '@/app/weather-news/_components/weather-news.client'
 import { isAppApiError } from '@/lib/api-error'
+import { getCurrentUser } from '@/lib/auth/session.server'
 import { loadWeatherNews } from '@/services/naver.loader'
 import type { AppApiError } from '@/types/error.type'
 import type { WeatherNewsFeedPage } from '@/types/naver-news.type'
 
 async function WeatherNewsPage() {
+	const currentUser = await getCurrentUser()
+
 	let initialPage: WeatherNewsFeedPage | null = null
 	let initialError: AppApiError | null = null
 
@@ -29,7 +32,7 @@ async function WeatherNewsPage() {
 		<div className="min-h-screen-safe flex w-full flex-1 font-sans">
 			<main className="flex w-full flex-1">
 				<div className="max-w-content container mx-auto flex w-full flex-col py-8">
-					<WeatherNewsClient initialPage={initialPage} initialError={initialError} />
+					<WeatherNewsClient isLoggedIn={Boolean(currentUser)} initialPage={initialPage} initialError={initialError} />
 				</div>
 			</main>
 		</div>
