@@ -7,20 +7,44 @@ import { Crosshair, Star } from 'lucide-react'
 import type { LocationControlProps } from '@/features/home/types/home-component.type'
 import WeatherUnitSettingsPopover from '@/features/weather/components/weather-unit-settings-popover'
 
-function CurrentLocation({ location, loading, isLocating, error, onRequestCurrentPosition }: LocationControlProps) {
+function CurrentLocation({
+	location,
+	loading,
+	isLocating,
+	error,
+	onRequestCurrentPosition,
+	isFavorite,
+	isFavoritePending,
+	onToggleFavorite
+}: LocationControlProps) {
 	const label = isLocating
 		? '현재 위치 확인 중...'
 		: loading && !location.label
 			? '날씨 정보 불러오는 중...'
 			: location.label || '위치 정보 없음'
 
+	const canToggleFavorite = Boolean(location.label.trim()) && !loading && !isLocating
+
 	return (
 		<div className="flex flex-col gap-1">
 			<div className="flex items-center justify-between">
 				{/* 위치 정보 */}
 				<div className="flex items-center gap-2 text-xl font-bold">
-					<Button type="button" variant="ghost" aria-label="즐겨찾기 추가" className="p-0">
-						<Star fill="var(--color-grayscale-300)" stroke="var(--color-grayscale-300)" className="size-6" />
+					<Button
+						type="button"
+						variant="ghost"
+						aria-label={isFavorite ? '관심지역 해제' : '관심지역 추가'}
+						aria-pressed={isFavorite}
+						aria-busy={isFavoritePending}
+						disabled={!canToggleFavorite || isFavoritePending}
+						onClick={onToggleFavorite}
+						className="p-0"
+					>
+						<Star
+							className={cn('size-6', isFavorite ? 'text-pastel-yellow-500' : 'text-grayscale-300')}
+							fill={isFavorite ? 'currentColor' : 'transparent'}
+							stroke="currentColor"
+						/>
 					</Button>
 					<h2>{label}</h2>
 					<Button

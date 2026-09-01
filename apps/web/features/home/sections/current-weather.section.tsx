@@ -8,7 +8,10 @@ function CurrentWeatherSection({
 	loading,
 	isLocating,
 	error,
-	onRequestCurrentPosition
+	onRequestCurrentPosition,
+	isFavorite,
+	isFavoritePending,
+	onToggleFavorite
 }: CurrentWeatherSectionProps) {
 	return (
 		<section className="flex flex-col gap-3">
@@ -18,6 +21,9 @@ function CurrentWeatherSection({
 				isLocating={isLocating}
 				error={error}
 				onRequestCurrentPosition={onRequestCurrentPosition}
+				isFavorite={isFavorite}
+				isFavoritePending={isFavoritePending}
+				onToggleFavorite={onToggleFavorite}
 			/>
 			<CurrentWeather current={current} />
 		</section>
