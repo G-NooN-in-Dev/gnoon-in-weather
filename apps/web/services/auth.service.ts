@@ -5,6 +5,8 @@ import { hashPassword, verifyPassword } from '@/lib/auth/password'
 import type { SignInInput, SignUpInput, UpdatePasswordInput } from '@/lib/auth/schemas'
 import { getDb } from '@/lib/mongodb/client'
 import { USERS_COLLECTION } from '@/lib/mongodb/constants'
+import { removeAllFavoriteLocationsByUserId } from '@/services/favorite-location.service'
+import { removeAllFavoritePressListsByUserId } from '@/services/favorite-press-list.service'
 import type { PublicUser } from '@/types/auth.type'
 import type { UserDocument } from '@/types/user.type'
 
@@ -279,4 +281,40 @@ async function updateUserPassword(
 	return toPublicUser(updated)
 }
 
-export { getUserById, signInUser, signUpUser, updateUserNickname, updateUserPassword }
+/** 회원과 연관된 모든 데이터를 삭제합니다. */
+async function deleteUserAccount(userId: string): Promise<void> {
+	if (!ObjectId.isValid(userId)) {
+		throw createAuthError({
+			key: 'AUTH_UNAUTHORIZED',
+			message: '로그인이 필요합니다.',
+			status: 401
+		})
+	}
+
+	const users = await getUsersCollection()
+	const userObjectId = new ObjectId(userId)
+	const current = await users.findOne({ _id: userObjectId })
+
+	if (!current) {
+		throw createAuthError({
+			key: 'AUTH_UNAUTHORIZED',
+			message: '로그인이 필요합니다.',
+			status: 401
+		})
+	}
+
+	await removeAllFavoriteLocationsByUserId(userId)
+	await removeAllFavoritePressListsByUserId(userId)
+
+	const result = await users.deleteOne({ _id: userObjectId })
+
+	if (result.deletedCount === 0) {
+		throw createAuthError({
+			key: 'AUTH_INTERNAL_ERROR',
+			message: '회원탈퇴 중 오류가 발생했습니다.',
+			status: 500
+		})
+	}
+}
+
+export { deleteUserAccount, getUserById, signInUser, signUpUser, updateUserNickname, updateUserPassword }
