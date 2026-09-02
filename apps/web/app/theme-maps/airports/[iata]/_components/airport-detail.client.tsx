@@ -5,10 +5,9 @@ import { useMemo } from 'react'
 import Loading from '@/components/loading'
 import { WeatherUnitsProvider } from '@/contexts/weather-units.context'
 import useAirportWeather from '@/features/theme-maps/hooks/use-airport-weather'
-import AirportCurrentWeatherSection from '@/features/theme-maps/sections/airport-current-weather.section'
-import AirportPickerSection from '@/features/theme-maps/sections/airport-picker.section'
+import { AirportCurrentWeatherSection, AirportPickerSection } from '@/features/theme-maps/sections'
 import type { AirportDetailClientProps } from '@/features/theme-maps/types/airport-detail-component.type'
-import { AstroScheduleSections, DailyWeatherSection, HourlyWeatherSection } from '@/features/weather/sections'
+import { AstroScheduleSection, DailyWeatherSection, HourlyWeatherSection } from '@/features/weather/sections'
 import { splitForecast } from '@/lib/weather/split-forecast'
 
 /**
@@ -40,7 +39,7 @@ function AirportDetailClient({ airport, initialWeather, initialUnits, initialErr
 				</div>
 				<div className="flex w-1/3 flex-col gap-6">
 					<AirportPickerSection selectedIata={airport.iata} />
-					<AstroScheduleSections astros={forecastSplit?.astros ?? []} coordinates={airport} />
+					<AstroScheduleSection astros={forecastSplit?.astros ?? []} coordinates={airport} />
 				</div>
 			</div>
 		</WeatherUnitsProvider>

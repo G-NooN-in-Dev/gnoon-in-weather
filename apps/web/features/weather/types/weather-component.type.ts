@@ -1,3 +1,4 @@
+import type { Coordinates } from '@/types/location.type'
 import type { ForecastAstroEntry, ForecastDayEntry, WeatherApiCurrent, WeatherApiHour } from '@/types/weather-api.type'
 
 /** 실시간 날씨 카드 props */
@@ -31,17 +32,17 @@ type MoonriseMoonsetSectionProps = {
 	yesterdayAstro?: ForecastAstroEntry | null
 }
 
-/** 시간별 예보 테이블 props */
-type HourlyWeatherTableProps = {
-	hours: WeatherApiHour[]
+/** 일출/월출 섹션 조합기 props */
+type AstroScheduleSectionProps = {
 	astros: ForecastAstroEntry[]
+	coordinates: Coordinates
 }
 
 export type {
+	AstroScheduleSectionProps,
 	CurrentWeatherProps,
 	ForecastAstroSectionProps,
 	ForecastDaysSectionProps,
 	ForecastHoursSectionProps,
-	HourlyWeatherTableProps,
 	MoonriseMoonsetSectionProps
 }

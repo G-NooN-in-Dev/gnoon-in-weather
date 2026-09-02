@@ -11,16 +11,7 @@ import {
 	getAirportByIata,
 	isAirportVisibleForFilter
 } from '@/features/theme-maps/lib/airports'
-
-/* eslint-disable no-unused-vars -- 콜백 시그니처의 파라미터명은 문서용입니다. */
-type AirportSelectHandler = (iata: string) => void
-/* eslint-enable no-unused-vars */
-
-type AirportsMapSectionProps = {
-	selectedIata: string | null
-	onSelect: AirportSelectHandler
-	onClear: () => void
-}
+import type { AirportsMapSectionProps } from '@/features/theme-maps/types/theme-maps-component.type'
 
 function AirportsMapSection({ selectedIata, onSelect, onClear }: AirportsMapSectionProps) {
 	const [filter, setFilter] = useState<AirportMapFilter>('all')

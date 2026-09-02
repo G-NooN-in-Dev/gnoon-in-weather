@@ -2,15 +2,12 @@ import { notFound } from 'next/navigation'
 
 import AirportDetailClient from '@/app/theme-maps/airports/[iata]/_components/airport-detail.client'
 import { getAirportByIata } from '@/features/theme-maps/lib/airports'
+import type { ThemeMapsAirportDetailPageProps } from '@/features/theme-maps/types/theme-maps-component.type'
 import { isAppApiError } from '@/lib/api-error'
 import { readWeatherUnitsFromCookies } from '@/lib/weather/units-cookie.server'
 import { loadWeatherSummary } from '@/services/weather.loader'
 import type { AppApiError } from '@/types/error.type'
 import type { WeatherSummary } from '@/types/weather-api.type'
-
-type ThemeMapsAirportDetailPageProps = {
-	params: Promise<{ iata: string }>
-}
 
 async function ThemeMapsAirportDetailPage({ params }: ThemeMapsAirportDetailPageProps) {
 	const { iata } = await params

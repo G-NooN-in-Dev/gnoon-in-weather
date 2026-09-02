@@ -1,4 +1,4 @@
-import ThemeMapsHomeSection from '@/features/theme-maps/sections/theme-maps-home.section'
+import { ThemeMapsHomeSection } from '@/features/theme-maps/sections'
 
 function ThemeMapsHomePage() {
 	return (

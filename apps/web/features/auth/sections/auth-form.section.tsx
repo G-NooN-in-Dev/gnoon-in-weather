@@ -6,12 +6,7 @@ import Link from 'next/link'
 
 import SignInForm from '@/features/auth/components/sign-in-form'
 import SignUpForm from '@/features/auth/components/sign-up-form'
-
-type AuthFormMode = 'sign-in' | 'sign-up'
-
-type AuthFormSectionProps = {
-	mode: AuthFormMode
-}
+import type { AuthFormMode, AuthFormSectionProps } from '@/features/auth/types/auth-component.type'
 
 const FORM_LABELS = {
 	'sign-in': {
@@ -67,4 +62,3 @@ function AuthFormSection({ mode }: AuthFormSectionProps) {
 }
 
 export default AuthFormSection
-export type { AuthFormMode, AuthFormSectionProps }

@@ -21,10 +21,6 @@ type NewsFeedSectionProps = {
 	onLoadMore: () => void
 }
 
-type NewsListItemProps = {
-	item: WeatherNewsListItem
-}
-
 type PressFilterSectionProps = {
 	isLoggedIn: boolean
 	favoriteLists: FavoritePressList[]
@@ -43,4 +39,4 @@ type PressFilterSectionProps = {
 	onApplyClick: (list: FavoritePressList) => void
 }
 
-export type { NewsFeedSectionProps, NewsListItemProps, PressFilterSectionProps, WeatherNewsClientProps }
+export type { NewsFeedSectionProps, PressFilterSectionProps, WeatherNewsClientProps }
