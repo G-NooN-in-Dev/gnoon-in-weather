@@ -12,7 +12,8 @@
 		"NAVER_API_BASE_URL",
 		"MONGODB_URI",
 		"AUTH_SECRET",
-		"NODE_ENV"
+		"NODE_ENV",
+		"BASE_URL"
 	],
 	"tasks": {
 		"build": {

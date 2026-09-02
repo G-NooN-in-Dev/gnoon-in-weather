@@ -13,6 +13,7 @@
 		"@meteocons/svg-static": "^0.1.0",
 		"@phosphor-icons/react": "^2.1.10",
 		"@shared/ui": "workspace:*",
+		"@vercel/analytics": "^2.0.1",
 		"bcryptjs": "^3.0.3",
 		"dayjs": "^1.11.21",
 		"jose": "^6.2.10",

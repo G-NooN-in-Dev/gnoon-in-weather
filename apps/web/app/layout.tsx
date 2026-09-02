@@ -1,6 +1,7 @@
 import '@/global.css'
 
 import { Toaster } from '@shared/ui/sonner'
+import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { PropsWithChildren, Suspense } from 'react'
 
@@ -13,7 +14,25 @@ export const metadata: Metadata = {
 		default: 'G-NooN in Weather',
 		template: '%s | G-NooN in Weather'
 	},
-	description: 'G-NooN in Weather'
+	description: 'G-NooN in Weather',
+	icons: {
+		icon: '/icon.svg',
+		apple: '/apple-icon.svg'
+	},
+	openGraph: {
+		title: 'G-NooN in Weather',
+		description: 'G-NooN in Weather',
+		url: process.env.BASE_URL ?? 'https://gnoon-in-weather.vercel.app',
+		siteName: 'G-NooN in Weather',
+		images: [
+			{
+				url: '/icon.svg',
+				alt: 'G-NooN in Weather'
+			}
+		],
+		locale: 'ko-KR',
+		type: 'website'
+	}
 }
 
 function RootLayout({ children }: PropsWithChildren) {
@@ -27,6 +46,7 @@ function RootLayout({ children }: PropsWithChildren) {
 				{children}
 				<Footer />
 				<Toaster richColors position="top-center" />
+				<Analytics />
 			</body>
 		</html>
 	)
