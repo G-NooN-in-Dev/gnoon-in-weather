@@ -70,13 +70,45 @@ const isNavActive = (pathname: string, href: string) => pathname === href
 
 ### 선택 기준 요약
 
-| 상황                        | 권장                                               |
-| --------------------------- | -------------------------------------------------- |
-| export 컴포넌트             | `function` + `export default`                      |
-| export 유틸 함수            | `function` + `export { fn }` + `export type { T }` |
-| 타입 전용 파일              | `export type { T }`                                |
-| 파일 내부 짧은 헬퍼         | `const` 화살표 함수                                |
-| `this` 바인딩이 필요한 경우 | `function` (실무에서는 드묾)                       |
+| 상황                         | 권장                                               |
+| ---------------------------- | -------------------------------------------------- |
+| export 컴포넌트·훅·페이지    | `function` + `export default`                      |
+| export 유틸·서비스 (여러 개) | `function` + `export { fn }` + `export type { T }` |
+| 타입 전용 파일               | `export type { T }`                                |
+| 파일 내부 짧은 헬퍼          | `const` 화살표 함수                                |
+| `this` 바인딩이 필요한 경우  | `function` (실무에서는 드묾)                       |
+
+### export 방식
+
+**런타임 export가 하나**면 `export default`를 씁니다.
+
+- 컴포넌트 1개 (`*.tsx`)
+- 커스텀 훅 1개 (`use-*.ts`)
+- 페이지·레이아웃 (`page.tsx`, `layout.tsx`)
+
+**런타임 export가 둘 이상**이면 `export { … }`만 씁니다. `export default`와 혼용하지 않습니다.
+
+- `services/*.service.ts` — 함수 여러 개
+- `contexts/*.tsx` — Provider + hook
+- `app/api/**/route.ts` — HTTP 메서드 핸들러
+
+타입은 필요할 때만 파일 하단 `export type { … }`로 **추가**합니다. default export와 함께 써도 됩니다.
+
+```ts
+// ✅ 훅 1개 + 외부에서 쓰는 옵션 타입
+function useWeather() {
+	/* … */
+}
+export default useWeather
+export type { UseWeatherOptions, UseWeatherResult }
+
+// ✅ 서비스·컨텍스트 — default 없음
+export { getRealtimeWeather, getForecastWeather }
+export type { WeatherFetchOptions }
+```
+
+- 다른 파일에서 import하지 않는 Props·옵션 타입은 **export하지 않습니다.**
+- `packages/ui`는 shadcn 관례에 따라 named export만 사용합니다.
 
 ---
 
@@ -103,7 +135,7 @@ export default ComponentName
 ### 파일명·컴포넌트명
 
 - 파일명은 **kebab-case**를 사용합니다.
-- 섹션 등 역할이 있는 컴포넌트는 `example.section.tsx`처럼 **점(`.`)으로 역할 접미사**를 붙일 수 있습니다.
+- 역할 접미사는 **단수형**을 씁니다. (`section`, `client` — `sections` 같은 복수형 금지)
 - 컴포넌트명은 파일명(확장자 제외)의 `-`, `.` 구분 단위를 각각 PascalCase로 합칩니다.
 
 | 파일명                        | 컴포넌트명              |
@@ -111,6 +143,23 @@ export default ComponentName
 | `current-location.tsx`        | `CurrentLocation`       |
 | `example.section.tsx`         | `ExampleSection`        |
 | `current-weather.section.tsx` | `CurrentWeatherSection` |
+| `homepage.client.tsx`         | `HomepageClient`        |
+| `use-weather.ts`              | `useWeather`            |
+
+#### 역할 접미사 (apps/web)
+
+| 접미사         | 예시                        | 용도                                              |
+| -------------- | --------------------------- | ------------------------------------------------- |
+| `.section.tsx` | `daily-weather.section.tsx` | feature 섹션 UI                                   |
+| `.client.tsx`  | `homepage.client.tsx`       | 페이지 전용 client 조합기 (`app/**/_components/`) |
+| `.type.ts`     | `weather-api.type.ts`       | 타입 전용                                         |
+| `.service.ts`  | `weather.service.ts`        | 외부 API 1건 호출                                 |
+| `.loader.ts`   | `weather.loader.ts`         | service 조합·앱 진입                              |
+| `.server.ts`   | `cookie.server.ts`          | 서버 전용 I/O (`cookies()` 등)                    |
+
+- 일반 UI 조각·카드·다이얼로그: 접미사 없이 `kebab-case.tsx`
+- 훅: `use-{name}.ts` (`hooks/` 또는 `features/{name}/hooks/`)
+- API Route: `app/api/{path}/route.ts` (Next.js 관례)
 
 ### Next.js 라우트
 
@@ -132,17 +181,49 @@ export default ComponentName
 
 ### 하이드레이션·클라이언트 전용 값
 
-기기 시각·`window`·`localStorage`처럼 서버와 다른 값은 렌더에서 바로 읽지 않습니다.
+기기 시각·`window`·`localStorage`처럼 **서버 HTML과 클라이언트 첫 렌더가 달라질 수 있는 값**은 조건부 UI에 바로 쓰지 않습니다.  
+React 19(Strict Mode)에서는 `useEffect` 안의 `setState`도 **마운트 직후 추가 렌더**를 일으켜, 서버·클라 불일치(hydration mismatch)나 깜빡임(flicker)으로 이어지기 쉽습니다.
 
-- **선호:** `useSyncExternalStore` (예: `useIsClient` — 서버 `false`, 클라이언트 `true`)
-- **지양:** 마운트 후 `useEffect` + `useState`로만 “클라 준비됨” 플래그를 세우는 패턴
-- `Date.now()`를 `useSyncExternalStore`의 `getSnapshot`에 매 호출마다 넣지 않습니다 (매 렌더 값이 바뀌면 tearing 경고)
+#### `useEffect` + `setState` — 지양하는 패턴
+
+| 패턴                                                             | 문제                                      | 대안                                                    |
+| ---------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------- |
+| `useEffect(() => setMounted(true), [])` 로 “클라 준비됨”         | 서버·첫 클라 렌더와 이후 렌더 UI가 달라짐 | `useIsClient()` (`useSyncExternalStore`)                |
+| `useEffect`로 props → state 미러링                               | 불필요한 2-pass 렌더, 동기화 버그         | 렌더에서 직접 계산, 또는 `key`로 리셋                   |
+| `useEffect` + `dayjs()` / `Date.now()`로 **표시 순서·문구** 결정 | hydrate 직후 레이아웃이 바뀜              | `useIsClient()` 가드 후 계산, 또는 SSR-safe 기본값 유지 |
+| `localStorage` / `window`를 effect 없이 render에서 읽기          | 서버에는 없는 값 → mismatch               | `useSyncExternalStore` 또는 effect 후에만 표시          |
 
 ```tsx
-// ✅ 클라이언트에서만 현재 시각으로 계산
+// ❌ 마운트 플래그 — effect 직후 UI가 바뀜
+const [mounted, setMounted] = useState(false)
+useEffect(() => setMounted(true), [])
+if (!mounted) return null
+
+// ✅ 서버 false / 클라 true — 스냅샷 API
 const isClient = useIsClient()
 const status = isClient ? createSunriseStatus(today, tomorrow, dayjs()) : null
 ```
+
+```tsx
+// ❌ props를 effect로 state에 복사
+const [value, setValue] = useState(initial)
+useEffect(() => setValue(initial), [initial])
+
+// ✅ 파생 값은 렌더에서
+const value = transform(initial)
+```
+
+- `Date.now()`를 `useSyncExternalStore`의 `getSnapshot`에 **매 호출마다** 넣지 않습니다 (tearing 경고).
+- hydrate 전·후 **레이아웃 순서가 바뀌는 UI**는 클라에서만 순서를 바꾸고, SSR·첫 paint에는 안전한 기본 순서를 유지합니다. (예: `AstroScheduleSection`)
+
+#### `useEffect`를 써도 되는 경우
+
+- **구독** — 이벤트 리스너, `ResizeObserver`, 외부 store subscribe (cleanup 반환)
+- **명령형 DOM / 서드파티** — Kakao Map, 차트 등 React 밖 API
+- **의존성 변경 시 fetch** — 좌표·필터 변경 refetch (로딩·에러 state 포함)
+- **props/state와 무관한 1회 초기화** — SDK script 로드 등 (UI 분기용 `setState`와 분리)
+
+effect 안 `setState`는 **위 경우처럼 부수 효과의 결과**를 반영할 때만 쓰고, “클라인지 판별”“현재 시각 반영” 같은 **렌더 분기 목적**에는 쓰지 않습니다.
 
 ### React 19 API 우선
 
@@ -161,6 +242,26 @@ const status = isClient ? createSunriseStatus(today, tomorrow, dayjs()) : null
 ---
 
 ## 5. TypeScript
+
+### Props·타입 배치
+
+상세 폴더 규칙: [`apps/web/ARCHITECTURE.md`](../apps/web/ARCHITECTURE.md)
+
+`features/{기능}/types/`는 **feature 공개 계약(boundary contract)** — 의도적으로 파일·레이어를 넘나드는 props만 둡니다.
+
+| 범위                                     | 위치                                        | export               |
+| ---------------------------------------- | ------------------------------------------- | -------------------- |
+| **섹션·client 조합기·페이지** props      | `features/{기능}/types/*-component.type.ts` | `export type { … }`  |
+| **shared primitive** (2곳 이상·`&` 조합) | 동일 또는 `features/weather/types/` 등      | `export type { … }`  |
+| **앱 전역** API·도메인                   | `apps/web/types/*.type.ts`                  | `export type { … }`  |
+| **leaf 컴포넌트** (해당 파일만)          | 컴포넌트 파일 **상단** 인라인 `type`        | export **하지 않음** |
+| **훅 옵션/결과** (외부 import)           | 훅 파일 하단                                | `export type { … }`  |
+| **훅 옵션** (파일 내부만)                | 훅 파일 상단 인라인                         | export 안 함         |
+
+- 2곳 이상에서 쓰이거나 `&`로 **조합**되는 props → `types/`에 둡니다.
+- leaf props를 `types/`에 두지 않습니다. (파일 가까이에 두어 읽기 쉽게)
+- feature가 **화면·서브도메인이 여러 개**면 types 파일도 쪼갭니다. (예: `theme-maps/types/` — 목록·공항 상세·야구 상세)
+- `lib/auth/schemas.ts`처럼 zod 스키마 + `z.infer` 타입은 해당 도메인 `lib/`에 둡니다.
 
 ### 구조분해할당
 

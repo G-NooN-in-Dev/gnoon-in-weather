@@ -125,14 +125,35 @@ features/home/                     # 홈 전용 (GPS 위치, 검색, 페이지 �
 
 - 특정 기능(홈, 테마지도 등)에만 쓰는 섹션·카드·테이블
 - **2개 이상 feature에서 쓰는 날씨 UI** → `features/weather/`
-- 섹션 파일: `*.section.tsx` (프로젝트 컨벤션)
+- 섹션 파일: `*.section.tsx` + **`sections/index.ts` barrel** (feature마다 1개)
+
+**섹션 barrel (`sections/index.ts`)**
+
+- **용도:** `app/**/_components`, `page.tsx` 등 **외부 조합기**가 여러 섹션을 `@/features/{기능}/sections` 한 경로로 import
+- **export 형식:** `export { default as XxxSection } from './xxx.section'` (named re-export)
+- **형제 섹션**끼리 import할 때는 barrel을 쓰지 않고 **상대 경로** (`./moonrise-moonset.section`) — 순환 참조 방지
+- 섹션이 1개뿐인 feature(`auth`)도 barrel을 두어 import 경로를 통일
 
 **규칙**
 
 - 표시 데이터는 **props로** 받습니다.
 - 섹션이 context를 직접 읽지 않도록 유지합니다. (테스트·재사용 용이)
-- 날씨 섹션 props는 `features/weather/types/weather-component.type.ts`에 정의합니다.
-- 기능 전용 props(GPS 위치 등)는 `features/{기능}/types/`에 정의하고 `&`로 조합합니다.
+- `features/{기능}/types/` = **공개 계약(boundary contract)** — 섹션·client·page props, 2곳 이상 쓰이거나 `&`로 조합되는 shared primitive
+- **leaf 컴포넌트**(카드·테이블·다이얼로그 등, 해당 파일만 쓰는 props) → 컴포넌트 파일 상단 인라인 `type`, **export 안 함**
+- feature 간 조합은 `features/{기능}/types/`에서 `&`로 합칩니다.
+- 화면·서브도메인이 여러 개인 feature는 types 파일을 분리합니다. (예: `theme-maps/types/theme-maps-component.type.ts`, `airport-detail-component.type.ts`)
+- 앱 전역 API·도메인 타입 → `apps/web/types/`
+- 상세: [`docs/CODING_GUIDELINES.md`](../../docs/CODING_GUIDELINES.md) § TypeScript (Props·타입 배치, `type` vs `interface`)
+
+**타입 배치 요약**
+
+| 대상                | 위치                              | 예                                            |
+| ------------------- | --------------------------------- | --------------------------------------------- |
+| 섹션 props          | `features/{기능}/types/`          | `ForecastDaysSectionProps`                    |
+| client 조합기 props | 동일                              | `HomepageClientProps`                         |
+| shared primitive    | 동일 (또는 cross-feature feature) | `CurrentWeatherProps`, `LocationControlProps` |
+| leaf props          | 컴포넌트 파일 인라인              | `DailyWeatherCardProps`                       |
+| API·공유 도메인     | `types/`                          | `WeatherSummary`                              |
 
 **공통 props 예시**
 
