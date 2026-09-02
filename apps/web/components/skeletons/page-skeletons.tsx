@@ -44,8 +44,22 @@ function MyPageSkeleton() {
 			<Skeleton className="h-48 w-full rounded-xl" />
 			<Skeleton className="h-0.5 w-full" />
 			<Skeleton className="h-32 w-full rounded-xl" />
+			<Skeleton className="h-0.5 w-full" />
+			<Skeleton className="h-32 w-full rounded-xl" />
 		</div>
 	)
+}
+
+function MyPageFavoriteLocationsSkeleton() {
+	return <Skeleton className="h-40 w-full rounded-xl" aria-busy="true" aria-live="polite" />
+}
+
+function MyPageFavoritePressListsSkeleton() {
+	return <Skeleton className="h-48 w-full rounded-xl" aria-busy="true" aria-live="polite" />
+}
+
+function MyPageAccountDeleteSkeleton() {
+	return <Skeleton className="h-32 w-full rounded-xl" aria-busy="true" aria-live="polite" />
 }
 
 function ThemeMapsHomeSkeleton() {
@@ -72,6 +86,9 @@ function ThemeMapsListSkeleton() {
 
 export {
 	HomePageSkeleton,
+	MyPageAccountDeleteSkeleton,
+	MyPageFavoriteLocationsSkeleton,
+	MyPageFavoritePressListsSkeleton,
 	MyPageSkeleton,
 	ThemeMapsDetailSkeleton,
 	ThemeMapsHomeSkeleton,
