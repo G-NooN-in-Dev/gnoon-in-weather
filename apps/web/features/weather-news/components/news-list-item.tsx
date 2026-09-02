@@ -1,5 +1,8 @@
+'use client'
+
+import useIsClient from '@/hooks/use-is-client'
 import type { WeatherNewsListItem } from '@/types/naver-news.type'
-import { formatRelativeTime } from '@/utils/format'
+import { formatDate, formatRelativeTime } from '@/utils/format'
 
 type NewsListItemProps = {
 	item: WeatherNewsListItem
@@ -8,10 +11,13 @@ type NewsListItemProps = {
 /**
  * 뉴스 피드 한 줄.
  * 제목·요약·언론사·상대 시각을 와이어프레임 순서대로 표시합니다.
+ * 상대 시각은 hydrate 이후에만 갱신해 SSR·첫 클라 렌더를 맞춥니다.
  */
 function NewsListItem({ item }: NewsListItemProps) {
+	const isClient = useIsClient()
 	const { title, description, pressName, pubDate, link } = item
 	const relativeTime = formatRelativeTime(pubDate)
+	const timeLabel = isClient ? relativeTime : relativeTime === '' ? '' : formatDate(pubDate, 'YYYY.MM.DD HH:mm')
 
 	return (
 		<article className="border-grayscale-200 mb-4 rounded-lg border-2 bg-white p-4 transition-all duration-300 hover:scale-105 hover:shadow-lg">
@@ -22,7 +28,7 @@ function NewsListItem({ item }: NewsListItemProps) {
 				{description ? <p className="text-grayscale-600 line-clamp-2 text-sm leading-relaxed">{description}</p> : null}
 				<p className="text-grayscale-500 flex items-center gap-2 text-sm">
 					<span>{pressName}</span>
-					{relativeTime ? <span>{` ${relativeTime}`}</span> : null}
+					{timeLabel ? <span>{timeLabel}</span> : null}
 				</p>
 			</a>
 		</article>

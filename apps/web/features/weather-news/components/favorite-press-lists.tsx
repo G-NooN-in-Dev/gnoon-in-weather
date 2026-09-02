@@ -26,8 +26,9 @@ function FavoritePressLists({
 
 	if (isLoading) {
 		return (
-			<div className="text-grayscale-400 flex items-center gap-2 text-sm">
-				<Spinner /> <span>선호목록을 불러오는 중입니다.</span>
+			<div className="text-grayscale-400 flex items-start gap-2 text-sm">
+				<Spinner className="mx-0 shrink-0" />
+				<span>선호목록을 불러오는 중입니다.</span>
 			</div>
 		)
 	}
