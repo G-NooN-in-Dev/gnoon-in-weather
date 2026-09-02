@@ -1,9 +1,14 @@
 'use client'
 
 import { toast } from '@shared/ui/sonner'
-import { useCallback, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
 
-import { requestAddFavoriteLocation, requestRemoveFavoriteLocation } from '@/lib/favorite-location/client'
+import {
+	requestAddFavoriteLocation,
+	requestFavoriteLocations,
+	requestRemoveFavoriteLocation
+} from '@/lib/favorite-location/client'
 import { FAVORITE_LOCATION_MAX_ITEMS, FAVORITE_LOCATION_TOAST } from '@/lib/favorite-location/constants'
 import { isSameFavoriteLocation } from '@/lib/favorite-location/match'
 import type { FavoriteLocation } from '@/types/favorite-location.type'
@@ -27,8 +32,40 @@ type UseFavoriteLocationsResult = {
  * 성공·비로그인·오류 토스트는 이 훅에서 처리합니다.
  */
 function useFavoriteLocations({ initialItems, isLoggedIn }: UseFavoriteLocationsOptions): UseFavoriteLocationsResult {
+	const router = useRouter()
 	const [items, setItems] = useState(initialItems)
 	const [isPending, setIsPending] = useState(false)
+	const [prevIsLoggedIn, setPrevIsLoggedIn] = useState(isLoggedIn)
+
+	// 로그아웃 시 목록 비우기
+	if (prevIsLoggedIn !== isLoggedIn) {
+		setPrevIsLoggedIn(isLoggedIn)
+		if (!isLoggedIn) {
+			setItems([])
+		}
+	}
+
+	useEffect(() => {
+		if (!isLoggedIn) {
+			return
+		}
+
+		let cancelled = false
+
+		async function syncItems() {
+			const nextItems = await requestFavoriteLocations()
+
+			if (!cancelled) {
+				setItems(nextItems)
+			}
+		}
+
+		void syncItems()
+
+		return () => {
+			cancelled = true
+		}
+	}, [isLoggedIn])
 
 	const isFavorite = useCallback(
 		(location: LocationState) =>
@@ -42,24 +79,28 @@ function useFavoriteLocations({ initialItems, isLoggedIn }: UseFavoriteLocations
 		[items]
 	)
 
-	const removeById = useCallback(async (id: string) => {
-		setIsPending(true)
+	const removeById = useCallback(
+		async (id: string) => {
+			setIsPending(true)
 
-		try {
-			const result = await requestRemoveFavoriteLocation(id)
+			try {
+				const result = await requestRemoveFavoriteLocation(id)
 
-			if (!result.ok) {
-				toast.error(result.message)
-				return false
+				if (!result.ok) {
+					toast.error(result.message)
+					return false
+				}
+
+				setItems((current) => current.filter((item) => item.id !== id))
+				router.refresh()
+				toast.success(FAVORITE_LOCATION_TOAST.REMOVED)
+				return true
+			} finally {
+				setIsPending(false)
 			}
-
-			setItems((current) => current.filter((item) => item.id !== id))
-			toast.success(FAVORITE_LOCATION_TOAST.REMOVED)
-			return true
-		} finally {
-			setIsPending(false)
-		}
-	}, [])
+		},
+		[router]
+	)
 
 	const toggleFavorite = useCallback(
 		async (location: LocationState) => {
@@ -92,6 +133,7 @@ function useFavoriteLocations({ initialItems, isLoggedIn }: UseFavoriteLocations
 					}
 
 					setItems((current) => current.filter((item) => item.id !== existing.id))
+					router.refresh()
 					toast.success(FAVORITE_LOCATION_TOAST.REMOVED)
 					return
 				}
@@ -110,12 +152,13 @@ function useFavoriteLocations({ initialItems, isLoggedIn }: UseFavoriteLocations
 				}
 
 				setItems((current) => [...current, result.item].slice(0, FAVORITE_LOCATION_MAX_ITEMS))
+				router.refresh()
 				toast.success(FAVORITE_LOCATION_TOAST.ADDED)
 			} finally {
 				setIsPending(false)
 			}
 		},
-		[isLoggedIn, items]
+		[isLoggedIn, items, router]
 	)
 
 	return { items, isFavorite, isPending, removeById, toggleFavorite }

@@ -2,15 +2,15 @@
 
 import { cn } from '@shared/ui/utils'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { subscribeNavigationStart } from '@/lib/navigation/navigation-progress-events'
 
 /**
  * 상단 progress bar 상태
- * - idle: 대기 / loading : 로딩 중 / completing : 완료 중
+ * - idle: 대기 / loading : 로딩 중 / completed : 완료 예정
  */
-type NavigationProgressState = 'idle' | 'loading' | 'completing'
+type NavigationProgressState = 'idle' | 'loading' | 'completed'
 
 /**
  * App Router 페이지 이동 시 보여지는 상단 progress bar.
@@ -22,13 +22,19 @@ function NavigationProgress() {
 	const routeKey = `${pathname}?${searchParams.toString()}`
 	const [state, setState] = useState<NavigationProgressState>('idle')
 	const [width, setWidth] = useState(0)
-	const intervalRef = useRef<number | undefined>(undefined)
-	const isFirstRouteRef = useRef(true)
+	const [trackedRouteKey, setTrackedRouteKey] = useState(routeKey)
 
 	/** 로딩 시작 & 상단 progress bar 너비를 10%로 설정합니다. */
 	const startLoading = () => {
 		setState('loading')
 		setWidth(10)
+	}
+
+	// 라우트 변경 시 완료 애니메이션
+	if (trackedRouteKey !== routeKey) {
+		setTrackedRouteKey(routeKey)
+		setState('completed')
+		setWidth(100)
 	}
 
 	/** 페이지 이동 시작 이벤트를 구독합니다. */
@@ -103,7 +109,7 @@ function NavigationProgress() {
 			return
 		}
 
-		intervalRef.current = window.setInterval(() => {
+		const intervalId = window.setInterval(() => {
 			setWidth((previous) => {
 				if (previous >= 90) {
 					return previous
@@ -114,29 +120,17 @@ function NavigationProgress() {
 		}, 280)
 
 		return () => {
-			if (intervalRef.current !== undefined) {
-				window.clearInterval(intervalRef.current)
-			}
+			window.clearInterval(intervalId)
 		}
 	}, [state])
 
 	/**
-	 * 페이지 이동 완료 처리
-	 * - 완료 처리 후 100%로 렌더링
-	 * - 220ms 후 대기 상태로 전환
+	 * 완료 처리 이후 220ms 후에 대기 상태로 전환합니다.
 	 */
 	useEffect(() => {
-		if (isFirstRouteRef.current) {
-			isFirstRouteRef.current = false
+		if (state !== 'completed') {
 			return
 		}
-
-		if (intervalRef.current !== undefined) {
-			window.clearInterval(intervalRef.current)
-		}
-
-		setState('completing')
-		setWidth(100)
 
 		const timeout = window.setTimeout(() => {
 			setState('idle')
@@ -146,7 +140,7 @@ function NavigationProgress() {
 		return () => {
 			window.clearTimeout(timeout)
 		}
-	}, [routeKey])
+	}, [state, routeKey])
 
 	const visible = state !== 'idle'
 
@@ -166,7 +160,7 @@ function NavigationProgress() {
 			<div
 				className={cn(
 					'bg-pastel-blue-600 h-full origin-left shadow-[0_0_10px_rgb(110_184_242/0.55)] transition-[width] duration-200 ease-out',
-					state === 'completing' && 'duration-150'
+					state === 'completed' && 'duration-150'
 				)}
 				style={{ width: `${width}%` }}
 			/>

@@ -67,6 +67,12 @@ function useYesterdayMoonAstro({ coordinates, astros }: UseYesterdayMoonAstroOpt
 		let isMounted = true
 
 		async function resolveYesterdayAstro() {
+			await Promise.resolve()
+
+			if (!isMounted) {
+				return
+			}
+
 			try {
 				const cached = localStorage.getItem(cacheKey)
 

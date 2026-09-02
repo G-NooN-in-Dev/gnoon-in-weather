@@ -103,6 +103,14 @@ function useWeather({
 		const isSameAsInitial = isSameCoordinates({ lat: fetchLat, lng: fetchLng }, { lat: initialLat, lng: initialLng })
 		const isUserInitiated = fetchCount > 0
 
+		// 마운트 직후 SSR 데이터만 단축 사용. 사용자 재선택은 항상 다시 조회합니다.
+		if (
+			!isUserInitiated &&
+			canUseInitialWeatherWithoutFetch(fetchLat, fetchLng, initialLat, initialLng, initialWeather)
+		) {
+			return
+		}
+
 		/** 날씨만 반영하고, 라벨은 카카오/쿠키 값을 유지한 채 쿠키에 저장합니다. */
 		function applyWeatherSummary(summary: WeatherSummary, coordinates: Coordinates) {
 			setWeather(summary)
@@ -117,12 +125,9 @@ function useWeather({
 		}
 
 		async function fetchWeather() {
-			// 마운트 직후 SSR 데이터만 단축 사용. 사용자 재선택은 항상 다시 조회합니다.
-			if (
-				!isUserInitiated &&
-				canUseInitialWeatherWithoutFetch(fetchLat, fetchLng, initialLat, initialLng, initialWeather)
-			) {
-				setLoading(false)
+			await Promise.resolve()
+
+			if (controller.signal.aborted) {
 				return
 			}
 

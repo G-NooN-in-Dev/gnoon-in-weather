@@ -46,11 +46,16 @@ function useBaseballWeather({
 	const [error, setError] = useState<AppApiError | null>(initialError)
 
 	useEffect(() => {
+		if (canUseInitialWeatherWithoutFetch(initialWeather)) {
+			return
+		}
+
 		const controller = new AbortController()
 
 		async function fetchWeather() {
-			if (canUseInitialWeatherWithoutFetch(initialWeather)) {
-				setLoading(false)
+			await Promise.resolve()
+
+			if (controller.signal.aborted) {
 				return
 			}
 

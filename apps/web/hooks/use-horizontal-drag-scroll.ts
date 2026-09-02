@@ -89,7 +89,10 @@ function useHorizontalDragScroll({ scrollRatio = 0.8 }: UseHorizontalDragScrollO
 		const scrollElement = scrollRef.current
 		if (!scrollElement) return
 
-		updateScrollState()
+		// 초기 측정은 rAF·ResizeObserver 콜백에서
+		const frameId = window.requestAnimationFrame(() => {
+			updateScrollState()
+		})
 
 		const resizeObserver = new ResizeObserver(() => {
 			updateScrollState()
@@ -105,6 +108,7 @@ function useHorizontalDragScroll({ scrollRatio = 0.8 }: UseHorizontalDragScrollO
 		window.addEventListener('resize', updateScrollState)
 
 		return () => {
+			window.cancelAnimationFrame(frameId)
 			resizeObserver.disconnect()
 			window.removeEventListener('resize', updateScrollState)
 		}

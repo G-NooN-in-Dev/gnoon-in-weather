@@ -1,6 +1,7 @@
 'use client'
 
 import { toast } from '@shared/ui/sonner'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 
 import {
@@ -35,12 +36,14 @@ function useFavoritePressLists({
 	initialItems,
 	isLoggedIn
 }: UseFavoritePressListsOptions): UseFavoritePressListsResult {
+	const router = useRouter()
 	const hasInitialItems = initialItems !== undefined
 	const [items, setItems] = useState(hasInitialItems ? initialItems : [])
 	const [isLoading, setIsLoading] = useState(!hasInitialItems)
 	const [isPending, setIsPending] = useState(false)
 	const [prevIsLoggedIn, setPrevIsLoggedIn] = useState(isLoggedIn)
 
+	// 로그아웃 시 목록 비우기
 	if (prevIsLoggedIn !== isLoggedIn) {
 		setPrevIsLoggedIn(isLoggedIn)
 		if (!isLoggedIn) {
@@ -49,15 +52,13 @@ function useFavoritePressLists({
 	}
 
 	useEffect(() => {
-		if (!isLoggedIn || hasInitialItems) {
+		if (!isLoggedIn) {
 			return
 		}
 
 		let cancelled = false
 
-		async function loadItems() {
-			setIsLoading(true)
-
+		async function syncItems() {
 			try {
 				const nextItems = await requestFavoritePressLists()
 
@@ -71,12 +72,12 @@ function useFavoritePressLists({
 			}
 		}
 
-		void loadItems()
+		void syncItems()
 
 		return () => {
 			cancelled = true
 		}
-	}, [hasInitialItems, isLoggedIn])
+	}, [isLoggedIn])
 
 	const createList = useCallback(
 		async ({ name, domains }: { name: string; domains: string[] }) => {
@@ -106,13 +107,14 @@ function useFavoritePressLists({
 				}
 
 				setItems((current) => [...current, result.item].slice(0, FAVORITE_PRESS_LIST_MAX_ITEMS))
+				router.refresh()
 				toast.success(FAVORITE_PRESS_LIST_TOAST.ADDED)
 				return result.item
 			} finally {
 				setIsPending(false)
 			}
 		},
-		[isLoggedIn, items]
+		[isLoggedIn, items, router]
 	)
 
 	const updateList = useCallback(
@@ -138,13 +140,14 @@ function useFavoritePressLists({
 				}
 
 				setItems((current) => current.map((item) => (item.id === id ? result.item : item)))
+				router.refresh()
 				toast.success(FAVORITE_PRESS_LIST_TOAST.UPDATED)
 				return result.item
 			} finally {
 				setIsPending(false)
 			}
 		},
-		[isLoggedIn, items]
+		[isLoggedIn, items, router]
 	)
 
 	const removeList = useCallback(
@@ -165,13 +168,14 @@ function useFavoritePressLists({
 				}
 
 				setItems((current) => current.filter((item) => item.id !== id))
+				router.refresh()
 				toast.success(FAVORITE_PRESS_LIST_TOAST.REMOVED)
 				return true
 			} finally {
 				setIsPending(false)
 			}
 		},
-		[isLoggedIn]
+		[isLoggedIn, router]
 	)
 
 	return { items, isLoading, isPending, createList, updateList, removeList }
