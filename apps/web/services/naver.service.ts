@@ -1,3 +1,4 @@
+import { NAVER_NEWS_REVALIDATE_SECONDS } from '@/lib/naver/constants'
 import { type NaverErrorPayload, normalizeNaverApiError } from '@/lib/naver/normalize-error'
 import type { NaverNewsSearchParams, NaverNewsSearchResponse } from '@/types/naver-news.type'
 
@@ -47,18 +48,25 @@ async function parseNaverApiResponse<T>(res: Response): Promise<T> {
 	return payload
 }
 
-async function fetchNaverApi<T>(url: URL): Promise<T> {
+type NaverFetchOptions = {
+	/** true면 Data Cache를 우회하고 네이버 API를 직접 조회합니다. */
+	fresh?: boolean
+}
+
+async function fetchNaverApi<T>(url: URL, options?: NaverFetchOptions): Promise<T> {
 	const res = await fetch(url, {
 		headers: getNaverClientHeaders(),
-		// 뉴스 검색은 시점마다 결과가 달라지므로 캐시하지 않습니다.
-		cache: 'no-store'
+		...(options?.fresh ? { cache: 'no-store' as const } : { next: { revalidate: NAVER_NEWS_REVALIDATE_SECONDS } })
 	})
 
 	return parseNaverApiResponse<T>(res)
 }
 
 /** 네이버 뉴스 검색 결과를 조회합니다. */
-async function getNewsSearch(params: NaverNewsSearchParams): Promise<NaverNewsSearchResponse> {
+async function getNewsSearch(
+	params: NaverNewsSearchParams,
+	options?: NaverFetchOptions
+): Promise<NaverNewsSearchResponse> {
 	const url = buildNaverApiUrl('search/news.json', {
 		query: params.query,
 		display: String(params.display ?? 10),
@@ -66,7 +74,8 @@ async function getNewsSearch(params: NaverNewsSearchParams): Promise<NaverNewsSe
 		sort: params.sort ?? 'sim'
 	})
 
-	return fetchNaverApi<NaverNewsSearchResponse>(url)
+	return fetchNaverApi<NaverNewsSearchResponse>(url, options)
 }
 
 export { getNewsSearch }
+export type { NaverFetchOptions }

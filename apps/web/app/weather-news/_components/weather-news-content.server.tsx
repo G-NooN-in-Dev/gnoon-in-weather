@@ -1,24 +1,28 @@
 import WeatherNewsClient from '@/app/weather-news/_components/weather-news.client'
 import { isAppApiError } from '@/lib/api-error'
+import { getCurrentUser } from '@/lib/auth/session.server'
 import { loadWeatherNews } from '@/services/naver.loader'
 import type { AppApiError } from '@/types/error.type'
 import type { WeatherNewsFeedPage } from '@/types/naver-news.type'
 
-type WeatherNewsContentServerProps = {
-	isLoggedIn: boolean
+type WeatherLoadResult = {
+	page: WeatherNewsFeedPage | null
+	error: AppApiError | null
 }
 
-async function WeatherNewsContentServer({ isLoggedIn }: WeatherNewsContentServerProps) {
-	let initialPage: WeatherNewsFeedPage | null = null
-	let initialError: AppApiError | null = null
-
+async function loadWeatherNewsSafe(): Promise<WeatherLoadResult> {
 	try {
-		initialPage = await loadWeatherNews()
+		const page = await loadWeatherNews()
+
+		return { page, error: null }
 	} catch (caught) {
 		if (isAppApiError(caught)) {
-			initialError = caught
-		} else {
-			initialError = {
+			return { page: null, error: caught }
+		}
+
+		return {
+			page: null,
+			error: {
 				provider: 'naver',
 				code: 0,
 				key: 'NAVER_INTERNAL_ERROR',
@@ -28,8 +32,15 @@ async function WeatherNewsContentServer({ isLoggedIn }: WeatherNewsContentServer
 			}
 		}
 	}
+}
 
-	return <WeatherNewsClient isLoggedIn={isLoggedIn} initialPage={initialPage} initialError={initialError} />
+async function WeatherNewsContentServer() {
+	const [currentUser, { page: initialPage, error: initialError }] = await Promise.all([
+		getCurrentUser(),
+		loadWeatherNewsSafe()
+	])
+
+	return <WeatherNewsClient isLoggedIn={Boolean(currentUser)} initialPage={initialPage} initialError={initialError} />
 }
 
 export default WeatherNewsContentServer

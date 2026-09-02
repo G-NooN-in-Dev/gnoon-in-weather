@@ -27,6 +27,8 @@ function createClientPromise(): Promise<MongoClient> {
 	return client.connect()
 }
 
+let clientPromise: Promise<MongoClient> | undefined
+
 function getClientPromise(): Promise<MongoClient> {
 	if (process.env.NODE_ENV === 'development') {
 		if (!globalThis._mongoClientPromise) {
@@ -36,7 +38,11 @@ function getClientPromise(): Promise<MongoClient> {
 		return globalThis._mongoClientPromise
 	}
 
-	return createClientPromise()
+	if (!clientPromise) {
+		clientPromise = createClientPromise()
+	}
+
+	return clientPromise
 }
 
 /** 연결된 MongoClient를 반환합니다. */

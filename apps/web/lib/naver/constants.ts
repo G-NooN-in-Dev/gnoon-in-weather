@@ -13,8 +13,12 @@ const NAVER_NEWS_SORT = 'date' as const
 /** 네이버 검색 start 파라미터 최댓값 */
 const NAVER_NEWS_START_MAX = 1000
 
+/** 날씨 뉴스 SSR Data Cache 갱신 주기 — 3분 */
+const NAVER_NEWS_REVALIDATE_SECONDS = 180
+
 export {
 	NAVER_NEWS_FETCH_BATCH,
+	NAVER_NEWS_REVALIDATE_SECONDS,
 	NAVER_NEWS_SORT,
 	NAVER_NEWS_START_MAX,
 	NAVER_WEATHER_NEWS_QUERY,

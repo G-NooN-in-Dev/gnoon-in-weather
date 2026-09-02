@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers'
+import { cache } from 'react'
 
 import { AUTH_SESSION_COOKIE_NAME, AUTH_SESSION_MAX_AGE_SECONDS } from '@/lib/auth/constants'
 import { createSessionToken, verifySessionToken } from '@/lib/auth/session'
@@ -33,8 +34,9 @@ async function clearSessionCookie(): Promise<void> {
 /**
  * 현재 요청의 세션 사용자 정보를 반환합니다.
  * JWT가 유효해도 DB에 유저가 없으면 세션을 비우고 null을 반환합니다.
+ * Header·page 등 동일 요청 내 중복 호출은 React cache로 dedupe(중복 제거)합니다.
  */
-async function getCurrentUser(): Promise<PublicUser | null> {
+const getCurrentUser = cache(async (): Promise<PublicUser | null> => {
 	const cookieStore = await cookies()
 	const token = cookieStore.get(AUTH_SESSION_COOKIE_NAME)?.value
 
@@ -62,6 +64,6 @@ async function getCurrentUser(): Promise<PublicUser | null> {
 	}
 
 	return user
-}
+})
 
 export { clearSessionCookie, getCurrentUser, setSessionCookie }
