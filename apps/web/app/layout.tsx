@@ -1,6 +1,7 @@
 import '@/global.css'
 
 import { Toaster } from '@shared/ui/sonner'
+import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { PropsWithChildren, Suspense } from 'react'
 
@@ -45,6 +46,7 @@ function RootLayout({ children }: PropsWithChildren) {
 				{children}
 				<Footer />
 				<Toaster richColors position="top-center" />
+				<Analytics />
 			</body>
 		</html>
 	)
