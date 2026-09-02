@@ -225,6 +225,15 @@ const value = transform(initial)
 
 effect 안 `setState`는 **위 경우처럼 부수 효과의 결과**를 반영할 때만 쓰고, “클라인지 판별”“현재 시각 반영” 같은 **렌더 분기 목적**에는 쓰지 않습니다.
 
+`react-hooks/set-state-in-effect`(및 React 19 런타임 경고)는 effect **본문에서 동기적으로** 도달하는 `setState`를 잡습니다. `void (async () => { setLoading(true); await fetch(...) })()`처럼 **첫 `await` 전의 `setState`**도 동기 경로로 취급됩니다.
+
+| 동기 경로 예시                               | 대안                                                             |
+| -------------------------------------------- | ---------------------------------------------------------------- |
+| `if (!loggedIn) { setItems([]); return }`    | 렌더 중 `prev` 비교로 조정 (예: `use-favorite-press-lists`)      |
+| `if (canSkip) { setLoading(false); return }` | 초기 `useState`로 로딩을 맞게 두고 early return만                |
+| fetch 시작 직전 `setLoading(true)`           | `await Promise.resolve()` 이후, 또는 이벤트 핸들러에서 미리 설정 |
+| effect에서 DOM 측정 후 바로 `setCanScroll`   | `ResizeObserver`/`requestAnimationFrame` 콜백에서 설정           |
+
 ### React 19 API 우선
 
 | 상황                              | 사용                                            |

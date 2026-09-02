@@ -23,5 +23,6 @@
 - 패키지 매니저는 `pnpm`, 앱 단위 실행은 `turbo --filter`, 공통 설정은 `@shared/*`를 재사용합니다.
 - UI는 `@shared/ui`를 우선 재사용합니다.
 - Tailwind className은 v4 canonical을 씁니다 (`h-128`, `w-240` 등). `h-[32rem]` 같은 rem/px 임의값은 스케일 변환 후 사용 — `.cursor/rules/tailwind-canonical.mdc`.
+- React 19: `useEffect` 본문·첫 `await` 전 동기 `setState` 금지 (`react-hooks/set-state-in-effect`). 상세·대안은 `docs/CODING_GUIDELINES.md` § React 19, 체크리스트는 `.cursor/rules/coding-react.mdc` (`*.ts`/`*.tsx`).
 - 비밀값·토큰은 커밋·문서화하지 않습니다.
 - 명시적 구현 요청이 없으면 레포에 코드를 바로 수정하지 않습니다. (가이드·질문은 예시 코드까지 가능)
