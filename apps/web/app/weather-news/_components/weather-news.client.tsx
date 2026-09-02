@@ -3,7 +3,7 @@
 import { toast } from '@shared/ui/sonner'
 import { useMemo, useState } from 'react'
 
-import FavoritePressListsAlertDialog from '@/features/weather-news/components/favorite-press-lists-alert-dialog'
+import ConfirmAlertDialog from '@/components/confirm-alert-dialog'
 import FavoritePressListsCreateDialog from '@/features/weather-news/components/favorite-press-lists-create-dialog'
 import FavoritePressListsEditDialog from '@/features/weather-news/components/favorite-press-lists-edit-dialog'
 import { useWeatherNews } from '@/features/weather-news/hooks/use-weather-news'
@@ -206,7 +206,7 @@ function WeatherNewsClient({ isLoggedIn, initialPage, initialError }: WeatherNew
 				onDelete={handleDelete}
 			/>
 
-			<FavoritePressListsAlertDialog
+			<ConfirmAlertDialog
 				open={pendingApplyList !== null}
 				onOpenChange={(nextOpen) => {
 					if (!nextOpen) {

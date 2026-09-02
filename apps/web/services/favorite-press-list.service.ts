@@ -196,4 +196,21 @@ async function removeFavoritePressList(userId: string, favoriteId: string): Prom
 	}
 }
 
-export { addFavoritePressList, listFavoritePressLists, removeFavoritePressList, updateFavoritePressList }
+/** 유저의 언론사 선호목록을 전부 삭제합니다. */
+async function removeAllFavoritePressListsByUserId(userId: string): Promise<void> {
+	if (!ObjectId.isValid(userId)) {
+		return
+	}
+
+	const collection = await getFavoritePressListsCollection()
+
+	await collection.deleteMany({ userId: new ObjectId(userId) })
+}
+
+export {
+	addFavoritePressList,
+	listFavoritePressLists,
+	removeAllFavoritePressListsByUserId,
+	removeFavoritePressList,
+	updateFavoritePressList
+}

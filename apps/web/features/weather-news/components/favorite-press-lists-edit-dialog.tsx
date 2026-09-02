@@ -1,18 +1,22 @@
 'use client'
 
-import { Dialog, DialogContent } from '@shared/ui/dialog'
+import { Button } from '@shared/ui/button'
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle
+} from '@shared/ui/dialog'
 import { useState } from 'react'
 
-import { FAVORITE_PRESS_LIST_MAX_PRESSES } from '@/lib/favorite-press-list/constants'
-import { resolvePressEntries } from '@/lib/favorite-press-list/domains'
-import { PressEntry } from '@/lib/naver/broadcast-press-list'
+import ConfirmAlertDialog from '@/components/confirm-alert-dialog'
+import FavoritePressListEditSession from '@/features/favorite-press-list/components/favorite-press-list-edit-session'
 import { FavoritePressList } from '@/types/favorite-press-list.type'
 
-import FavoritePressListsAlertDialog from './favorite-press-lists-alert-dialog'
-import {
-	FavoritePressListsEditDialogDefaultContent,
-	FavoritePressListsEditDialogUpdateContent
-} from './favorite-press-lists-edit-dialog-content'
+import FavoritePressListsItem from './favorite-press-lists-item'
 
 type FavoritePressListsEditDialogProps = {
 	open: boolean
@@ -35,59 +39,19 @@ function FavoritePressListsEditDialog({
 	onDelete
 }: FavoritePressListsEditDialogProps) {
 	const [editingList, setEditingList] = useState<FavoritePressList | null>(null)
-	const [draftPresses, setDraftPresses] = useState<PressEntry[]>([])
 	const [deletingList, setDeletingList] = useState<FavoritePressList | null>(null)
-
-	const resetEditingState = () => {
-		setEditingList(null)
-		setDraftPresses([])
-	}
 
 	const handleOpenChange = (nextOpen: boolean) => {
 		if (!nextOpen) {
-			resetEditingState()
+			setEditingList(null)
 			setDeletingList(null)
 		}
 
 		onOpenChange(nextOpen)
 	}
 
-	const handleStartEdit = (list: FavoritePressList) => {
-		setEditingList(list)
-		setDraftPresses(resolvePressEntries(list.domains))
-	}
-
-	const handleToggleDraft = (press: PressEntry) => {
-		const { domain } = press
-
-		setDraftPresses((prev) => {
-			if (prev.some((item) => item.domain === domain)) {
-				return prev.filter((item) => item.domain !== domain)
-			}
-
-			if (prev.length >= FAVORITE_PRESS_LIST_MAX_PRESSES) {
-				return prev
-			}
-
-			return [...prev, press]
-		})
-	}
-
-	const handleRemoveDraft = (domain: string) => {
-		setDraftPresses((prev) => prev.filter((item) => item.domain !== domain))
-	}
-
-	const handleSave = async () => {
-		if (!editingList || draftPresses.length === 0) {
-			return
-		}
-
-		const domains = draftPresses.map((press) => press.domain)
-		const updated = await onUpdate(editingList, domains)
-
-		if (updated) {
-			resetEditingState()
-		}
+	const handleClose = () => {
+		setEditingList(null)
 	}
 
 	const handleConfirmDelete = async () => {
@@ -99,7 +63,7 @@ function FavoritePressListsEditDialog({
 
 		if (removed) {
 			if (editingList?.id === deletingList.id) {
-				resetEditingState()
+				setEditingList(null)
 			}
 
 			setDeletingList(null)
@@ -111,27 +75,42 @@ function FavoritePressListsEditDialog({
 			<Dialog open={open} onOpenChange={handleOpenChange}>
 				<DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-lg">
 					{editingList ? (
-						<FavoritePressListsEditDialogUpdateContent
-							editingList={editingList}
-							draftPresses={draftPresses}
-							onToggle={handleToggleDraft}
-							onRemove={handleRemoveDraft}
-							isSubmitting={isPending}
-							onCancel={resetEditingState}
-							onSave={handleSave}
+						<FavoritePressListEditSession
+							key={editingList.id}
+							list={editingList}
+							isPending={isPending}
+							onClose={handleClose}
+							onUpdate={onUpdate}
 						/>
 					) : (
-						<FavoritePressListsEditDialogDefaultContent
-							lists={lists}
-							isPending={isPending}
-							onEditStart={handleStartEdit}
-							onDelete={setDeletingList}
-						/>
+						<>
+							<DialogHeader>
+								<DialogTitle>선호목록 편집</DialogTitle>
+								<DialogDescription>저장된 선호목록을 수정하거나 삭제할 수 있습니다.</DialogDescription>
+							</DialogHeader>
+
+							{lists.length === 0 ? (
+								<p className="text-grayscale-400 text-sm">저장된 목록이 없습니다.</p>
+							) : (
+								<FavoritePressListsItem
+									items={lists}
+									isPending={isPending}
+									editText="편집"
+									deleteText="삭제"
+									onEditStart={setEditingList}
+									onDelete={setDeletingList}
+								/>
+							)}
+
+							<DialogFooter>
+								<DialogClose render={<Button type="button" variant="outline" disabled={isPending} />}>닫기</DialogClose>
+							</DialogFooter>
+						</>
 					)}
 				</DialogContent>
 			</Dialog>
 
-			<FavoritePressListsAlertDialog
+			<ConfirmAlertDialog
 				open={deletingList !== null}
 				onOpenChange={(nextOpen) => {
 					if (!nextOpen) {
@@ -142,7 +121,7 @@ function FavoritePressListsEditDialog({
 				description={deletingList ? `'${deletingList.name}' 선호목록을 삭제하시겠습니까?` : ''}
 				isPending={isPending}
 				onConfirm={handleConfirmDelete}
-				confirmText="확인"
+				confirmText="삭제"
 			/>
 		</>
 	)

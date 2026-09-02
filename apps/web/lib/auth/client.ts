@@ -121,5 +121,30 @@ async function requestSignOut(): Promise<void> {
 	await fetch(`${AUTH_API_BASE_URL}/sign-out`, { method: 'POST' })
 }
 
-export { requestSignIn, requestSignOut, requestSignUp, requestUpdateNickname, requestUpdatePassword }
-export type { AuthFormResult }
+type DeleteAccountResult = { ok: true } | { ok: false; message: string }
+
+/** 클라이언트에서 회원탈퇴 API를 호출합니다. */
+async function requestDeleteAccount(): Promise<DeleteAccountResult> {
+	const response = await fetch(`${AUTH_API_BASE_URL}/account`, { method: 'DELETE' })
+	const payload = (await response.json()) as { ok?: true; error?: AuthApiError }
+
+	if (payload.ok) {
+		return { ok: true }
+	}
+
+	if (payload.error) {
+		return { ok: false, message: payload.error.message }
+	}
+
+	return { ok: false, message: '회원탈퇴 중 오류가 발생했습니다.' }
+}
+
+export {
+	requestDeleteAccount,
+	requestSignIn,
+	requestSignOut,
+	requestSignUp,
+	requestUpdateNickname,
+	requestUpdatePassword
+}
+export type { AuthFormResult, DeleteAccountResult }

@@ -150,4 +150,15 @@ async function removeFavoriteLocation(userId: string, favoriteId: string): Promi
 	}
 }
 
-export { addFavoriteLocation, listFavoriteLocations, removeFavoriteLocation }
+/** 유저의 관심지역을 전부 삭제합니다. */
+async function removeAllFavoriteLocationsByUserId(userId: string): Promise<void> {
+	if (!ObjectId.isValid(userId)) {
+		return
+	}
+
+	const collection = await getFavoriteLocationsCollection()
+
+	await collection.deleteMany({ userId: new ObjectId(userId) })
+}
+
+export { addFavoriteLocation, listFavoriteLocations, removeAllFavoriteLocationsByUserId, removeFavoriteLocation }
