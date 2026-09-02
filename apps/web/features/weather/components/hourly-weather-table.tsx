@@ -6,7 +6,7 @@ import { cn } from '@shared/ui/utils'
 import dayjs from 'dayjs'
 import { ArrowBigUp, SearchX } from 'lucide-react'
 import Image from 'next/image'
-import { ReactNode } from 'react'
+import { ReactNode, useMemo } from 'react'
 
 import EmptyState from '@/components/empty-state'
 import HorizontalScrollContainer from '@/components/horizontal-scroll-container'
@@ -14,6 +14,7 @@ import { useWeatherUnits } from '@/contexts/weather-units.context'
 import {
 	createHourlyWeatherTimeline,
 	getHourlyTimelineItemKey,
+	getHourlyTimelineReferenceHourEpoch,
 	type HourlyWeatherTimeline
 } from '@/features/weather/lib/create-hourly-weather-timeline'
 import {
@@ -26,6 +27,7 @@ import {
 	formatSpeedUnitLabel,
 	formatTemperatureLabel
 } from '@/features/weather/lib/format-weather-values'
+import useIsClient from '@/hooks/use-is-client'
 import type { ForecastAstroEntry, WeatherApiHour } from '@/types/weather-api.type'
 import { WeatherUnits } from '@/types/weather-units.type'
 import { formatLocaleNumber } from '@/utils/format'
@@ -236,7 +238,12 @@ const timelineRows: TimelineRowConfig[] = [
 
 function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 	const { units } = useWeatherUnits()
-	const { timeline, baseDate } = createHourlyWeatherTimeline(hours, astros)
+	const isClient = useIsClient()
+	const referenceHourEpoch = isClient ? undefined : getHourlyTimelineReferenceHourEpoch(hours)
+	const { timeline, baseDate } = useMemo(
+		() => createHourlyWeatherTimeline(hours, astros, { referenceHourEpoch }),
+		[hours, astros, referenceHourEpoch]
+	)
 
 	// stale forecast처럼 전부 과거 epoch이면 hours는 있어도 표시할 열이 없습니다.
 	if (timeline.length === 0) {

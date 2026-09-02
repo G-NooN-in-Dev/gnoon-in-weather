@@ -2,7 +2,7 @@
 
 import useIsClient from '@/hooks/use-is-client'
 import type { WeatherNewsListItem } from '@/types/naver-news.type'
-import { formatDate, formatRelativeTime } from '@/utils/format'
+import { formatNewsPubDateLabel, formatRelativeTime } from '@/utils/format'
 
 type NewsListItemProps = {
 	item: WeatherNewsListItem
@@ -16,8 +16,7 @@ type NewsListItemProps = {
 function NewsListItem({ item }: NewsListItemProps) {
 	const isClient = useIsClient()
 	const { title, description, pressName, pubDate, link } = item
-	const relativeTime = formatRelativeTime(pubDate)
-	const timeLabel = isClient ? relativeTime : relativeTime === '' ? '' : formatDate(pubDate, 'YYYY.MM.DD HH:mm')
+	const timeLabel = isClient ? formatRelativeTime(pubDate) : formatNewsPubDateLabel(pubDate)
 
 	return (
 		<article className="border-grayscale-200 mb-4 rounded-lg border-2 bg-white p-4 transition-all duration-300 hover:scale-105 hover:shadow-lg">

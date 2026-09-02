@@ -75,4 +75,38 @@ function formatRelativeTime(date: string): string {
 	return relativeTime === '한 시간 전' ? '1시간 전' : relativeTime
 }
 
-export { DEFAULT_DISPLAY_LOCALE, formatDate, formatLocaleNumber, formatRelativeTime, formatTime12To24, normalizeNumber }
+/**
+ * 네이버 뉴스 `pubDate`(RFC 822)를 KST 절대 시각으로 표시합니다.
+ * hydrate 전 서버·클라이언트 첫 렌더를 맞출 때 사용합니다.
+ */
+function formatNewsPubDateLabel(pubDate: string): string {
+	const timestamp = Date.parse(pubDate)
+
+	if (Number.isNaN(timestamp)) {
+		return ''
+	}
+
+	const parts = new Intl.DateTimeFormat('en-GB', {
+		timeZone: 'Asia/Seoul',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false
+	}).formatToParts(new Date(timestamp))
+
+	const getPart = (type: Intl.DateTimeFormatPartTypes) => parts.find((part) => part.type === type)?.value ?? ''
+
+	return `${getPart('year')}.${getPart('month')}.${getPart('day')} ${getPart('hour')}:${getPart('minute')}`
+}
+
+export {
+	DEFAULT_DISPLAY_LOCALE,
+	formatDate,
+	formatLocaleNumber,
+	formatNewsPubDateLabel,
+	formatRelativeTime,
+	formatTime12To24,
+	normalizeNumber
+}

@@ -22,6 +22,25 @@ type AstroTimeline = {
 
 type HourlyWeatherTimeline = HourlyTimeline | AstroTimeline
 
+type CreateHourlyWeatherTimelineOptions = {
+	/**
+	 * 과거 시간대를 걸러낼 기준 정시(epoch 초).
+	 * hydrate 전에는 API 첫 시간대를 쓰고, 클라이언트 마운트 후에는 생략해 현재 시각을 씁니다.
+	 */
+	referenceHourEpoch?: number
+}
+
+/** hydrate 전 서버·클라이언트가 공유할 기준 정시. API `time_epoch`는 UTC 기준이라 TZ와 무관합니다. */
+function getHourlyTimelineReferenceHourEpoch(hours: WeatherApiHour[]): number | undefined {
+	const firstEpoch = hours[0]?.time_epoch
+
+	if (firstEpoch === undefined) {
+		return undefined
+	}
+
+	return dayjs.unix(firstEpoch).startOf('hour').unix()
+}
+
 /** 시간 예보와 일출·일몰이 같은 epoch여도 React key가 겹치지 않도록 kind를 포함합니다. */
 function getHourlyTimelineItemKey(item: Pick<HourlyWeatherTimeline, 'kind' | 'epoch'>) {
 	return `${item.kind}-${item.epoch}`
@@ -45,10 +64,15 @@ function createAstroTimeline(astro: ForecastAstroEntry, kind: SunStatusKind) {
 	}
 }
 
-function createHourlyWeatherTimeline(hours: WeatherApiHour[], astros: ForecastAstroEntry[]) {
+function createHourlyWeatherTimeline(
+	hours: WeatherApiHour[],
+	astros: ForecastAstroEntry[],
+	options?: CreateHourlyWeatherTimelineOptions
+) {
 	const now = dayjs()
 	const baseDate = astros[0]?.date ?? hours[0]?.time.split(' ')[0] ?? now.format('YYYY-MM-DD')
-	const baseHourEpoch = now.startOf('hour').unix()
+	const baseHourEpoch =
+		options?.referenceHourEpoch !== undefined ? options.referenceHourEpoch : now.startOf('hour').unix()
 
 	const hourTimeline = hours.map((hour) => {
 		const { time, time_epoch, ...rest } = hour
@@ -79,5 +103,5 @@ function createHourlyWeatherTimeline(hours: WeatherApiHour[], astros: ForecastAs
 	return { timeline, baseDate }
 }
 
-export { createHourlyWeatherTimeline, getHourlyTimelineItemKey }
-export type { HourlyWeatherTimeline }
+export { createHourlyWeatherTimeline, getHourlyTimelineItemKey, getHourlyTimelineReferenceHourEpoch }
+export type { CreateHourlyWeatherTimelineOptions, HourlyWeatherTimeline }
