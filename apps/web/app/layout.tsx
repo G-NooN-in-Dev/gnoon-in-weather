@@ -13,7 +13,25 @@ export const metadata: Metadata = {
 		default: 'G-NooN in Weather',
 		template: '%s | G-NooN in Weather'
 	},
-	description: 'G-NooN in Weather'
+	description: 'G-NooN in Weather',
+	icons: {
+		icon: '/icon.svg',
+		apple: '/apple-icon.svg'
+	},
+	openGraph: {
+		title: 'G-NooN in Weather',
+		description: 'G-NooN in Weather',
+		url: process.env.BASE_URL ?? 'https://gnoon-in-weather.vercel.app',
+		siteName: 'G-NooN in Weather',
+		images: [
+			{
+				url: '/icon.svg',
+				alt: 'G-NooN in Weather'
+			}
+		],
+		locale: 'ko-KR',
+		type: 'website'
+	}
 }
 
 function RootLayout({ children }: PropsWithChildren) {
