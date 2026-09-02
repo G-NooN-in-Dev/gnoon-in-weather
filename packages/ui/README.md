@@ -34,9 +34,18 @@ export function Example() {
 
 ## Tailwind v4 className 정규화
 
-shadcn/Tailwind IntelliSense가 제안하는 v4 canonical 문법을 따른다. (상세: [`docs/CODING_GUIDELINES.md`](../../docs/CODING_GUIDELINES.md) § UI / Tailwind)
+shadcn/Tailwind IntelliSense가 제안하는 v4 canonical 문법을 따른다. (상세: [`docs/CODING_GUIDELINES.md`](../../docs/CODING_GUIDELINES.md) § UI / Tailwind, AI 규칙: [`.cursor/rules/tailwind-canonical.mdc`](../../.cursor/rules/tailwind-canonical.mdc))
+
+**rem/px → spacing 스케일** (1 = 0.25rem, rem × 4 = 스케일):
+
+- `h-[32rem]` → `h-128`
+- `w-[60rem]` → `w-240`
+- `h-[2.5rem]` → `h-10`
+
+**CSS 변수 / calc:**
 
 - `w-[var(--x)]` → `w-(--x)`
 - `left-[calc(var(--x)*-1)]` → `-left-(--x)`
 - `calc(var(--x)+…)` → `calc((--x)+…)`
-- 컴포넌트 추가·수정 후 IDE warning이 남으면 위 규칙으로 맞춘다.
+
+컴포넌트 추가·수정 후 IDE warning이 남으면 위 규칙으로 맞춘다.
