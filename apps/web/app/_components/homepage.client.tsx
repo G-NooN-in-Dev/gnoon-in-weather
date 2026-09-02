@@ -8,13 +8,13 @@ import LocationSearch from '@/features/home/components/location-search'
 import { CurrentWeatherSection, WeatherRadarSection } from '@/features/home/sections'
 import type { HomepageClientProps } from '@/features/home/types/home-component.type'
 import {
-	AstroScheduleSections,
+	AstroScheduleSection,
 	DailyWeatherSection,
 	HourlyWeatherSection,
 	UvIndexSection
 } from '@/features/weather/sections'
-import { useFavoriteLocations } from '@/hooks/use-favorite-locations'
-import { useWeather } from '@/hooks/use-weather'
+import useFavoriteLocations from '@/hooks/use-favorite-locations'
+import useWeather from '@/hooks/use-weather'
 import { splitForecast } from '@/lib/weather/split-forecast'
 
 /**
@@ -77,7 +77,7 @@ function HomepageClient({
 				<div className="flex w-1/3 flex-col gap-6">
 					<LocationSearch onSelect={selectLocation} />
 					<UvIndexSection current={current} />
-					<AstroScheduleSections astros={forecastSplit?.astros ?? []} coordinates={location} />
+					<AstroScheduleSection astros={forecastSplit?.astros ?? []} coordinates={location} />
 					<WeatherRadarSection />
 				</div>
 			</div>

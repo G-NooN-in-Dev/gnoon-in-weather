@@ -27,4 +27,3 @@ function PressBadge({ press, isSelected, isDisabled, onToggle }: PressBadgeProps
 }
 
 export default PressBadge
-export type { PressBadgeProps }

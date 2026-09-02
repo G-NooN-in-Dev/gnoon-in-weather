@@ -1,6 +1,6 @@
 'use client'
 
-import AuthFormSection from '@/features/auth/sections/auth-form.section'
+import { AuthFormSection } from '@/features/auth/sections'
 
 function SignUpClient() {
 	return (

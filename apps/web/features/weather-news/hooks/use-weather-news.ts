@@ -102,4 +102,4 @@ function useWeatherNews({ initialPage, initialError = null }: UseWeatherNewsOpti
 	}
 }
 
-export { useWeatherNews }
+export default useWeatherNews

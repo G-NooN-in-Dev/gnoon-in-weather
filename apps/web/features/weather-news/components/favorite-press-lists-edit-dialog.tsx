@@ -128,4 +128,3 @@ function FavoritePressListsEditDialog({
 }
 
 export default FavoritePressListsEditDialog
-export type { FavoritePressListsEditDialogProps }

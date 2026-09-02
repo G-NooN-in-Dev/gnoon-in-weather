@@ -26,16 +26,20 @@ import {
 	formatSpeedUnitLabel,
 	formatTemperatureLabel
 } from '@/features/weather/lib/format-weather-values'
+import type { ForecastAstroEntry, WeatherApiHour } from '@/types/weather-api.type'
 import { WeatherUnits } from '@/types/weather-units.type'
 import { formatLocaleNumber } from '@/utils/format'
-
-import { HourlyWeatherTableProps } from '../types/weather-component.type'
 
 type TimelineRowConfig = {
 	id: string
 	label: (units: WeatherUnits) => ReactNode
 	isVisible?: (item: HourlyWeatherTimeline) => boolean
 	render: (item: HourlyWeatherTimeline, units: WeatherUnits) => ReactNode
+}
+
+type HourlyWeatherTableProps = {
+	hours: WeatherApiHour[]
+	astros: ForecastAstroEntry[]
 }
 
 const stickyTableHeadClassName = 'sticky left-0 z-1 bg-background min-w-24 w-24 '

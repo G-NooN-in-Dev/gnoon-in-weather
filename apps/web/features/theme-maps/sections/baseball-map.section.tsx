@@ -11,16 +11,7 @@ import {
 	getBaseballParkById,
 	isBaseballParkVisibleForFilter
 } from '@/features/theme-maps/lib/baseball-parks'
-
-/* eslint-disable no-unused-vars -- 콜백 시그니처의 파라미터명은 문서용입니다. */
-type BaseballParkSelectHandler = (id: string) => void
-/* eslint-enable no-unused-vars */
-
-type BaseballMapSectionProps = {
-	selectedParkId: string | null
-	onSelect: BaseballParkSelectHandler
-	onClear: () => void
-}
+import type { BaseballMapSectionProps } from '@/features/theme-maps/types/theme-maps-component.type'
 
 function BaseballMapSection({ selectedParkId, onSelect, onClear }: BaseballMapSectionProps) {
 	const [filter, setFilter] = useState<BaseballParkMapFilter>('first')

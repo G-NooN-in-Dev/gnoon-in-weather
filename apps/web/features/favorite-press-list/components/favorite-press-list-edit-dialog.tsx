@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent } from '@shared/ui/dialog'
 
-import { FavoritePressList } from '@/types/favorite-press-list.type'
+import type { FavoritePressList } from '@/types/favorite-press-list.type'
 
 import FavoritePressListEditSession from './favorite-press-list-edit-session'
 
@@ -47,4 +47,3 @@ function FavoritePressListEditDialog({
 }
 
 export default FavoritePressListEditDialog
-export type { FavoritePressListEditDialogProps }

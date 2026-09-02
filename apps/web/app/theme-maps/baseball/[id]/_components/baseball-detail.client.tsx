@@ -5,11 +5,10 @@ import { useMemo } from 'react'
 import Loading from '@/components/loading'
 import { WeatherUnitsProvider } from '@/contexts/weather-units.context'
 import useBaseballWeather from '@/features/theme-maps/hooks/use-baseball-weather'
-import BaseballCurrentWeatherSection from '@/features/theme-maps/sections/baseball-current-weather.section'
-import BaseballPickerSection from '@/features/theme-maps/sections/baseball-picker.section'
+import { BaseballCurrentWeatherSection, BaseballPickerSection } from '@/features/theme-maps/sections'
 import type { BaseballDetailClientProps } from '@/features/theme-maps/types/baseball-detail-component.type'
 import {
-	AstroScheduleSections,
+	AstroScheduleSection,
 	DailyWeatherSection,
 	HourlyWeatherSection,
 	UvIndexSection
@@ -52,7 +51,7 @@ function BaseballDetailClient({
 				<div className="flex w-1/3 flex-col gap-6">
 					<BaseballPickerSection selectedParkId={park.id} initialFilter={initialFilter} />
 					<UvIndexSection current={current} />
-					<AstroScheduleSections astros={forecastSplit?.astros ?? []} coordinates={park} />
+					<AstroScheduleSection astros={forecastSplit?.astros ?? []} coordinates={park} />
 				</div>
 			</div>
 		</WeatherUnitsProvider>

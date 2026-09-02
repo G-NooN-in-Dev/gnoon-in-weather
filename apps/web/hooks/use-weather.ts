@@ -295,5 +295,5 @@ function useWeather({
 	}
 }
 
-export { useWeather }
+export default useWeather
 export type { UseWeatherOptions, UseWeatherResult }

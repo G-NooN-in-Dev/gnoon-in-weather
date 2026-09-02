@@ -6,16 +6,12 @@ import {
 	parseBaseballParkMapFilter,
 	resolveBaseballParkMapFilter
 } from '@/features/theme-maps/lib/baseball-parks'
+import type { ThemeMapsBaseballDetailPageProps } from '@/features/theme-maps/types/theme-maps-component.type'
 import { isAppApiError } from '@/lib/api-error'
 import { readWeatherUnitsFromCookies } from '@/lib/weather/units-cookie.server'
 import { loadWeatherSummary } from '@/services/weather.loader'
 import type { AppApiError } from '@/types/error.type'
 import type { WeatherSummary } from '@/types/weather-api.type'
-
-type ThemeMapsBaseballDetailPageProps = {
-	params: Promise<{ id: string }>
-	searchParams: Promise<{ level?: string | string[] }>
-}
 
 async function ThemeMapsBaseballDetailPage({ params, searchParams }: ThemeMapsBaseballDetailPageProps) {
 	const { id } = await params

@@ -6,7 +6,7 @@ import ConfirmAlertDialog from '@/components/confirm-alert-dialog'
 import FavoritePressListEditDialog from '@/features/favorite-press-list/components/favorite-press-list-edit-dialog'
 import type { FavoritePressListsSectionProps } from '@/features/my/types/my-page-component.type'
 import FavoritePressListsItem from '@/features/weather-news/components/favorite-press-lists-item'
-import { useFavoritePressLists } from '@/hooks/use-favorite-press-lists'
+import useFavoritePressLists from '@/hooks/use-favorite-press-lists'
 import { FAVORITE_PRESS_LIST_MAX_ITEMS } from '@/lib/favorite-press-list/constants'
 import type { FavoritePressList } from '@/types/favorite-press-list.type'
 

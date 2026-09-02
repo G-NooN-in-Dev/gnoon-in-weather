@@ -1,5 +1,9 @@
-import type { NewsListItemProps } from '@/features/weather-news/types/weather-news-component.type'
+import type { WeatherNewsListItem } from '@/types/naver-news.type'
 import { formatRelativeTime } from '@/utils/format'
+
+type NewsListItemProps = {
+	item: WeatherNewsListItem
+}
 
 /**
  * 뉴스 피드 한 줄.

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardTitle } from '@shared/ui/card'
 
-interface DataCardProps {
+type DataCardProps = {
 	title: string
 	value: string | number
 	unit: string

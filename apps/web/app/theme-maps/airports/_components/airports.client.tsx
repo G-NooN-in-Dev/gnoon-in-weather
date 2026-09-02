@@ -3,12 +3,8 @@
 import { useState } from 'react'
 
 import { WeatherUnitsProvider } from '@/contexts/weather-units.context'
-import AirportsMapSection from '@/features/theme-maps/sections/airports-map.section'
-import type { WeatherUnits } from '@/types/weather-units.type'
-
-type AirportsClientProps = {
-	initialUnits: WeatherUnits | null
-}
+import { AirportsMapSection } from '@/features/theme-maps/sections'
+import type { AirportsClientProps } from '@/features/theme-maps/types/theme-maps-component.type'
 
 function AirportsClient({ initialUnits }: AirportsClientProps) {
 	const [selectedIata, setSelectedIata] = useState<string | null>(null)

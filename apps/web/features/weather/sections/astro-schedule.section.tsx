@@ -4,23 +4,18 @@ import dayjs from 'dayjs'
 
 import useYesterdayMoonAstro from '@/features/weather/hooks/use-yesterday-moon-astro'
 import { shouldPreferMoonriseSection } from '@/features/weather/lib/should-prefer-moonrise-section'
-import MoonriseMoonsetSection from '@/features/weather/sections/moonrise-moonset.section'
-import SunriseSunsetSection from '@/features/weather/sections/sunrise-sunset.section'
+import type { AstroScheduleSectionProps } from '@/features/weather/types/weather-component.type'
 import useIsClient from '@/hooks/use-is-client'
-import type { Coordinates } from '@/types/location.type'
-import type { ForecastAstroEntry } from '@/types/weather-api.type'
 
-type AstroScheduleSectionsProps = {
-	astros: ForecastAstroEntry[]
-	coordinates: Coordinates
-}
+import MoonriseMoonsetSection from './moonrise-moonset.section'
+import SunriseSunsetSection from './sunrise-sunset.section'
 
 /**
  * 일출/일몰·월출/월몰 섹션 조합기.
  * 렌더 시점 기준으로 밤+달 뜸이면 월출 섹션을 위에 배치합니다.
  * 어제 astro는 여기서 한 번만 복구해 월출 status·순서 판정에 공유합니다.
  */
-function AstroScheduleSections({ astros, coordinates }: AstroScheduleSectionsProps) {
+function AstroScheduleSection({ astros, coordinates }: AstroScheduleSectionProps) {
 	const isClient = useIsClient()
 	const yesterdayAstro = useYesterdayMoonAstro({
 		astros,
@@ -55,4 +50,4 @@ function AstroScheduleSections({ astros, coordinates }: AstroScheduleSectionsPro
 	)
 }
 
-export default AstroScheduleSections
+export default AstroScheduleSection

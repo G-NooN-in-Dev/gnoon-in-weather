@@ -16,7 +16,7 @@ import WeatherApiCredit from '../components/weather-api-credit'
 
 /**
  * 월출/월몰 섹션.
- * 어제 astro는 부모(`AstroScheduleSections`)에서 복구해 주입받습니다.
+ * 어제 astro는 부모(`AstroScheduleSection`)에서 복구해 주입받습니다.
  * 어제 행 월몰이 아직 안 지났으면 표를 어제·오늘·내일로 열고, 지났으면 오늘 기준 3일입니다.
  */
 function MoonriseMoonsetSection({ astros, yesterdayAstro = null }: MoonriseMoonsetSectionProps) {

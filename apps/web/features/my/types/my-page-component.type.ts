@@ -27,13 +27,7 @@ type AccountDeleteSectionProps = {
 	favoritePressLists: FavoritePressList[]
 }
 
-type AccountDeleteDialogProps = {
-	hasFavoriteLocations: boolean
-	hasFavoritePressLists: boolean
-}
-
 export type {
-	AccountDeleteDialogProps,
 	AccountDeleteSectionProps,
 	FavoriteLocationsSectionProps,
 	FavoritePressListsSectionProps,

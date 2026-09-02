@@ -3,12 +3,8 @@
 import { useState } from 'react'
 
 import { WeatherUnitsProvider } from '@/contexts/weather-units.context'
-import BaseballMapSection from '@/features/theme-maps/sections/baseball-map.section'
-import type { WeatherUnits } from '@/types/weather-units.type'
-
-type BaseballClientProps = {
-	initialUnits: WeatherUnits | null
-}
+import { BaseballMapSection } from '@/features/theme-maps/sections'
+import type { BaseballClientProps } from '@/features/theme-maps/types/theme-maps-component.type'
 
 function BaseballClient({ initialUnits }: BaseballClientProps) {
 	const [selectedParkId, setSelectedParkId] = useState<string | null>(null)

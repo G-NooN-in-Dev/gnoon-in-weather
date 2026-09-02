@@ -140,4 +140,3 @@ function WeatherMapPanel({
 }
 
 export default WeatherMapPanel
-export type { WeatherMapPanelProps }

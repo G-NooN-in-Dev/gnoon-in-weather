@@ -4,8 +4,8 @@ import { useState } from 'react'
 
 import { FAVORITE_PRESS_LIST_MAX_PRESSES } from '@/lib/favorite-press-list/constants'
 import { resolvePressEntries } from '@/lib/favorite-press-list/domains'
-import { PressEntry } from '@/lib/naver/broadcast-press-list'
-import { FavoritePressList } from '@/types/favorite-press-list.type'
+import type { PressEntry } from '@/lib/naver/broadcast-press-list'
+import type { FavoritePressList } from '@/types/favorite-press-list.type'
 
 import FavoritePressListEditForm from './favorite-press-list-edit-form'
 
@@ -77,4 +77,3 @@ function FavoritePressListEditSession({
 }
 
 export default FavoritePressListEditSession
-export type { FavoritePressListEditSessionProps }

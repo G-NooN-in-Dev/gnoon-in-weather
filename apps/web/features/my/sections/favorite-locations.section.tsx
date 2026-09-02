@@ -6,7 +6,7 @@ import { useState } from 'react'
 
 import ConfirmAlertDialog from '@/components/confirm-alert-dialog'
 import type { FavoriteLocationsSectionProps } from '@/features/my/types/my-page-component.type'
-import { useFavoriteLocations } from '@/hooks/use-favorite-locations'
+import useFavoriteLocations from '@/hooks/use-favorite-locations'
 import { FAVORITE_LOCATION_MAX_ITEMS } from '@/lib/favorite-location/constants'
 import type { FavoriteLocation } from '@/types/favorite-location.type'
 

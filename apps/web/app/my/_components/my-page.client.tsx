@@ -1,9 +1,11 @@
 import { Separator } from '@shared/ui/separator'
 
-import AccountDeleteSection from '@/features/my/sections/account-delete.section'
-import FavoriteLocationsSection from '@/features/my/sections/favorite-locations.section'
-import FavoritePressListsSection from '@/features/my/sections/favorite-press-lists.section'
-import UserInfoEditSection from '@/features/my/sections/user-info-edit.section'
+import {
+	AccountDeleteSection,
+	FavoriteLocationsSection,
+	FavoritePressListsSection,
+	UserInfoEditSection
+} from '@/features/my/sections'
 import type { MyPageClientProps } from '@/features/my/types/my-page-component.type'
 
 /**
