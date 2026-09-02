@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 
-import Loading from '@/components/loading'
+import LoadingComponent from '@/components/loading-component'
 import { WeatherUnitsProvider } from '@/contexts/weather-units.context'
 import useAirportWeather from '@/features/theme-maps/hooks/use-airport-weather'
 import { AirportCurrentWeatherSection, AirportPickerSection } from '@/features/theme-maps/sections'
@@ -30,7 +30,7 @@ function AirportDetailClient({ airport, initialWeather, initialUnits, initialErr
 
 	return (
 		<WeatherUnitsProvider initialUnits={initialUnits}>
-			{loading ? <Loading /> : null}
+			{loading ? <LoadingComponent /> : null}
 			<div className="flex gap-10">
 				<div className="flex w-2/3 flex-col gap-6">
 					<AirportCurrentWeatherSection airport={airport} current={current} error={activeError} />

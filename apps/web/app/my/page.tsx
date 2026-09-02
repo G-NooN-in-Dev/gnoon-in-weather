@@ -1,24 +1,22 @@
 import { UserRoundX } from 'lucide-react'
+import { Suspense } from 'react'
 
+import MyPageContentServer from '@/app/my/_components/my-page-content.server'
 import EmptyState from '@/components/empty-state'
+import { MyPageSkeleton } from '@/components/skeletons/page-skeletons'
 import { getCurrentUser } from '@/lib/auth/session.server'
-import { loadFavoriteLocations } from '@/services/favorite-location.loader'
-import { loadFavoritePressLists } from '@/services/favorite-press-list.loader'
-
-import MyPageClient from './_components/my-page.client'
 
 async function MyPage() {
 	const user = await getCurrentUser()
-
-	const favoriteLocations = user ? await loadFavoriteLocations(user.id) : []
-	const favoritePressLists = user ? await loadFavoritePressLists(user.id) : []
 
 	return (
 		<div className="min-h-screen-safe flex w-full flex-1 font-sans">
 			<main className="flex w-full flex-1">
 				<div className="max-w-content container mx-auto flex w-full flex-col py-8">
 					{user ? (
-						<MyPageClient user={user} favoriteLocations={favoriteLocations} favoritePressLists={favoritePressLists} />
+						<Suspense fallback={<MyPageSkeleton />}>
+							<MyPageContentServer user={user} />
+						</Suspense>
 					) : (
 						<EmptyState
 							icon={<UserRoundX className="size-10 text-gray-500" />}

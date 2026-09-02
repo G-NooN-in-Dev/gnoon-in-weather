@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 
-import Loading from '@/components/loading'
+import LoadingComponent from '@/components/loading-component'
 import { WeatherUnitsProvider } from '@/contexts/weather-units.context'
 import useBaseballWeather from '@/features/theme-maps/hooks/use-baseball-weather'
 import { BaseballCurrentWeatherSection, BaseballPickerSection } from '@/features/theme-maps/sections'
@@ -41,7 +41,7 @@ function BaseballDetailClient({
 
 	return (
 		<WeatherUnitsProvider initialUnits={initialUnits}>
-			{loading ? <Loading /> : null}
+			{loading ? <LoadingComponent /> : null}
 			<div className="flex gap-10">
 				<div className="flex w-2/3 flex-col gap-6">
 					<BaseballCurrentWeatherSection park={park} current={current} error={activeError} />

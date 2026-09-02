@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from 'react'
 
-import Loading from '@/components/loading'
+import LoadingComponent from '@/components/loading-component'
 import { WeatherUnitsProvider } from '@/contexts/weather-units.context'
 import LocationSearch from '@/features/home/components/location-search'
 import { CurrentWeatherSection, WeatherRadarSection } from '@/features/home/sections'
@@ -57,7 +57,7 @@ function HomepageClient({
 
 	return (
 		<WeatherUnitsProvider initialUnits={initialUnits}>
-			{loading ? <Loading /> : null}
+			{loading ? <LoadingComponent /> : null}
 			<div className="flex gap-10">
 				<div className="flex w-2/3 flex-col gap-6">
 					<CurrentWeatherSection
