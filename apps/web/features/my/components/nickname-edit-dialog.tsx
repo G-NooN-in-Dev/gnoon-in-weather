@@ -17,10 +17,10 @@ import { toast } from '@shared/ui/sonner'
 import { Spinner } from '@shared/ui/spinner'
 import { ChevronRightIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { type ChangeEvent, useState } from 'react'
 
 import useAuthForm from '@/features/auth/hooks/use-auth-form'
-import { requestUpdateNickname } from '@/lib/auth/client'
+import { requestCheckNicknameAvailability, requestUpdateNickname } from '@/lib/auth/client'
 import type { UpdateNicknameInput } from '@/lib/auth/schemas'
 
 type NicknameEditFormProps = {
@@ -35,6 +35,10 @@ type NicknameEditDialogProps = {
 /** 닉네임 변경 폼. */
 
 function NicknameEditForm({ currentNickname, onSuccess }: NicknameEditFormProps) {
+	const [isCheckingNickname, setIsCheckingNickname] = useState(false)
+	const [isNicknameVerified, setIsNicknameVerified] = useState(false)
+	const [nicknameCheckError, setNicknameCheckError] = useState<string | undefined>()
+
 	const { formValue, fieldErrors, isSubmitting, handleChange, handleSubmit } = useAuthForm<UpdateNicknameInput>({
 		initial: { nickname: '' },
 		submit: (value) => {
@@ -53,6 +57,48 @@ function NicknameEditForm({ currentNickname, onSuccess }: NicknameEditFormProps)
 		}
 	})
 
+	const handleNicknameChange = (event: ChangeEvent<HTMLInputElement>) => {
+		handleChange(event)
+		setIsNicknameVerified(false)
+		setNicknameCheckError(undefined)
+	}
+
+	const handleCheckNickname = async () => {
+		const trimmedNickname = formValue.nickname.trim()
+
+		if (trimmedNickname === currentNickname) {
+			setIsNicknameVerified(false)
+			setNicknameCheckError('현재 닉네임과 같습니다.')
+			return
+		}
+
+		setIsCheckingNickname(true)
+		setNicknameCheckError(undefined)
+
+		try {
+			const result = await requestCheckNicknameAvailability(formValue.nickname)
+
+			if (!result.ok) {
+				setIsNicknameVerified(false)
+				setNicknameCheckError(result.fieldErrors.nickname ?? result.message)
+				return
+			}
+
+			if (!result.available) {
+				setIsNicknameVerified(false)
+				setNicknameCheckError('이미 사용 중인 닉네임입니다.')
+				return
+			}
+
+			setIsNicknameVerified(true)
+			toast.success('사용 가능한 닉네임입니다.')
+		} finally {
+			setIsCheckingNickname(false)
+		}
+	}
+
+	const nicknameError = fieldErrors.nickname ?? nicknameCheckError
+
 	return (
 		<form onSubmit={handleSubmit} className="contents" noValidate>
 			<DialogHeader>
@@ -64,21 +110,36 @@ function NicknameEditForm({ currentNickname, onSuccess }: NicknameEditFormProps)
 					<FieldLabel htmlFor="current-nickname">현재 닉네임</FieldLabel>
 					<Input id="current-nickname" value={currentNickname} disabled readOnly />
 				</Field>
-				<Field data-invalid={Boolean(fieldErrors.nickname) || undefined}>
+				<Field data-invalid={Boolean(nicknameError) || undefined}>
 					<FieldLabel htmlFor="new-nickname">새 닉네임</FieldLabel>
-					<Input
-						id="new-nickname"
-						name="nickname"
-						type="text"
-						autoComplete="nickname"
-						value={formValue.nickname}
-						onChange={handleChange}
-						aria-invalid={Boolean(fieldErrors.nickname) || undefined}
-						placeholder="2~20자"
-						minLength={2}
-						maxLength={20}
-					/>
-					<FieldError>{fieldErrors.nickname}</FieldError>
+					<div className="flex gap-2">
+						<Input
+							id="new-nickname"
+							name="nickname"
+							type="text"
+							autoComplete="nickname"
+							value={formValue.nickname}
+							onChange={handleNicknameChange}
+							aria-invalid={Boolean(nicknameError) || undefined}
+							placeholder="2~20자"
+							minLength={2}
+							maxLength={20}
+							className="min-w-0 flex-1"
+						/>
+						<Button
+							type="button"
+							variant="outline"
+							className="shrink-0"
+							disabled={isCheckingNickname || !formValue.nickname.trim() || isNicknameVerified}
+							onClick={handleCheckNickname}
+						>
+							{isCheckingNickname ? <Spinner /> : '중복확인'}
+						</Button>
+					</div>
+					{isNicknameVerified && !nicknameError ? (
+						<p className="text-success-700 text-sm">사용 가능한 닉네임입니다.</p>
+					) : null}
+					<FieldError>{nicknameError}</FieldError>
 				</Field>
 			</FieldGroup>
 			<DialogFooter>
