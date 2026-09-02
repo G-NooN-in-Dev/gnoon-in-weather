@@ -124,4 +124,3 @@ function NicknameEditDialog({ currentNickname }: NicknameEditDialogProps) {
 }
 
 export default NicknameEditDialog
-export type { NicknameEditDialogProps }

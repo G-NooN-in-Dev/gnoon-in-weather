@@ -70,19 +70,15 @@ function attachThemePlaceMarkerContent<TPlace extends ThemeMapPlace>({
 }): HTMLElement {
 	const { id } = place
 
-	return createMarkerContent(
-		place,
-		onSelect,
-		(hovered) => {
-			const overlay = overlayHolder.overlay
-			if (!overlay) {
-				return
-			}
-
-			hoveredIdRef.current = hovered ? id : hoveredIdRef.current === id ? null : hoveredIdRef.current
-			overlay.setZIndex(getThemeMapMarkerZIndex(place, selectedIdRef.current, hoveredIdRef.current))
+	return createMarkerContent(place, onSelect, (hovered) => {
+		const overlay = overlayHolder.overlay
+		if (!overlay) {
+			return
 		}
-	)
+
+		hoveredIdRef.current = hovered ? id : hoveredIdRef.current === id ? null : hoveredIdRef.current
+		overlay.setZIndex(getThemeMapMarkerZIndex(place, selectedIdRef.current, hoveredIdRef.current))
+	})
 }
 
 /**
@@ -359,4 +355,3 @@ function ThemePlacesKakaoMap<TPlace extends ThemeMapPlace>({
 }
 
 export default ThemePlacesKakaoMap
-export type { ThemePlacesKakaoMapProps }

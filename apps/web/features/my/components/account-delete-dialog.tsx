@@ -17,10 +17,14 @@ import { ChevronRightIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import type { AccountDeleteDialogProps } from '@/features/my/types/my-page-component.type'
 import { requestDeleteAccount } from '@/lib/auth/client'
 
 const ACCOUNT_DELETED_PATH = '/account-deleted'
+
+type AccountDeleteDialogProps = {
+	hasFavoriteLocations: boolean
+	hasFavoritePressLists: boolean
+}
 
 /**
  * 회원탈퇴 확인 다이얼로그.

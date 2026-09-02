@@ -208,4 +208,3 @@ function FavoritePressListsCreateDialog({
 }
 
 export default FavoritePressListsCreateDialog
-export type { FavoritePressListsCreateDialogProps }

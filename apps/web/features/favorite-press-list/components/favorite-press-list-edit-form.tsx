@@ -7,8 +7,9 @@ import PressBadge from '@/features/weather-news/components/press-badge'
 import SelectedPressLists from '@/features/weather-news/components/selected-press-lists'
 import { FAVORITE_PRESS_LIST_MAX_PRESSES } from '@/lib/favorite-press-list/constants'
 import { arePressDomainsEqual } from '@/lib/favorite-press-list/domains'
-import { PRESS_FILTER_GROUPS, PressEntry } from '@/lib/naver/broadcast-press-list'
-import { FavoritePressList } from '@/types/favorite-press-list.type'
+import type { PressEntry } from '@/lib/naver/broadcast-press-list'
+import { PRESS_FILTER_GROUPS } from '@/lib/naver/broadcast-press-list'
+import type { FavoritePressList } from '@/types/favorite-press-list.type'
 
 type FavoritePressListEditFormProps = {
 	list: FavoritePressList
@@ -102,4 +103,3 @@ function FavoritePressListEditForm({
 }
 
 export default FavoritePressListEditForm
-export type { FavoritePressListEditFormProps }
