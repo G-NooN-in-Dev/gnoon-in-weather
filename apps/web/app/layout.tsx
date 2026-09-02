@@ -5,7 +5,6 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { PropsWithChildren, Suspense } from 'react'
 
-import Footer from '@/components/footer'
 import Header from '@/components/header'
 import NavigationProgress from '@/components/navigation-progress'
 
@@ -44,7 +43,6 @@ function RootLayout({ children }: PropsWithChildren) {
 				</Suspense>
 				<Header />
 				{children}
-				<Footer />
 				<Toaster richColors position="top-center" />
 				<Analytics />
 			</body>
