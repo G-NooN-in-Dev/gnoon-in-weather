@@ -1,4 +1,4 @@
-import GoHomeButton from '@/app/(auth)/account-deleted/_components/go-home-button.client'
+import GoHomeButton from '@/features/auth/components/go-home-button'
 
 /**
  * 회원탈퇴 완료 페이지.

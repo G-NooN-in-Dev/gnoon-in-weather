@@ -4,14 +4,14 @@ import { Button } from '@shared/ui/button'
 import { Field, FieldError, FieldGroup, FieldLabel } from '@shared/ui/field'
 import { Input } from '@shared/ui/input'
 import { Spinner } from '@shared/ui/spinner'
-import { useRouter } from 'next/navigation'
 
 import useAuthForm from '@/features/auth/hooks/use-auth-form'
+import useAppRouter from '@/hooks/use-app-router'
 import { requestSignIn } from '@/lib/auth/client'
 import type { SignInInput } from '@/lib/auth/schemas'
 
 function SignInForm() {
-	const router = useRouter()
+	const router = useAppRouter()
 	const { formValue, fieldErrors, isSubmitting, handleChange, handleSubmit } = useAuthForm<SignInInput>({
 		initial: {
 			email: '',

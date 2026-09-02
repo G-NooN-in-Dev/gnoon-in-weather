@@ -5,15 +5,15 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@shared/ui/field'
 import { Input } from '@shared/ui/input'
 import { toast } from '@shared/ui/sonner'
 import { Spinner } from '@shared/ui/spinner'
-import { useRouter } from 'next/navigation'
 import { type ChangeEvent, useState } from 'react'
 
 import useAuthForm from '@/features/auth/hooks/use-auth-form'
+import useAppRouter from '@/hooks/use-app-router'
 import { requestCheckNicknameAvailability, requestSignUp } from '@/lib/auth/client'
 import type { SignUpInput } from '@/lib/auth/schemas'
 
 function SignUpForm() {
-	const router = useRouter()
+	const router = useAppRouter()
 	const [isCheckingNickname, setIsCheckingNickname] = useState(false)
 	const [isNicknameVerified, setIsNicknameVerified] = useState(false)
 	const [nicknameCheckError, setNicknameCheckError] = useState<string | undefined>()

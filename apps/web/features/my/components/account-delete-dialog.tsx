@@ -14,9 +14,9 @@ import {
 import { toast } from '@shared/ui/sonner'
 import { Spinner } from '@shared/ui/spinner'
 import { ChevronRightIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import useAppRouter from '@/hooks/use-app-router'
 import { requestDeleteAccount } from '@/lib/auth/client'
 
 const ACCOUNT_DELETED_PATH = '/account-deleted'
@@ -31,7 +31,7 @@ type AccountDeleteDialogProps = {
  * 보유 데이터 목록을 보여준 뒤 탈퇴 API를 호출합니다.
  */
 function AccountDeleteDialog({ hasFavoriteLocations, hasFavoritePressLists }: AccountDeleteDialogProps) {
-	const router = useRouter()
+	const router = useAppRouter()
 	const [open, setOpen] = useState(false)
 	const [isDeleting, setIsDeleting] = useState(false)
 

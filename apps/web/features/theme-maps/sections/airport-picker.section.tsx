@@ -3,12 +3,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card'
 import { Label } from '@shared/ui/label'
 import { Switch } from '@shared/ui/switch'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import AirportsKakaoMap from '@/features/theme-maps/components/airports-kakao-map'
 import { THEME_MAPS_ROUTES } from '@/features/theme-maps/lib/theme-maps-routes'
 import type { AirportPickerSectionProps } from '@/features/theme-maps/types/airport-detail-component.type'
+import useAppRouter from '@/hooks/use-app-router'
 
 const INTERNATIONAL_SWITCH_ID = 'airport-picker-international'
 
@@ -18,7 +18,7 @@ const INTERNATIONAL_SWITCH_ID = 'airport-picker-international'
  * 국제선 스위치로 국제선을 운영하는 공항만 표시할 수 있습니다
  */
 function AirportPickerSection({ selectedIata }: AirportPickerSectionProps) {
-	const router = useRouter()
+	const router = useAppRouter()
 	const [internationalOnly, setInternationalOnly] = useState(false)
 
 	return (
