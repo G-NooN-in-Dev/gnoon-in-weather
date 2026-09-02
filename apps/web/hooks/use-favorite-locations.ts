@@ -121,5 +121,5 @@ function useFavoriteLocations({ initialItems, isLoggedIn }: UseFavoriteLocations
 	return { items, isFavorite, isPending, removeById, toggleFavorite }
 }
 
-export { useFavoriteLocations }
+export default useFavoriteLocations
 export type { UseFavoriteLocationsOptions, UseFavoriteLocationsResult }

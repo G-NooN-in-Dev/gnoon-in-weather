@@ -177,5 +177,5 @@ function useFavoritePressLists({
 	return { items, isLoading, isPending, createList, updateList, removeList }
 }
 
-export { useFavoritePressLists }
+export default useFavoritePressLists
 export type { UseFavoritePressListsOptions, UseFavoritePressListsResult }
