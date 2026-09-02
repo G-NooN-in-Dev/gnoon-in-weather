@@ -126,6 +126,14 @@ async function signUpUser({ email, nickname, password }: SignUpInput): Promise<P
 	}
 }
 
+/** 회원가입 시 닉네임 사용 가능 여부를 확인합니다. */
+async function isNicknameAvailable(nickname: string): Promise<boolean> {
+	const users = await getUsersCollection()
+	const existing = await users.findOne({ nickname: nickname.trim() }, { projection: { _id: 1 } })
+
+	return existing === null
+}
+
 /** 닉네임의 중복 여부를 확인합니다. */
 async function isTakenNickname(nickname: string, excludeUserId: string): Promise<boolean> {
 	const users = await getUsersCollection()
@@ -317,4 +325,12 @@ async function deleteUserAccount(userId: string): Promise<void> {
 	}
 }
 
-export { deleteUserAccount, getUserById, signInUser, signUpUser, updateUserNickname, updateUserPassword }
+export {
+	deleteUserAccount,
+	getUserById,
+	isNicknameAvailable,
+	signInUser,
+	signUpUser,
+	updateUserNickname,
+	updateUserPassword
+}

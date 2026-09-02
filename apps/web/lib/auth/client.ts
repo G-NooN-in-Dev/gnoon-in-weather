@@ -74,6 +74,45 @@ async function requestSignUp(input: unknown): Promise<AuthFormResult> {
 	return parseAuthResponse(response)
 }
 
+type NicknameCheckResult =
+	| { ok: true; available: boolean }
+	| { ok: false; message: string; fieldErrors: Partial<Record<string, string>> }
+
+/** 클라이언트에서 닉네임 사용 가능 여부를 확인합니다. */
+async function requestCheckNicknameAvailability(nickname: string): Promise<NicknameCheckResult> {
+	const parsed = updateNicknameSchema.safeParse({ nickname })
+
+	if (!parsed.success) {
+		return {
+			ok: false,
+			message: '입력값을 확인해 주세요.',
+			fieldErrors: fieldErrorsFromZod(parsed.error)
+		}
+	}
+
+	const params = new URLSearchParams({ nickname: parsed.data.nickname })
+	const response = await fetch(`${AUTH_API_BASE_URL}/nickname/availability?${params.toString()}`)
+	const payload = (await response.json()) as { available?: boolean; error?: AuthApiError }
+
+	if (payload.error) {
+		return {
+			ok: false,
+			message: payload.error.message,
+			fieldErrors: payload.error.fieldErrors ?? {}
+		}
+	}
+
+	if (typeof payload.available !== 'boolean') {
+		return {
+			ok: false,
+			message: '요청을 처리하지 못했습니다.',
+			fieldErrors: {}
+		}
+	}
+
+	return { ok: true, available: payload.available }
+}
+
 /** 클라이언트에서 닉네임 변경 API를 호출합니다. */
 async function requestUpdateNickname(input: unknown): Promise<AuthFormResult> {
 	const parsedUserData = updateNicknameSchema.safeParse(input)
@@ -140,6 +179,7 @@ async function requestDeleteAccount(): Promise<DeleteAccountResult> {
 }
 
 export {
+	requestCheckNicknameAvailability,
 	requestDeleteAccount,
 	requestSignIn,
 	requestSignOut,
@@ -147,4 +187,4 @@ export {
 	requestUpdateNickname,
 	requestUpdatePassword
 }
-export type { AuthFormResult, DeleteAccountResult }
+export type { AuthFormResult, DeleteAccountResult, NicknameCheckResult }

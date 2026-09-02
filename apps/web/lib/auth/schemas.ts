@@ -58,5 +58,5 @@ type SignUpInput = z.infer<typeof signUpSchema>
 type UpdateNicknameInput = z.infer<typeof updateNicknameSchema>
 type UpdatePasswordInput = z.infer<typeof updatePasswordSchema>
 
-export { signInSchema, signUpSchema, updateNicknameSchema, updatePasswordSchema }
+export { nicknameSchema, signInSchema, signUpSchema, updateNicknameSchema, updatePasswordSchema }
 export type { SignInInput, SignUpInput, UpdateNicknameInput, UpdatePasswordInput }
