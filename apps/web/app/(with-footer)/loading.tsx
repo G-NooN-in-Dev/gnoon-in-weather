@@ -1,7 +1,19 @@
-import PageLoadingFallback from '@/components/page-loading-fallback'
+import { Spinner } from '@shared/ui/spinner'
 
-function RootLoading() {
-	return <PageLoadingFallback />
+/**
+ * 라우트 전환용 기본 fallback. 페이지 로딩 시 표시됩니다.
+ * 헤더·푸터는 layout에 남기고 본문 영역만 로딩 표시합니다.
+ */
+function PageLoading() {
+	return (
+		<div className="min-h-screen-safe flex w-full flex-1 font-sans">
+			<main className="flex w-full flex-1">
+				<div className="max-w-content container mx-auto flex w-full flex-col items-center justify-center py-24">
+					<Spinner className="text-pastel-blue-600 size-10" aria-label="페이지를 불러오는 중" />
+				</div>
+			</main>
+		</div>
+	)
 }
 
-export default RootLoading
+export default PageLoading
