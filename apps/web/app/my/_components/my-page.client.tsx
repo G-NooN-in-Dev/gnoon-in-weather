@@ -1,5 +1,6 @@
 import { Separator } from '@shared/ui/separator'
 
+import AccountDeleteSection from '@/features/my/sections/account-delete.section'
 import FavoriteLocationsSection from '@/features/my/sections/favorite-locations.section'
 import FavoritePressListsSection from '@/features/my/sections/favorite-press-lists.section'
 import UserInfoEditSection from '@/features/my/sections/user-info-edit.section'
@@ -16,6 +17,8 @@ function MyPageClient({ user, favoriteLocations, favoritePressLists }: MyPageCli
 			<FavoritePressListsSection initialItems={favoritePressLists} isLoggedIn />
 			<Separator className="bg-grayscale-700 data-[orientation=horizontal]:h-0.5" />
 			<UserInfoEditSection user={user} />
+			<Separator className="bg-grayscale-700 data-[orientation=horizontal]:h-0.5" />
+			<AccountDeleteSection favoriteLocations={favoriteLocations} favoritePressLists={favoritePressLists} />
 		</div>
 	)
 }

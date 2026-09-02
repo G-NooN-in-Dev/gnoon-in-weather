@@ -22,7 +22,19 @@ type FavoritePressListsSectionProps = {
 	isLoggedIn: boolean
 }
 
+type AccountDeleteSectionProps = {
+	favoriteLocations: FavoriteLocation[]
+	favoritePressLists: FavoritePressList[]
+}
+
+type AccountDeleteDialogProps = {
+	hasFavoriteLocations: boolean
+	hasFavoritePressLists: boolean
+}
+
 export type {
+	AccountDeleteDialogProps,
+	AccountDeleteSectionProps,
 	FavoriteLocationsSectionProps,
 	FavoritePressListsSectionProps,
 	MyPageClientProps,
