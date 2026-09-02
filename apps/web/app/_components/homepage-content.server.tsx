@@ -3,8 +3,8 @@ import { isAppApiError } from '@/lib/api-error'
 import { getCurrentUser } from '@/lib/auth/session.server'
 import { resolveHomeLocation } from '@/lib/location/resolve-home'
 import { readWeatherUnitsFromCookies } from '@/lib/weather/units-cookie.server'
-import { loadFavoriteLocations } from '@/services/favorite-location.loader'
-import { loadWeatherSummary } from '@/services/weather.loader'
+import { loadFavoriteLocationsCached } from '@/services/favorite-location.loader.cache.server'
+import { loadWeatherSummaryCached } from '@/services/weather.loader.cache.server'
 import type { AppApiError } from '@/types/error.type'
 import type { WeatherSummary } from '@/types/weather-api.type'
 
@@ -17,7 +17,7 @@ async function loadWeatherSummarySafe(
 	location: Awaited<ReturnType<typeof resolveHomeLocation>>
 ): Promise<WeatherLoadResult> {
 	try {
-		const weather = await loadWeatherSummary(location)
+		const weather = await loadWeatherSummaryCached(location)
 
 		return { weather, error: null }
 	} catch (error) {
@@ -47,7 +47,7 @@ async function HomepageContentServer() {
 	])
 
 	const [initialFavoriteLocations, { weather: initialWeather, error: initialError }] = await Promise.all([
-		user ? loadFavoriteLocations(user.id) : Promise.resolve([]),
+		user ? loadFavoriteLocationsCached(user.id) : Promise.resolve([]),
 		loadWeatherSummarySafe(baseLocation)
 	])
 

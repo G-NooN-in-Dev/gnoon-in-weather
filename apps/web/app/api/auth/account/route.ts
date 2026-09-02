@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 
 import { createAuthError, isAuthApiError } from '@/lib/auth/errors'
 import { clearSessionCookie, getCurrentUser } from '@/lib/auth/session.server'
+import { invalidateFavoriteLocationsCache } from '@/lib/favorite-location/cache.server'
+import { invalidateFavoritePressListsCache } from '@/lib/favorite-press-list/cache.server'
 import { deleteUserAccount } from '@/services/auth.service'
 import type { AuthErrorResponse } from '@/types/auth.type'
 
@@ -24,6 +26,10 @@ async function DELETE() {
 		}
 
 		await deleteUserAccount(currentUser.id)
+
+		invalidateFavoriteLocationsCache(currentUser.id)
+		invalidateFavoritePressListsCache(currentUser.id)
+
 		await clearSessionCookie()
 
 		return NextResponse.json({ ok: true } satisfies DeleteAccountSuccessResponse)

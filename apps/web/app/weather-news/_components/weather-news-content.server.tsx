@@ -1,7 +1,7 @@
 import WeatherNewsClient from '@/app/weather-news/_components/weather-news.client'
 import { isAppApiError } from '@/lib/api-error'
 import { getCurrentUser } from '@/lib/auth/session.server'
-import { loadWeatherNews } from '@/services/naver.loader'
+import { loadWeatherNewsFirstPage } from '@/services/naver.loader.cache.server'
 import type { AppApiError } from '@/types/error.type'
 import type { WeatherNewsFeedPage } from '@/types/naver-news.type'
 
@@ -12,7 +12,7 @@ type WeatherLoadResult = {
 
 async function loadWeatherNewsSafe(): Promise<WeatherLoadResult> {
 	try {
-		const page = await loadWeatherNews()
+		const page = await loadWeatherNewsFirstPage()
 
 		return { page, error: null }
 	} catch (caught) {

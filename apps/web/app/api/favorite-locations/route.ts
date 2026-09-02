@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { getCurrentUser } from '@/lib/auth/session.server'
 import { fieldErrorsFromZod } from '@/lib/auth/zod-utils'
+import { invalidateFavoriteLocationsCache } from '@/lib/favorite-location/cache.server'
 import { createFavoriteLocationError, isFavoriteLocationApiError } from '@/lib/favorite-location/errors'
 import { addFavoriteLocationSchema, deleteFavoriteLocationQuerySchema } from '@/lib/favorite-location/schemas'
 import {
@@ -74,6 +75,8 @@ async function POST(request: Request) {
 
 		const item = await addFavoriteLocation(currentUser.id, parsed.data)
 
+		invalidateFavoriteLocationsCache(currentUser.id)
+
 		return NextResponse.json({ item } satisfies FavoriteLocationCreateResponse)
 	} catch (caught) {
 		if (isFavoriteLocationApiError(caught)) {
@@ -119,6 +122,8 @@ async function DELETE(request: Request) {
 		}
 
 		await removeFavoriteLocation(currentUser.id, parsed.data.id)
+
+		invalidateFavoriteLocationsCache(currentUser.id)
 
 		return NextResponse.json({ ok: true } satisfies FavoriteLocationDeleteResponse)
 	} catch (caught) {

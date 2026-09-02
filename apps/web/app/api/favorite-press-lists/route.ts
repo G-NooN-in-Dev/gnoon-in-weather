@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { getCurrentUser } from '@/lib/auth/session.server'
 import { fieldErrorsFromZod } from '@/lib/auth/zod-utils'
+import { invalidateFavoritePressListsCache } from '@/lib/favorite-press-list/cache.server'
 import { createFavoritePressListError, isFavoritePressListApiError } from '@/lib/favorite-press-list/errors'
 import {
 	createFavoritePressListSchema,
@@ -80,6 +81,8 @@ async function POST(request: Request) {
 
 		const item = await addFavoritePressList(currentUser.id, parsed.data)
 
+		invalidateFavoritePressListsCache(currentUser.id)
+
 		return NextResponse.json({ item } satisfies FavoritePressListCreateResponse)
 	} catch (caught) {
 		if (isFavoritePressListApiError(caught)) {
@@ -126,6 +129,8 @@ async function PATCH(request: Request) {
 
 		const item = await updateFavoritePressList(currentUser.id, parsed.data)
 
+		invalidateFavoritePressListsCache(currentUser.id)
+
 		return NextResponse.json({ item } satisfies FavoritePressListUpdateResponse)
 	} catch (caught) {
 		if (isFavoritePressListApiError(caught)) {
@@ -171,6 +176,8 @@ async function DELETE(request: Request) {
 		}
 
 		await removeFavoritePressList(currentUser.id, parsed.data.id)
+
+		invalidateFavoritePressListsCache(currentUser.id)
 
 		return NextResponse.json({ ok: true } satisfies FavoritePressListDeleteResponse)
 	} catch (caught) {

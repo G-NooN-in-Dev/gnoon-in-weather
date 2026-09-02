@@ -1,6 +1,6 @@
 import { UserRoundX } from 'lucide-react'
 
-import MyPageContentServer from '@/app/my/_components/my-page-content.server'
+import MyPageLoggedInServer from '@/app/my/_components/my-page-logged-in.server'
 import EmptyState from '@/components/empty-state'
 import { getCurrentUser } from '@/lib/auth/session.server'
 
@@ -18,7 +18,7 @@ async function MyPageGateServer() {
 		)
 	}
 
-	return <MyPageContentServer user={user} />
+	return <MyPageLoggedInServer user={user} />
 }
 
 export default MyPageGateServer
