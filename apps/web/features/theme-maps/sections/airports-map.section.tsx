@@ -25,7 +25,8 @@ function AirportsMapSection({ selectedIata, onSelect, onClear }: AirportsMapSect
 	}
 
 	return (
-		<section className="relative h-[calc(100dvh-6.5rem)] w-full">
+		// 헤더 h-14(3.5rem) + lg에서 ThemeMapsNav h-12(3rem) → 6.5rem
+		<section className="relative h-[calc(100dvh-3.5rem)] w-full lg:h-[calc(100dvh-6.5rem)]">
 			<AirportsKakaoMap
 				selectedIata={selectedIata}
 				onSelect={onSelect}
