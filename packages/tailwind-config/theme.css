@@ -9,6 +9,8 @@
 	--breakpoint-xs: 480px;
 	--breakpoint-sm: 640px;
 	--breakpoint-md: 768px;
+	/* md(768)와 lg(1024) 사이. 다열 표처럼 768은 좁고 1024는 넓은 구간에 사용 */
+	--breakpoint-tab: 896px;
 	--breakpoint-lg: 1024px;
 	--breakpoint-xl: 1280px;
 	--breakpoint-2xl: 1536px;
@@ -19,6 +21,7 @@
 	--container-padding-xs: 1rem;
 	--container-padding-sm: 1.25rem;
 	--container-padding-md: 1.5rem;
+	--container-padding-tab: 1.5rem;
 	--container-padding-lg: 1.5rem;
 	--container-padding-xl: 2rem;
 	--container-padding-2xl: 2.5rem;
@@ -90,6 +93,19 @@
 	--color-pastel-blue-800: #4d85b2;
 	--color-pastel-blue-900: #426e93;
 	--color-pastel-blue-950: #2a4660;
+
+	--color-pastel-navy: #607ec7;
+	--color-pastel-navy-50: #f3f6fc;
+	--color-pastel-navy-100: #dce4f9;
+	--color-pastel-navy-200: #c5d0f2;
+	--color-pastel-navy-300: #a8bae6;
+	--color-pastel-navy-400: #839bd8;
+	--color-pastel-navy-500: #607ec7;
+	--color-pastel-navy-600: #4566ba;
+	--color-pastel-navy-700: #38559f;
+	--color-pastel-navy-800: #2a4384;
+	--color-pastel-navy-900: #24386b;
+	--color-pastel-navy-950: #182444;
 
 	--color-pastel-purple: #c6a7ff;
 	--color-pastel-purple-50: #faf6ff;
@@ -214,7 +230,8 @@
 	--color-sidebar-ring: var(--color-grayscale-900);
 
 	--max-width-prose: 70ch;
-	--max-width-content: 72rem;
+	/* 헤더·푸터·전 페이지 셸 공통 폭 */
+	--max-width-content: 80rem;
 	--max-width-reading: 65ch;
 
 	--min-height-screen-safe: 100dvh;
@@ -241,4 +258,7 @@
 		radial-gradient(circle at 20% 20%, rgb(255 135 194 / 0.18), transparent 40%),
 		radial-gradient(circle at 80% 0%, rgb(132 202 255 / 0.18), transparent 42%),
 		radial-gradient(circle at 50% 80%, rgb(147 229 127 / 0.16), transparent 42%);
+
+	--animate-accordion-down: accordion-down 0.2s ease-out;
+	--animate-accordion-up: accordion-up 0.2s ease-out;
 }
