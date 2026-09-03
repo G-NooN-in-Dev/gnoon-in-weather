@@ -29,7 +29,7 @@ function CurrentLocation({
 		<div className="flex flex-col gap-1">
 			<div className="flex items-center justify-between">
 				{/* 위치 정보 */}
-				<div className="flex items-center gap-2 text-xl font-bold">
+				<div className="flex items-center gap-1 md:gap-2">
 					<Button
 						type="button"
 						variant="ghost"
@@ -46,7 +46,7 @@ function CurrentLocation({
 							stroke="currentColor"
 						/>
 					</Button>
-					<h2>{label}</h2>
+					<h2 className="font-bold md:text-xl">{label}</h2>
 					<Button
 						type="button"
 						variant="ghost"
@@ -56,7 +56,7 @@ function CurrentLocation({
 						onClick={onRequestCurrentPosition}
 						className="p-0"
 					>
-						<Crosshair className={cn('text-pastel-blue-600 size-5', isLocating && 'animate-spin')} />
+						<Crosshair className={cn('text-pastel-blue-600 size-5 font-bold', isLocating && 'animate-spin')} />
 					</Button>
 				</div>
 				<WeatherUnitSettingsPopover />

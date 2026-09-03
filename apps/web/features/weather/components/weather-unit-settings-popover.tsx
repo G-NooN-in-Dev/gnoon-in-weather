@@ -97,13 +97,13 @@ function WeatherUnitSettingsPopover() {
 
 	return (
 		<Popover open={open} onOpenChange={handleOpenChange}>
-			<PopoverTrigger render={<Button type="button" aria-label="단위 설정" className="" />}>
+			<PopoverTrigger render={<Button type="button" aria-label="단위 설정" className="h-8 gap-1 md:h-9 md:gap-1.5" />}>
 				<span>단위 설정</span>
 			</PopoverTrigger>
-			<PopoverContent>
+			<PopoverContent className="gap-2">
 				<PopoverHeader className="flex-row items-center justify-between">
 					<PopoverTitle>
-						<span className="text-lg font-extrabold">단위 설정</span>
+						<span className="text-base font-extrabold md:text-lg">단위 설정</span>
 					</PopoverTitle>
 					<PopoverDescription className="flex items-center" aria-label="초기화">
 						<Button type="button" variant="link" onClick={resetUnits}>
@@ -113,7 +113,7 @@ function WeatherUnitSettingsPopover() {
 					</PopoverDescription>
 				</PopoverHeader>
 
-				<div className="flex flex-col gap-4">
+				<div className="flex flex-col gap-2 md:gap-4">
 					<WeatherUnitOptionTabs
 						title="온도"
 						value={temperature}
@@ -140,7 +140,7 @@ function WeatherUnitSettingsPopover() {
 					/>
 				</div>
 
-				<div className="flex justify-end gap-2">
+				<div className="flex justify-end gap-2 pt-4">
 					<Button type="button" variant="outline" className="flex-1" onClick={handleCancel}>
 						취소
 					</Button>
