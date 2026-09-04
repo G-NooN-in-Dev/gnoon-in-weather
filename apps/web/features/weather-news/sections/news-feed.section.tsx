@@ -20,7 +20,8 @@ function NewsFeedSection({
 	hasMore,
 	loadingMore,
 	errorMessage,
-	onLoadMore
+	onLoadMore,
+	headerAction
 }: NewsFeedSectionProps) {
 	const visibleCount = items.length
 	const isEmpty = visibleCount === 0
@@ -28,13 +29,16 @@ function NewsFeedSection({
 
 	return (
 		<section className="flex w-full flex-col" aria-label="날씨 뉴스 목록">
-			<p className="text-grayscale-500 mb-4 text-sm" aria-live="polite">
-				총{' '}
-				<span className="text-grayscale-800 font-medium">
-					{isFiltered ? `${visibleCount} / ${loadedCount}` : loadedCount}
-				</span>{' '}
-				건
-			</p>
+			<div className="mb-4 flex items-center justify-between gap-3">
+				<p className="text-grayscale-500 text-sm" aria-live="polite">
+					총{' '}
+					<span className="text-grayscale-800 font-medium">
+						{isFiltered ? `${visibleCount} / ${loadedCount}` : loadedCount}
+					</span>{' '}
+					건
+				</p>
+				{headerAction}
+			</div>
 
 			{showErrorOnly ? <p className="text-destructive py-8 text-sm">{errorMessage}</p> : null}
 

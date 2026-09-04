@@ -281,10 +281,7 @@ function getBaseballParkHomeTeamIds(park: BaseballPark): BaseballTeamId[] {
 }
 
 /** 지도 필터(1군/2군)에 해당하는 홈팀. 잠실처럼 같은 군에 둘이면 모두 반환합니다. */
-function getBaseballParkHomeTeamsForFilter(
-	park: BaseballPark,
-	filter: BaseballParkMapFilter
-): BaseballTeam[] {
+function getBaseballParkHomeTeamsForFilter(park: BaseballPark, filter: BaseballParkMapFilter): BaseballTeam[] {
 	return park.homeTeams.flatMap((homeTeam) => {
 		if (homeTeam.level !== filter) {
 			return []

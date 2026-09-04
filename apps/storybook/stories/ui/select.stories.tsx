@@ -50,7 +50,7 @@ const meta = {
 					if (next) setArg('value', next)
 				}}
 			>
-				<SelectTrigger className="w-[180px]" size={size} disabled={disabled}>
+				<SelectTrigger className="w-45" size={size} disabled={disabled}>
 					<SelectValue placeholder={placeholder} />
 				</SelectTrigger>
 				<SelectContent>

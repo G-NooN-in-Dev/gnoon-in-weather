@@ -35,9 +35,11 @@ function UvIndexSection({ current }: CurrentWeatherProps) {
 				{guide && current ? (
 					<CardContent className="flex flex-col gap-3">
 						<div className="flex items-baseline gap-2">
-							<span className="text-2xl font-semibold tabular-nums">{current.uv}</span>
-							<Badge className={cn('font-semibold', UV_LEVEL_BADGE_CLASS_NAME[guide.level])}>{guide.label}</Badge>
-							<span className="text-grayscale-500 text-sm">({guide.rangeLabel})</span>
+							<span className="text-xl font-semibold tracking-wide tabular-nums md:text-2xl">{current.uv}</span>
+							<Badge className={cn('text-sm font-semibold md:text-base', UV_LEVEL_BADGE_CLASS_NAME[guide.level])}>
+								{guide.label}
+							</Badge>
+							<span className="text-grayscale-500 text-xs md:text-sm">({guide.rangeLabel})</span>
 						</div>
 						<ul className="text-grayscale-700 list-disc space-y-1 pl-5 text-sm">
 							{guide.tips.map((tip) => (

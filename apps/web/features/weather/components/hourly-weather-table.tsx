@@ -44,12 +44,17 @@ type HourlyWeatherTableProps = {
 	astros: ForecastAstroEntry[]
 }
 
-const stickyTableHeadClassName = 'sticky left-0 z-1 bg-background min-w-24 w-24 '
+// border-collapse면 sticky 아래로 옆 셀이 비치므로 separate + Card와 같은 bg-white
+const stickyTableHeadClassName =
+	'sticky left-0 z-1 bg-background min-w-22 w-22 text-sm md:min-w-24 md:w-24 md:text-base'
 const hourlyTablePrevButtonClassName = 'left-25'
-const timelineBorderClassName = 'border-l border-border'
-const tableHeadClassName = 'font-semibold'
-const unitLabelClassName = 'text-muted-foreground text-sm'
-const tableCellClassName = 'font-medium'
+const timelineBorderClassName = 'border-l border-r border-border'
+const timelineCellClassName = 'text-sm font-semibold md:text-base'
+const timelineDayLabelClassName = 'flex items-center justify-center'
+const timelineDayLabelBadgeClassName = 'size-fit text-base font-bold text-xs md:text-sm'
+const tableHeadClassName = 'font-semibold text-sm md:text-base'
+const unitLabelClassName = 'text-muted-foreground text-xs md:text-sm'
+const tableCellClassName = 'font-medium text-sm md:text-base'
 
 const timelineRows: TimelineRowConfig[] = [
 	{
@@ -60,7 +65,7 @@ const timelineRows: TimelineRowConfig[] = [
 				<div className="flex justify-between">
 					<div className="flex flex-col">
 						<p className={tableHeadClassName}>온도</p>
-						<p className="text-sm font-semibold">(체감온도)</p>
+						<p className="text-xs font-semibold md:text-sm">(체감온도)</p>
 					</div>
 					<span className={unitLabelClassName}>{temperatureLabel}</span>
 				</div>
@@ -72,8 +77,8 @@ const timelineRows: TimelineRowConfig[] = [
 			const { temp, feelslike } = formatHourLabelTemperature(item, units)
 			return (
 				<div className="flex flex-col">
-					<p className={cn(tableCellClassName, 'text-lg font-semibold')}>{temp}°</p>
-					<p className={cn(tableCellClassName, 'text-sm')}>({feelslike}°)</p>
+					<p className={cn(tableCellClassName, 'text-base font-semibold md:text-lg')}>{temp}°</p>
+					<p className={cn(tableCellClassName, 'text-xs md:text-sm')}>({feelslike}°)</p>
 				</div>
 			)
 		}
@@ -90,7 +95,7 @@ const timelineRows: TimelineRowConfig[] = [
 				<span
 					className={cn(
 						tableCellClassName,
-						'text-lg font-semibold',
+						'text-base font-semibold md:text-lg',
 						chance > 0 ? 'text-blue-600' : 'text-muted-foreground'
 					)}
 				>
@@ -104,7 +109,7 @@ const timelineRows: TimelineRowConfig[] = [
 		label: (units) => {
 			const precipitationLabel = formatPrecipitationUnitLabel(units)
 			return (
-				<p className="flex justify-between">
+				<p className="flex items-end justify-between">
 					<span className={tableHeadClassName}>강수량</span>
 					<span className={unitLabelClassName}>{precipitationLabel}</span>
 				</p>
@@ -129,7 +134,7 @@ const timelineRows: TimelineRowConfig[] = [
 		label: (units) => {
 			const snowDepthLabel = formatSnowDepthUnitLabel(units)
 			return (
-				<p className="flex justify-between">
+				<p className="flex items-end justify-between">
 					<span className={tableHeadClassName}>적설량</span>
 					<span className={unitLabelClassName}>{snowDepthLabel}</span>
 				</p>
@@ -170,7 +175,7 @@ const timelineRows: TimelineRowConfig[] = [
 		label: (units) => {
 			const windLabel = formatSpeedUnitLabel(units)
 			return (
-				<p className="flex justify-between">
+				<p className="flex items-end justify-between">
 					<span className={tableHeadClassName}>바람</span>
 					<span className={unitLabelClassName}>{windLabel}</span>
 				</p>
@@ -185,7 +190,7 @@ const timelineRows: TimelineRowConfig[] = [
 			return (
 				<div className="flex flex-col items-center">
 					<ArrowBigUp
-						className="fill-blue-500 text-blue-500"
+						className="size-4 fill-blue-500 text-blue-500 md:size-5"
 						style={{ transform: `rotate(${windDirection * 45 + 180}deg)` }}
 					/>
 					<span className={tableCellClassName}>{formatLocaleNumber(wind)}</span>
@@ -214,7 +219,7 @@ const timelineRows: TimelineRowConfig[] = [
 		label: (units) => {
 			const visibilityLabel = formatDistanceUnitLabel(units)
 			return (
-				<p className="flex justify-between">
+				<p className="flex items-end justify-between">
 					<span className={tableHeadClassName}>가시거리</span>
 					<span className={unitLabelClassName}>{visibilityLabel}</span>
 				</p>
@@ -261,18 +266,20 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 
 	return (
 		<HorizontalScrollContainer prevButtonClassName={hourlyTablePrevButtonClassName}>
-			<Table className="w-max">
-				<TableBody className="text-center text-base [&_tr]:border-none">
+			<Table className="w-max border-separate border-spacing-0">
+				<TableBody className="text-center text-sm md:text-base [&_tr]:border-none">
 					{/* 시간 헤더 */}
 					<TableRow>
-						<TableHead className={cn(stickyTableHeadClassName, tableHeadClassName)}>시간</TableHead>
+						<TableHead className={cn(stickyTableHeadClassName, timelineBorderClassName, tableHeadClassName)}>
+							시간
+						</TableHead>
 						{timeline.map((item) => {
 							const { date, kind, time, timeLabel } = item
 							const cellKey = getHourlyTimelineItemKey(item)
 
 							if (kind !== 'hour')
 								return (
-									<TableCell key={cellKey} className={cn(timelineBorderClassName, 'font-semibold')}>
+									<TableCell key={cellKey} className={cn(timelineBorderClassName, timelineCellClassName)}>
 										<span className="text-destructive">{time}</span>
 									</TableCell>
 								)
@@ -282,27 +289,27 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 									return (
 										<TableCell
 											key={cellKey}
-											className={cn(timelineBorderClassName, 'flex items-center justify-center font-semibold')}
+											className={cn(timelineBorderClassName, timelineCellClassName, timelineDayLabelClassName)}
 										>
-											<Badge className="size-fit text-base font-bold">내일</Badge>
+											<Badge className={timelineDayLabelBadgeClassName}>내일</Badge>
 										</TableCell>
 									)
 								case '내일':
 									return (
 										<TableCell
 											key={cellKey}
-											className={cn(timelineBorderClassName, 'flex items-center justify-center font-semibold')}
+											className={cn(timelineBorderClassName, timelineCellClassName, timelineDayLabelClassName)}
 										>
-											<Badge className="bg-pastel-purple-600 size-fit text-base font-bold">내일</Badge>
+											<Badge className={cn(timelineDayLabelBadgeClassName, 'bg-pastel-purple-600')}>내일</Badge>
 										</TableCell>
 									)
 								case '모레':
 									return (
 										<TableCell
 											key={cellKey}
-											className={cn(timelineBorderClassName, 'flex items-center justify-center font-semibold')}
+											className={cn(timelineBorderClassName, timelineCellClassName, timelineDayLabelClassName)}
 										>
-											<Badge className="bg-pastel-blue-600 size-fit text-base font-bold">모레</Badge>
+											<Badge className={cn(timelineDayLabelBadgeClassName, 'bg-pastel-blue-600')}>모레</Badge>
 										</TableCell>
 									)
 								default: {
@@ -312,7 +319,7 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 											key={cellKey}
 											className={cn(
 												timelineBorderClassName,
-												'font-semibold',
+												timelineCellClassName,
 												dayDiff === 1 && 'text-violet-700',
 												dayDiff === 2 && 'text-blue-700'
 											)}
@@ -326,15 +333,15 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 					</TableRow>
 					{/* 날씨 아이콘 */}
 					<TableRow>
-						<TableHead className={stickyTableHeadClassName} />
+						<TableHead className={cn(stickyTableHeadClassName, timelineBorderClassName)} />
 						{timeline.map((item) => {
 							const { kind, timeLabel } = item
 							const cellKey = getHourlyTimelineItemKey(item)
 
 							if (kind !== 'hour') {
 								return (
-									<TableCell key={cellKey} className={cn(timelineBorderClassName, 'py-0 font-semibold')}>
-										<Badge variant="destructive" className="size-fit font-bold">
+									<TableCell key={cellKey} className={cn(timelineBorderClassName, timelineCellClassName, 'py-0')}>
+										<Badge variant="destructive" className={timelineDayLabelBadgeClassName}>
 											{timeLabel}
 										</Badge>
 									</TableCell>
@@ -344,8 +351,17 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 							const { condition } = item
 							const { icon, text } = condition
 							return (
-								<TableCell key={cellKey} className={(cn(timelineBorderClassName), 'py-0')}>
-									<Image src={icon} alt={text} width={32} height={32} className="mx-auto" priority />
+								<TableCell key={cellKey} className={cn(timelineBorderClassName, timelineCellClassName, 'py-0')}>
+									<div className="flex size-10 items-center justify-center md:size-12">
+										<Image
+											src={icon}
+											alt={text}
+											width={32}
+											height={32}
+											className="border-border size-fit rounded-lg border shadow-xs"
+											priority
+										/>
+									</div>
 								</TableCell>
 							)
 						})}
@@ -356,9 +372,12 @@ function HourlyWeatherTable({ hours, astros }: HourlyWeatherTableProps) {
 
 						return (
 							<TableRow key={id}>
-								<TableHead className={stickyTableHeadClassName}>{label(units)}</TableHead>
+								<TableHead className={cn(stickyTableHeadClassName, timelineBorderClassName)}>{label(units)}</TableHead>
 								{timeline.map((item) => (
-									<TableCell key={getHourlyTimelineItemKey(item)} className={timelineBorderClassName}>
+									<TableCell
+										key={getHourlyTimelineItemKey(item)}
+										className={cn(timelineBorderClassName, timelineCellClassName)}
+									>
 										{render(item, units)}
 									</TableCell>
 								))}

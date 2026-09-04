@@ -6,7 +6,7 @@ import { THEME_MAPS_ROUTES } from '@/features/theme-maps/lib/theme-maps-routes'
 
 function ThemeMapsHomeSection() {
 	return (
-		<section className="grid grid-cols-1 gap-6 md:grid-cols-2">
+		<section className="grid grid-cols-1 gap-6 px-6 md:grid-cols-2 md:px-6">
 			<ThemeMapEntryCard
 				href={THEME_MAPS_ROUTES.airports}
 				title="공항 날씨"

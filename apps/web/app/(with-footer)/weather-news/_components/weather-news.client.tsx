@@ -1,6 +1,11 @@
 'use client'
 
+import { Button } from '@shared/ui/button'
+import { useIsMobile } from '@shared/ui/hooks/use-mobile'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@shared/ui/sheet'
 import { toast } from '@shared/ui/sonner'
+import { cn } from '@shared/ui/utils'
+import { ListFilterIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import ConfirmAlertDialog from '@/components/confirm-alert-dialog'
@@ -20,8 +25,8 @@ const MAX_PRESS_SELECTION = 5
 
 /**
  * 날씨 뉴스 페이지 client 조합기.
- * 좌측 피드 + 우측 언론사 필터(최대 5개, 선택 즉시 반영).
- * 선호목록 추가는 페이지 필터와 분리된 Dialog에서 구성합니다.
+ * lg+: 좌측 피드 + 우측 언론사 필터 / lg 미만: 피드 전폭 + Sheet 필터.
+ * Sheet는 md 미만 bottom, md~lg right. 필터 최대 5개·선택 즉시 반영.
  */
 function WeatherNewsClient({ isLoggedIn, initialPage, initialError }: WeatherNewsClientProps) {
 	const { items, hasMore, loadingMore, error, loadMore } = useWeatherNews({
@@ -38,12 +43,15 @@ function WeatherNewsClient({ isLoggedIn, initialPage, initialError }: WeatherNew
 	} = useFavoritePressLists({
 		isLoggedIn
 	})
+	const isMobile = useIsMobile()
+	const filterSheetSide = isMobile ? 'bottom' : 'right'
 
 	const [selectedPresses, setSelectedPresses] = useState<PressEntry[]>([])
 	const [appliedListId, setAppliedListId] = useState<string | null>(null)
 	const [createDialogOpen, setCreateDialogOpen] = useState(false)
 	const [editDialogOpen, setEditDialogOpen] = useState(false)
 	const [pendingApplyList, setPendingApplyList] = useState<FavoritePressList | null>(null)
+	const [filterSheetOpen, setFilterSheetOpen] = useState(false)
 
 	const applyConfirmDescription = useMemo(() => {
 		if (!pendingApplyList) {
@@ -124,6 +132,7 @@ function WeatherNewsClient({ isLoggedIn, initialPage, initialError }: WeatherNew
 		setAppliedListId(pendingApplyList.id)
 		toast.success(FAVORITE_PRESS_LIST_TOAST.APPLIED)
 		setPendingApplyList(null)
+		setFilterSheetOpen(false)
 	}
 
 	async function handleUpdate(list: FavoritePressList, domains: string[]) {
@@ -155,9 +164,29 @@ function WeatherNewsClient({ isLoggedIn, initialPage, initialError }: WeatherNew
 		return true
 	}
 
+	const pressFilterProps = {
+		isLoggedIn,
+		favoriteLists,
+		appliedListId,
+		isFavoriteListsLoading: isLoading,
+		selectedPresses,
+		maxSelection: MAX_PRESS_SELECTION,
+		isAddDisabled,
+		isPending,
+		onToggle: handleToggle,
+		onRemove: handleRemove,
+		onReset: handleReset,
+		onAddClick: handleAddClick,
+		onEditClick: () => setEditDialogOpen(true),
+		onApplyClick: handleApplyClick
+	}
+
+	const selectedCount = selectedPresses.length
+	const filterTriggerLabel = selectedCount > 0 ? `필터 (${selectedCount})` : '필터'
+
 	return (
-		<div className="flex gap-10">
-			<div className="flex w-2/3 flex-col">
+		<div className="flex flex-col gap-10 px-6 md:px-8 lg:flex-row lg:px-10">
+			<div className="flex w-full flex-col lg:w-2/3">
 				<NewsFeedSection
 					items={filteredItems}
 					loadedCount={items.length}
@@ -166,26 +195,44 @@ function WeatherNewsClient({ isLoggedIn, initialPage, initialError }: WeatherNew
 					loadingMore={loadingMore}
 					errorMessage={error?.message || null}
 					onLoadMore={loadMore}
+					headerAction={
+						<Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
+							<SheetTrigger
+								render={
+									<Button
+										type="button"
+										variant="outline"
+										size="sm"
+										className="lg:hidden"
+										aria-label={filterTriggerLabel}
+									/>
+								}
+							>
+								<ListFilterIcon className="size-4" data-icon="inline-start" />
+								{filterTriggerLabel}
+							</SheetTrigger>
+							<SheetContent
+								side={filterSheetSide}
+								className={cn(
+									'gap-0 p-0',
+									isMobile ? 'max-h-[85dvh] w-full overflow-hidden' : 'h-full w-full max-w-sm'
+								)}
+							>
+								<SheetHeader className="border-border shrink-0 border-b">
+									<SheetTitle>언론사 필터</SheetTitle>
+									<SheetDescription hidden />
+								</SheetHeader>
+								<div className="min-h-0 flex-1 overflow-y-auto">
+									<PressFilterSection {...pressFilterProps} className="rounded-none p-4" />
+								</div>
+							</SheetContent>
+						</Sheet>
+					}
 				/>
 			</div>
-			<aside className="w-1/3 shrink-0">
+			<aside className="hidden w-1/3 shrink-0 lg:block">
 				<div className="sticky top-6">
-					<PressFilterSection
-						isLoggedIn={isLoggedIn}
-						favoriteLists={favoriteLists}
-						appliedListId={appliedListId}
-						isFavoriteListsLoading={isLoading}
-						selectedPresses={selectedPresses}
-						maxSelection={MAX_PRESS_SELECTION}
-						isAddDisabled={isAddDisabled}
-						isPending={isPending}
-						onToggle={handleToggle}
-						onRemove={handleRemove}
-						onReset={handleReset}
-						onAddClick={handleAddClick}
-						onEditClick={() => setEditDialogOpen(true)}
-						onApplyClick={handleApplyClick}
-					/>
+					<PressFilterSection {...pressFilterProps} />
 				</div>
 			</aside>
 

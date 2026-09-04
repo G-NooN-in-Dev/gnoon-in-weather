@@ -55,7 +55,10 @@ function WeatherRadarDetailDialog({
 			>
 				자세히 보기 &gt;
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-4xl" showCloseButton>
+			<DialogContent
+				className="max-h-[min(90dvh,calc(100dvh-2rem))] overflow-y-auto sm:max-w-3xl md:max-w-4xl lg:max-w-5xl"
+				showCloseButton
+			>
 				<DialogHeader>
 					<DialogTitle>기상 레이더</DialogTitle>
 					<DialogDescription hidden />
@@ -68,7 +71,8 @@ function WeatherRadarDetailDialog({
 						waitingForFrame={waitingForFrame}
 						frameHint={frameHint}
 						preloadError={preloadError}
-						mapClassName="h-[min(70vh,36rem)]"
+						// 탭·슬라이더 등 크롬(~20rem)을 빼고, 짧은 뷰포트에서도 맵이 Dialog를 밀지 않게 합니다.
+						mapClassName="h-[min(45dvh,20rem)] sm:h-[min(calc(90dvh-20rem),28rem)] lg:h-[min(calc(90dvh-20rem),36rem)]"
 						viewVariant="detail"
 						layoutNonce={open}
 						timeline={timeline}

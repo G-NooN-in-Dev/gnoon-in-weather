@@ -12,26 +12,24 @@ function BaseballHeading({ park, error }: BaseballHeadingProps) {
 	const homeTeams = getBaseballTeamsByIds(getBaseballParkHomeTeamIds(park))
 
 	return (
-		<div className="flex items-start justify-between gap-3">
+		<div className="flex min-w-0 items-start justify-between gap-3 px-2">
 			<div className="flex min-w-0 flex-1 flex-col gap-1">
 				<div className="flex min-w-0 items-baseline gap-2 text-xl font-bold">
 					<h2 className="truncate">{name}</h2>
 					<span className="text-grayscale-600 shrink-0 text-sm font-normal tracking-wide">{homeTeamLabel}</span>
 				</div>
-				<p className="text-grayscale-500 text-sm">{address}</p>
-				{error ? <p className="text-destructive text-sm">{error.message}</p> : null}
+				<p className="text-grayscale-500 text-sm wrap-break-word">{address}</p>
+				{error ? <p className="text-destructive text-sm wrap-break-word">{error.message}</p> : null}
 			</div>
-			<div className="flex shrink-0 items-stretch gap-2 self-stretch">
-				<div aria-hidden className="flex h-full items-stretch gap-1.5">
+			<div className="flex shrink-0 items-center gap-2">
+				<div aria-hidden className="flex items-center gap-1.5">
 					{homeTeams.map(({ id, logoSrc }) => (
-						<span key={id} className="relative aspect-square h-full">
-							<Image src={logoSrc} alt="" fill className="object-contain" sizes="80px" />
+						<span key={id} className="relative size-10 sm:size-12">
+							<Image src={logoSrc} alt="" fill className="object-contain" sizes="48px" />
 						</span>
 					))}
 				</div>
-				<div className="self-center">
-					<WeatherUnitSettingsPopover />
-				</div>
+				<WeatherUnitSettingsPopover />
 			</div>
 		</div>
 	)

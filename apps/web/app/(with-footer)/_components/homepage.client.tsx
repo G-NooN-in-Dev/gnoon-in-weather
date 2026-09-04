@@ -58,8 +58,11 @@ function HomepageClient({
 	return (
 		<WeatherUnitsProvider initialUnits={initialUnits}>
 			{loading ? <LoadingComponent /> : null}
-			<div className="flex gap-10">
-				<div className="flex w-2/3 flex-col gap-6">
+			{/* 모바일 1열(검색 → 좌측 → aside), lg 이상 2열 */}
+			<div className="flex flex-col gap-6 px-6 md:px-8 lg:flex-row lg:gap-10 lg:px-10">
+				<div className="flex flex-col gap-6 lg:w-2/3">
+					{/* 모바일: CurrentLocation보다 위에 검색 배치 */}
+					<LocationSearch className="lg:hidden" onSelect={selectLocation} />
 					<CurrentWeatherSection
 						current={current}
 						location={location}
@@ -74,12 +77,13 @@ function HomepageClient({
 					<HourlyWeatherSection hours={forecastSplit?.hours ?? []} astros={forecastSplit?.astros ?? []} />
 					<DailyWeatherSection days={forecastSplit?.days ?? []} />
 				</div>
-				<div className="flex w-1/3 flex-col gap-6">
-					<LocationSearch onSelect={selectLocation} />
+				<aside className="flex flex-col gap-6 lg:w-1/3">
+					{/* 데스크탑: aside 상단에 검색 유지 */}
+					<LocationSearch className="hidden lg:block" onSelect={selectLocation} />
 					<UvIndexSection current={current} />
 					<AstroScheduleSection astros={forecastSplit?.astros ?? []} coordinates={location} />
 					<WeatherRadarSection />
-				</div>
+				</aside>
 			</div>
 		</WeatherUnitsProvider>
 	)

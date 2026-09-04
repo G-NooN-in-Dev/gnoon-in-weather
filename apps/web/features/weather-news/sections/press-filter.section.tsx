@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@shared/ui/button'
+import { cn } from '@shared/ui/utils'
 import { RotateCwIcon } from 'lucide-react'
 
 import type { PressFilterSectionProps } from '@/features/weather-news/types/weather-news-component.type'
@@ -30,7 +31,8 @@ function PressFilterSection({
 	onReset,
 	onAddClick,
 	onEditClick,
-	onApplyClick
+	onApplyClick,
+	className
 }: PressFilterSectionProps) {
 	const selectedCount = selectedPresses.length
 	const isAtLimit = selectedCount >= maxSelection
@@ -38,7 +40,7 @@ function PressFilterSection({
 	const favoriteListCount = favoriteLists.length
 
 	return (
-		<section className="flex w-full flex-col gap-6 rounded-lg bg-white p-4" aria-label="언론사 필터">
+		<section className={cn('flex w-full flex-col gap-6 rounded-lg bg-white p-4', className)} aria-label="언론사 필터">
 			<div className="border-grayscale-200 flex flex-col gap-3 border-b pb-6">
 				<div className="flex items-center justify-between gap-3">
 					<div className="flex items-baseline gap-2">

@@ -3,6 +3,7 @@
 import { Button } from '@shared/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@shared/ui/card'
 import { Spinner } from '@shared/ui/spinner'
+import { cn } from '@shared/ui/utils'
 import { ArrowBigUp, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -49,7 +50,15 @@ type ThemePlaceWeatherContentProps = {
 
 function ThemePlaceInfoPlaceholder({ children }: { children: ReactNode }) {
 	return (
-		<div className="bg-background/90 text-grayscale-600 border-grayscale-200 rounded-md border px-4 py-3 text-sm shadow-sm backdrop-blur-sm">
+		<div
+			className={cn(
+				'text-grayscale-600 px-4 py-3 text-sm',
+				// 모바일: ThemeMapInfoSurface sheet 크롬 안에서 투명
+				'border-0 bg-transparent text-center shadow-none',
+				// md+: 단독 플로팅 placeholder
+				'md:bg-background/90 md:border-grayscale-200 md:rounded-md md:border md:text-left md:shadow-sm md:backdrop-blur-sm'
+			)}
+		>
 			{children}
 		</div>
 	)
@@ -85,7 +94,14 @@ function ThemePlaceWeatherContent({ realtimeWeather }: ThemePlaceWeatherContentP
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex items-center gap-3">
-				<Image src={formatWeatherIconUrl(conditionIcon)} alt={conditionText} width={64} height={64} unoptimized />
+				<Image
+					src={formatWeatherIconUrl(conditionIcon)}
+					alt={conditionText}
+					width={64}
+					height={64}
+					unoptimized
+					className="border-grayscale-300 size-fit rounded-lg border shadow-xs"
+				/>
 				<div className="flex min-w-0 flex-col">
 					<span className="text-2xl font-semibold">{temp}°</span>
 					<span className="text-grayscale-700 text-lg tracking-wide">{conditionText}</span>
@@ -141,8 +157,16 @@ function ThemePlaceInfoPanel({
 	const { realtimeWeather, loading, error } = usePlaceRealtimeWeather(place)
 
 	return (
-		<Card className="bg-background/95 w-full max-w-sm gap-4 shadow-md backdrop-blur-sm">
-			<CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
+		<Card
+			className={cn(
+				'w-full gap-4',
+				// 모바일: ThemeMapInfoSurface sheet 크롬 안에서 투명
+				'rounded-none border-0 bg-transparent py-0 shadow-none ring-0',
+				// md+: 단독 플로팅 카드
+				'md:bg-background/95 md:max-w-md md:rounded-xl md:border md:py-6 md:shadow-md md:ring-1 md:backdrop-blur-sm'
+			)}
+		>
+			<CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0 px-0 md:px-6">
 				<div className="min-w-0">
 					<div className="flex items-center gap-2">
 						<CardTitle className="truncate text-lg font-semibold">{title}</CardTitle>
@@ -158,7 +182,7 @@ function ThemePlaceInfoPanel({
 					<X />
 				</Button>
 			</CardHeader>
-			<CardContent className="min-h-20">
+			<CardContent className="min-h-20 px-0 md:px-6">
 				{loading && <ThemePlaceInfoLoadingContent spinnerClassName={spinnerClassName} />}
 				{!loading && (error || !realtimeWeather) && (
 					<ThemePlaceInfoErrorContent error={error} description={errorDescription} />
@@ -166,7 +190,7 @@ function ThemePlaceInfoPanel({
 				{!loading && !error && realtimeWeather && <ThemePlaceWeatherContent realtimeWeather={realtimeWeather} />}
 			</CardContent>
 			{realtimeWeather && detailHref ? (
-				<CardFooter>
+				<CardFooter className="px-0 md:px-6">
 					<Link href={detailHref} className="w-full">
 						<Button type="button" className="w-full">
 							{detailLabel}

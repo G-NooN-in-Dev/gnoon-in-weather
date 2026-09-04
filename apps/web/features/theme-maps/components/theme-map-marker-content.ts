@@ -39,8 +39,7 @@ function ensureThemeMapMarkerStyles(theme: ThemeMapMarkerTheme) {
 		return
 	}
 
-	const { rootClassName, color, activeColor, focusRingColor, iconRotateDeg = 0, iconSizePx = 32 } =
-		theme
+	const { rootClassName, color, activeColor, focusRingColor, iconRotateDeg = 0, iconSizePx = 32 } = theme
 	const iconTransform = iconRotateDeg === 0 ? 'none' : `rotate(${iconRotateDeg}deg)`
 	const svgSizePx = Math.round(iconSizePx / 2)
 

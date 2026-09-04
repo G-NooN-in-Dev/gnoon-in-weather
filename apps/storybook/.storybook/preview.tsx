@@ -32,7 +32,7 @@ const preview: Preview = {
 
 			return (
 				<div className={theme === 'dark' ? 'dark' : ''}>
-					<div className="bg-background text-foreground min-h-[120px] p-6 font-sans">
+					<div className="bg-background text-foreground min-h-30 p-6 font-sans">
 						<TooltipProvider>
 							<Story />
 						</TooltipProvider>
