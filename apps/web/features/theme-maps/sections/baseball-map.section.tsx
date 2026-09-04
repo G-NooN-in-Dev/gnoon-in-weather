@@ -5,6 +5,7 @@ import { useState } from 'react'
 import BaseballInfoPanel from '@/features/theme-maps/components/baseball-info-panel'
 import BaseballKakaoMap from '@/features/theme-maps/components/baseball-kakao-map'
 import ThemeMapFilterTabs from '@/features/theme-maps/components/theme-map-filter-tabs'
+import ThemeMapInfoSurface from '@/features/theme-maps/components/theme-map-info-surface'
 import {
 	BASEBALL_PARK_MAP_FILTER_OPTIONS,
 	type BaseballParkMapFilter,
@@ -35,8 +36,8 @@ function BaseballMapSection({ selectedParkId, onSelect, onClear }: BaseballMapSe
 				className="size-full"
 				mapClassName="size-full rounded-none"
 			/>
-			<div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-wrap items-start justify-between gap-3 p-3 sm:p-4">
-				<div className="pointer-events-auto shrink-0">
+			<ThemeMapInfoSurface
+				filter={
 					<ThemeMapFilterTabs
 						value={filter}
 						options={BASEBALL_PARK_MAP_FILTER_OPTIONS}
@@ -44,11 +45,10 @@ function BaseballMapSection({ selectedParkId, onSelect, onClear }: BaseballMapSe
 						ariaLabel="구장 구분"
 						tone="baseball"
 					/>
-				</div>
-				<div className="pointer-events-auto w-[min(100%,20rem)] min-w-0">
-					<BaseballInfoPanel park={selectedPark} mapFilter={filter} onClose={onClear} />
-				</div>
-			</div>
+				}
+			>
+				<BaseballInfoPanel park={selectedPark} mapFilter={filter} onClose={onClear} />
+			</ThemeMapInfoSurface>
 		</section>
 	)
 }

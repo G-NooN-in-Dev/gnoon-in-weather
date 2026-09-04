@@ -5,6 +5,7 @@ import { useState } from 'react'
 import AirportInfoPanel from '@/features/theme-maps/components/airport-info-panel'
 import AirportsKakaoMap from '@/features/theme-maps/components/airports-kakao-map'
 import ThemeMapFilterTabs from '@/features/theme-maps/components/theme-map-filter-tabs'
+import ThemeMapInfoSurface from '@/features/theme-maps/components/theme-map-info-surface'
 import {
 	AIRPORT_MAP_FILTER_OPTIONS,
 	type AirportMapFilter,
@@ -35,8 +36,8 @@ function AirportsMapSection({ selectedIata, onSelect, onClear }: AirportsMapSect
 				className="size-full"
 				mapClassName="size-full rounded-none"
 			/>
-			<div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-wrap items-start justify-between gap-3 p-3 sm:p-4">
-				<div className="pointer-events-auto shrink-0">
+			<ThemeMapInfoSurface
+				filter={
 					<ThemeMapFilterTabs
 						value={filter}
 						options={AIRPORT_MAP_FILTER_OPTIONS}
@@ -44,11 +45,10 @@ function AirportsMapSection({ selectedIata, onSelect, onClear }: AirportsMapSect
 						ariaLabel="공항 구분"
 						tone="airport"
 					/>
-				</div>
-				<div className="pointer-events-auto w-[min(100%,20rem)] min-w-0">
-					<AirportInfoPanel airport={selectedAirport} onClose={onClear} />
-				</div>
-			</div>
+				}
+			>
+				<AirportInfoPanel airport={selectedAirport} onClose={onClear} />
+			</ThemeMapInfoSurface>
 		</section>
 	)
 }
