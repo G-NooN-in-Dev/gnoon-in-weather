@@ -49,7 +49,7 @@ function ThemeMapEntryCard({
 			<Card className={cn('relative min-h-72 overflow-hidden border-2 lg:min-h-80', border)}>
 				<CardHeader className="relative z-10 gap-3">
 					<Icon aria-hidden className={cn('size-16 shrink-0', iconColor, iconClassName)} />
-					<CardTitle className="text-4xl font-semibold">{title}</CardTitle>
+					<CardTitle className="text-3xl font-semibold md:text-4xl">{title}</CardTitle>
 				</CardHeader>
 				<DecoIcon
 					aria-hidden
