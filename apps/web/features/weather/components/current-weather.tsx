@@ -57,7 +57,7 @@ function CurrentWeather({ current }: CurrentWeatherProps) {
 							width={64}
 							height={64}
 							priority
-							className="bg-grayscale-200 border-grayscale-500 size-fit rounded-lg border shadow-xs"
+							className="border-grayscale-300 size-fit rounded-lg border shadow-xs"
 						/>
 						<div className="flex flex-col md:items-center">
 							<p className="text-xl font-semibold lg:text-2xl">{conditionText}</p>
@@ -70,6 +70,7 @@ function CurrentWeather({ current }: CurrentWeatherProps) {
 					</div>
 				</div>
 				<div className="flex gap-3">
+					{/* 모바일 환경 UI */}
 					<div className="grid w-full grid-cols-2 gap-2 md:hidden">
 						{chance_of_rain > 0 ? (
 							<DataCard title="강수량" value={precip} unit={formatPrecipitationUnitLabel(units)} />
@@ -87,6 +88,7 @@ function CurrentWeather({ current }: CurrentWeatherProps) {
 						<DataCard title="자외선지수" value={uv} unit={formatUvIndexLabel(uv)} />
 					</div>
 
+					{/* 데스크탑 환경 UI */}
 					<div className="hidden w-full md:grid md:grid-cols-3 md:gap-3">
 						{chance_of_rain > 0 ? (
 							<DataCard title="강수량" value={precip} unit={formatPrecipitationUnitLabel(units)} />
