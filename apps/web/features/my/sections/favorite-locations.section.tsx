@@ -43,14 +43,14 @@ function FavoriteLocationsSection({ initialItems, isLoggedIn }: FavoriteLocation
 			{items.length === 0 ? (
 				<p className="text-grayscale-400 text-sm">등록된 관심지역이 없습니다.</p>
 			) : (
-				<ul className="grid max-w-3xl grid-cols-2 gap-2">
+				<ul className="flex flex-wrap gap-2 md:grid md:grid-cols-2 lg:grid-cols-3">
 					{items.map((item) => {
 						const { id, label } = item
 
 						return (
-							<li key={id}>
-								<Badge className="bg-background text-foreground border-border h-10 w-full justify-between gap-1 px-3 pr-1 text-base shadow-xs">
-									<span>{label}</span>
+							<li key={id} className="max-w-full">
+								<Badge className="bg-background text-foreground border-border h-auto min-h-10 max-w-full justify-between gap-1 px-3 py-2 pr-1 text-base whitespace-normal shadow-xs md:w-full">
+									<span className="min-w-0 wrap-break-word">{label}</span>
 									<button
 										type="button"
 										aria-label={`${label} 삭제`}
