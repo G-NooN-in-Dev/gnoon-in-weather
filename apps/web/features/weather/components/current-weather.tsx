@@ -46,7 +46,7 @@ function CurrentWeather({ current }: CurrentWeatherProps) {
 	return (
 		<Card className="gap-4 py-4">
 			<CardHeader>
-				<CardTitle className="text-base font-bold md:text-xl">실시간 날씨</CardTitle>
+				<CardTitle className="text-xl font-bold">실시간 날씨</CardTitle>
 			</CardHeader>
 			<CardContent className="flex flex-col gap-4 md:flex-row">
 				<div className="bg-grayscale-100 flex flex-row gap-4 rounded-lg p-2 pr-4 md:flex-col">

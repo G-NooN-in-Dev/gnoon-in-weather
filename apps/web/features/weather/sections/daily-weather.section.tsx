@@ -9,7 +9,7 @@ import WeatherApiCredit from '../components/weather-api-credit'
 function DailyWeatherSection({ days }: ForecastDaysSectionProps) {
 	return (
 		<section className="flex flex-col gap-4">
-			<h2 className="pl-2 text-xl font-bold md:text-2xl">3일 예보</h2>
+			<h2 className="pl-2 text-xl font-bold">3일 예보</h2>
 			<div className="grid grid-cols-2 gap-4 md:grid-cols-3">
 				{days.length > 0 ? (
 					days.map((day, index) => (

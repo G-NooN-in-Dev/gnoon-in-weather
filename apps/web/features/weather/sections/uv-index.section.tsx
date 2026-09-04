@@ -30,7 +30,7 @@ function UvIndexSection({ current }: CurrentWeatherProps) {
 		<section>
 			<Card className="gap-2 py-4">
 				<CardHeader>
-					<CardTitle className="text-base font-bold md:text-xl">자외선 정보</CardTitle>
+					<CardTitle className="text-xl font-bold">자외선 정보</CardTitle>
 				</CardHeader>
 				{guide && current ? (
 					<CardContent className="flex flex-col gap-3">

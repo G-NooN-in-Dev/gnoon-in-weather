@@ -13,7 +13,7 @@ function HourlyWeatherSection({ hours, astros }: ForecastHoursSectionProps) {
 		<section>
 			<Card className="gap-4 py-4">
 				<CardHeader className="flex items-center gap-1 md:gap-2">
-					<CardTitle className="text-base font-bold md:text-xl">시간별 날씨</CardTitle>
+					<CardTitle className="text-xl font-bold">시간별 날씨</CardTitle>
 					<WeatherConditionLegendPopover />
 				</CardHeader>
 				<CardContent>
