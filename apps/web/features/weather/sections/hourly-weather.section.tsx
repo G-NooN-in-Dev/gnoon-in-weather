@@ -11,9 +11,9 @@ import WeatherConditionLegendPopover from '../components/weather-condition-legen
 function HourlyWeatherSection({ hours, astros }: ForecastHoursSectionProps) {
 	return (
 		<section>
-			<Card className="py-4">
-				<CardHeader className="flex items-center gap-3">
-					<CardTitle className="text-xl font-bold">시간별 날씨</CardTitle>
+			<Card className="gap-4 py-4">
+				<CardHeader className="flex items-center gap-1 md:gap-2">
+					<CardTitle className="text-base font-bold md:text-xl">시간별 날씨</CardTitle>
 					<WeatherConditionLegendPopover />
 				</CardHeader>
 				<CardContent>

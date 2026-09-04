@@ -57,7 +57,7 @@ function CurrentWeather({ current }: CurrentWeatherProps) {
 							width={64}
 							height={64}
 							priority
-							className="bg-grayscale-200 border-grayscale-500 rounded-lg border shadow-xs"
+							className="bg-grayscale-200 border-grayscale-500 size-fit rounded-lg border shadow-xs"
 						/>
 						<div className="flex flex-col md:items-center">
 							<p className="text-xl font-semibold lg:text-2xl">{conditionText}</p>
