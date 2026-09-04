@@ -34,7 +34,7 @@ export function Example() {
 
 ## Tailwind v4 className 정규화
 
-shadcn/Tailwind IntelliSense가 제안하는 v4 canonical 문법을 따른다. (상세: [`docs/CODING_GUIDELINES.md`](../../docs/CODING_GUIDELINES.md) § UI / Tailwind, AI 규칙: [`.cursor/rules/tailwind-canonical.mdc`](../../.cursor/rules/tailwind-canonical.mdc))
+shadcn/Tailwind IntelliSense가 제안하는 v4 canonical 문법을 따른다. 루트 Prettier(`prettier-plugin-tailwindcss-canonical-classes`)가 format/pre-commit에서 rename·스케일도 자동 정리한다. (상세: [`docs/CODING_GUIDELINES.md`](../../docs/CODING_GUIDELINES.md) § UI / Tailwind, AI 규칙: [`.cursor/rules/tailwind-canonical.mdc`](../../.cursor/rules/tailwind-canonical.mdc))
 
 **rem/px → spacing 스케일** (1 = 0.25rem, rem × 4 = 스케일):
 

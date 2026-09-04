@@ -28,7 +28,7 @@ const meta = {
 				onOpenChange={(next) => {
 					setArg('open', next)
 				}}
-				className="w-[350px] space-y-2"
+				className="w-87.5 space-y-2"
 			>
 				<div className="flex items-center justify-between gap-4">
 					<h4 className="text-sm font-medium">{heading}</h4>

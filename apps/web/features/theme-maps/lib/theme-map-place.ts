@@ -67,11 +67,7 @@ function getThemeMapPlaceBaseZIndex(place: ThemeMapPlace): number {
 	return place.markerZIndex ?? DEFAULT_MARKER_Z_INDEX
 }
 
-function getThemeMapMarkerZIndex(
-	place: ThemeMapPlace,
-	selectedId: string | null,
-	hoveredId: string | null
-): number {
+function getThemeMapMarkerZIndex(place: ThemeMapPlace, selectedId: string | null, hoveredId: string | null): number {
 	if (place.id === hoveredId) {
 		return HOVERED_MARKER_Z_INDEX
 	}

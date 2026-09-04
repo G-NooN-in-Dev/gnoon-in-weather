@@ -405,6 +405,8 @@ const parsed = JSON.parse(value) satisfies RecentLocationCookie // 실질 안전
 
 IntelliSense `suggestCanonicalClasses`("can be written as …")를 따릅니다. 임의값(`[…]`)은 토큰·shortcut이 없을 때만 씁니다.
 
+**자동화** — `pnpm format`과 pre-commit(`lint-staged` → Prettier)이 `prettier-plugin-tailwindcss-canonical-classes`로 v4 rename·스케일·shorthand를 정규화합니다. (설정: 루트 `.prettierrc`, 스타일시트 `apps/web/global.css`)
+
 **spacing / 크기 (rem → 스케일)** — 기본 spacing 1 = `0.25rem`이므로, 고정 rem/px는 `rem × 4`(또는 `px ÷ 4`) 스케일 클래스를 씁니다. `h-[32rem]`처럼 rem을 그대로 대괄호에 넣지 않습니다.
 
 | 임의값 (❌)            | canonical (✅)   |
@@ -418,7 +420,7 @@ IntelliSense `suggestCanonicalClasses`("can be written as …")를 따릅니다.
 **작성·리뷰 체크**
 
 - className 추가 시 rem/px 임의값 → 스케일 변환 가능 여부를 먼저 확인
-- shadcn CLI·외부 복사 코드도 동일 규칙으로 정규화
+- shadcn CLI·외부 복사 코드도 동일 규칙으로 정규화 (포맷/커밋 시에도 자동 정리)
 - IDE 저장 시 `.vscode/settings.json`의 `source.fixAll.tailwindcss`로 자동 수정
 - AI 에이전트 규칙: `.cursor/rules/tailwind-canonical.mdc` (`alwaysApply`)
 
@@ -429,10 +431,11 @@ IntelliSense `suggestCanonicalClasses`("can be written as …")를 따릅니다.
 - `calc` 안의 `var(--foo)` → `calc((--foo)+…)`
 - `h-[calc(--spacing(5.5))]` → `h-(--spacing(5.5))`
 
-**shorthand**
+**shorthand / rename**
 
 - `flex-shrink-0` → `shrink-0`
 - `flex-grow` → `grow`
+- `break-words` → `wrap-break-word`
 
 새 className은 처음부터 canonical로 작성하고, shadcn CLI 추가 후에도 정규화합니다.
 

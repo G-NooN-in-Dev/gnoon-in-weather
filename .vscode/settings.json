@@ -7,6 +7,7 @@
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "always",
 		// IntelliSense suggestCanonicalClasses 등 Tailwind autofix (확장 버전에 따라 동작)
+		// 포맷/커밋 경로: prettier-plugin-tailwindcss-canonical-classes (.prettierrc)
 		"source.fixAll.tailwindcss": "always"
 	},
 	"tailwindCSS.lint.suggestCanonicalClasses": "warning",
