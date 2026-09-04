@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 import type { PressEntry } from '@/lib/naver/broadcast-press-list'
 import type { AppApiError } from '@/types/error.type'
 import type { FavoritePressList } from '@/types/favorite-press-list.type'
@@ -19,6 +21,7 @@ type NewsFeedSectionProps = {
 	loadingMore: boolean
 	errorMessage: string | null
 	onLoadMore: () => void
+	headerAction?: ReactNode
 }
 
 type PressFilterSectionProps = {
@@ -37,6 +40,7 @@ type PressFilterSectionProps = {
 	onAddClick: () => void
 	onEditClick: () => void
 	onApplyClick: (list: FavoritePressList) => void
+	className?: string
 }
 
 export type { NewsFeedSectionProps, PressFilterSectionProps, WeatherNewsClientProps }
