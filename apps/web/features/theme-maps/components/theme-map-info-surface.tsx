@@ -28,7 +28,7 @@ function ThemeMapInfoSurface({ filter, children, className }: ThemeMapInfoSurfac
 					// 모바일: 하단 edge-to-edge sheet
 					'inset-x-0 bottom-0',
 					// md+: 우측 상단 플로팅 패널 위치
-					'md:inset-x-auto md:top-0 md:right-0 md:bottom-auto md:w-[min(100%,20rem)] md:p-4',
+					'md:inset-x-auto md:top-0 md:right-0 md:bottom-auto md:w-[min(100%,28rem)] md:p-4',
 					className
 				)}
 			>

@@ -94,7 +94,14 @@ function ThemePlaceWeatherContent({ realtimeWeather }: ThemePlaceWeatherContentP
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex items-center gap-3">
-				<Image src={formatWeatherIconUrl(conditionIcon)} alt={conditionText} width={64} height={64} unoptimized />
+				<Image
+					src={formatWeatherIconUrl(conditionIcon)}
+					alt={conditionText}
+					width={64}
+					height={64}
+					unoptimized
+					className="border-grayscale-300 size-fit rounded-lg border shadow-xs"
+				/>
 				<div className="flex min-w-0 flex-col">
 					<span className="text-2xl font-semibold">{temp}°</span>
 					<span className="text-grayscale-700 text-lg tracking-wide">{conditionText}</span>
@@ -156,7 +163,7 @@ function ThemePlaceInfoPanel({
 				// 모바일: ThemeMapInfoSurface sheet 크롬 안에서 투명
 				'rounded-none border-0 bg-transparent py-0 shadow-none ring-0',
 				// md+: 단독 플로팅 카드
-				'md:bg-background/95 md:max-w-sm md:rounded-xl md:border md:py-6 md:shadow-md md:ring-1 md:backdrop-blur-sm'
+				'md:bg-background/95 md:max-w-md md:rounded-xl md:border md:py-6 md:shadow-md md:ring-1 md:backdrop-blur-sm'
 			)}
 		>
 			<CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0 px-0 md:px-6">
