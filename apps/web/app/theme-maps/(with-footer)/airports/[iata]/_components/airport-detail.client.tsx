@@ -31,16 +31,16 @@ function AirportDetailClient({ airport, initialWeather, initialUnits, initialErr
 	return (
 		<WeatherUnitsProvider initialUnits={initialUnits}>
 			{loading ? <LoadingComponent /> : null}
-			<div className="flex gap-10">
-				<div className="flex w-2/3 flex-col gap-6">
+			<div className="flex flex-col gap-6 px-6 md:px-8 lg:flex-row lg:gap-10 lg:px-10">
+				<div className="flex flex-col gap-6 lg:w-2/3">
 					<AirportCurrentWeatherSection airport={airport} current={current} error={activeError} />
 					<HourlyWeatherSection hours={forecastSplit?.hours ?? []} astros={forecastSplit?.astros ?? []} />
 					<DailyWeatherSection days={forecastSplit?.days ?? []} />
 				</div>
-				<div className="flex w-1/3 flex-col gap-6">
+				<aside className="flex flex-col gap-6 lg:w-1/3">
 					<AirportPickerSection selectedIata={airport.iata} />
 					<AstroScheduleSection astros={forecastSplit?.astros ?? []} coordinates={airport} />
-				</div>
+				</aside>
 			</div>
 		</WeatherUnitsProvider>
 	)
