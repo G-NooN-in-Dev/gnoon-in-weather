@@ -14,9 +14,8 @@ import { useState } from 'react'
 
 import ConfirmAlertDialog from '@/components/confirm-alert-dialog'
 import FavoritePressListEditSession from '@/features/favorite-press-list/components/favorite-press-list-edit-session'
+import FavoritePressListsItem from '@/features/favorite-press-list/components/favorite-press-lists-item'
 import { FavoritePressList } from '@/types/favorite-press-list.type'
-
-import FavoritePressListsItem from './favorite-press-lists-item'
 
 type FavoritePressListsEditDialogProps = {
 	open: boolean

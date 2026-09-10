@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 
-import type { BaseballPark } from '@/features/theme-maps/lib/baseball-parks'
 import { buildWeatherApiUrl } from '@/lib/weather/api-url'
 import { isForecastStale } from '@/lib/weather/is-forecast-stale'
 import { isRealtimeStale } from '@/lib/weather/is-realtime-stale'
@@ -10,13 +9,14 @@ import { HOME_FORECAST_DAYS, HOME_WEATHER_LANG } from '@/services/weather.loader
 import type { AppApiError } from '@/types/error.type'
 import type { WeatherApiRealtimeResponse, WeatherSummary } from '@/types/weather-api.type'
 
-type UseBaseballWeatherOptions = {
-	park: BaseballPark
+type UsePlaceWeatherOptions = {
+	lat: number
+	lng: number
 	initialWeather?: WeatherSummary | null
 	initialError?: AppApiError | null
 }
 
-type UseBaseballWeatherResult = {
+type UsePlaceWeatherResult = {
 	weather: WeatherSummary | null
 	loading: boolean
 	error: AppApiError | null
@@ -31,16 +31,16 @@ function canUseInitialWeatherWithoutFetch(initialWeather: WeatherSummary | null)
 }
 
 /**
- * 야구장 상세용 날씨 조회 훅.
- * 좌표는 구장 고정이며 홈 위치 쿠키·GPS·검색은 쓰지 않습니다.
+ * 테마 장소(공항·야구장 등) 상세용 날씨 조회 훅.
+ * 좌표는 장소 고정이며 홈 위치 쿠키·GPS·검색은 쓰지 않습니다.
  * SSR 데이터가 유효하면 refetch를 생략하고, stale이면 홈과 같은 규칙으로 보정합니다.
  */
-function useBaseballWeather({
-	park,
+function usePlaceWeather({
+	lat,
+	lng,
 	initialWeather = null,
 	initialError = null
-}: UseBaseballWeatherOptions): UseBaseballWeatherResult {
-	const { lat, lng } = park
+}: UsePlaceWeatherOptions): UsePlaceWeatherResult {
 	const [weather, setWeather] = useState<WeatherSummary | null>(initialWeather)
 	const [loading, setLoading] = useState(() => initialWeather === null && initialError === null)
 	const [error, setError] = useState<AppApiError | null>(initialError)
@@ -138,5 +138,5 @@ function useBaseballWeather({
 	return { weather, loading, error }
 }
 
-export default useBaseballWeather
-export type { UseBaseballWeatherOptions, UseBaseballWeatherResult }
+export default usePlaceWeather
+export type { UsePlaceWeatherOptions, UsePlaceWeatherResult }

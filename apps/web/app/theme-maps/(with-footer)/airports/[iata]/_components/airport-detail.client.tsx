@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 import LoadingComponent from '@/components/loading-component'
 import { WeatherUnitsProvider } from '@/contexts/weather-units.context'
-import useAirportWeather from '@/features/theme-maps/hooks/use-airport-weather'
+import usePlaceWeather from '@/features/theme-maps/hooks/use-place-weather'
 import { AirportCurrentWeatherSection, AirportPickerSection } from '@/features/theme-maps/sections'
 import type { AirportDetailClientProps } from '@/features/theme-maps/types/airport-detail-component.type'
 import { AstroScheduleSection, DailyWeatherSection, HourlyWeatherSection } from '@/features/weather/sections'
@@ -16,8 +16,9 @@ import { splitForecast } from '@/lib/weather/split-forecast'
  * 좌표는 공항 고정이며 검색·GPS·레이더·자외선은 두지 않습니다.
  */
 function AirportDetailClient({ airport, initialWeather, initialUnits, initialError }: AirportDetailClientProps) {
-	const { weather, loading, error } = useAirportWeather({
-		airport,
+	const { weather, loading, error } = usePlaceWeather({
+		lat: airport.lat,
+		lng: airport.lng,
 		initialWeather,
 		initialError
 	})

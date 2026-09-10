@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 import LoadingComponent from '@/components/loading-component'
 import { WeatherUnitsProvider } from '@/contexts/weather-units.context'
-import useBaseballWeather from '@/features/theme-maps/hooks/use-baseball-weather'
+import usePlaceWeather from '@/features/theme-maps/hooks/use-place-weather'
 import { BaseballCurrentWeatherSection, BaseballPickerSection } from '@/features/theme-maps/sections'
 import type { BaseballDetailClientProps } from '@/features/theme-maps/types/baseball-detail-component.type'
 import {
@@ -27,8 +27,9 @@ function BaseballDetailClient({
 	initialUnits,
 	initialError
 }: BaseballDetailClientProps) {
-	const { weather, loading, error } = useBaseballWeather({
-		park,
+	const { weather, loading, error } = usePlaceWeather({
+		lat: park.lat,
+		lng: park.lng,
 		initialWeather,
 		initialError
 	})
