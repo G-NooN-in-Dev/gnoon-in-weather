@@ -20,6 +20,13 @@ Turborepo + pnpm 모노레포로 `apps/web`과 공유 패키지를 함께 관리
 - **데이터**: MongoDB, WeatherAPI, Kakao Local/Maps, Naver Search API
 - **빌드**: Turborepo, pnpm
 
+## 설계 하이라이트
+
+- **SSR + Client 조합기**: `page` → `*.content.server.tsx`(쿠키·loader) → `*.client.tsx`(GPS·refetch) → `features/*/sections`
+- **service / loader 분리**: 외부 API는 `*.service.ts`, 화면·Route는 `*.loader.ts`(SSR는 `*.loader.cache.server.ts`)만 호출
+- **도메인 `lib/{domain}`**: 쿠키·stale 판정·정규화는 feature UI와 분리해 재사용
+- **모노레포 UI·토큰**: `@shared/ui` + `@shared/tailwind-config`로 앱 간 디자인 시스템 공유
+
 ## 사전 요구사항
 
 - Node.js **18+** (CI는 Node 22 사용)
@@ -70,6 +77,7 @@ pnpm format        # Prettier 포맷
 
 ```sh
 pnpm --filter web dev
+pnpm --filter web test   # lib 순수 로직 단위 테스트
 pnpm --filter storybook dev
 pnpm --filter web build
 ```

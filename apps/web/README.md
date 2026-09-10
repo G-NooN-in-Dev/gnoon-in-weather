@@ -84,13 +84,17 @@ pnpm --filter web start
 ## 주요 디렉터리
 
 ```
-app/           # 라우트, SSR, API Route
-app/_components/   # 페이지 전용 client 조합기
-features/      # 도메인 UI (home, weather, theme-maps, …)
-components/    # 앱 전역 공통 UI
-services/      # 외부 API 호출 (service, loader)
-hooks/         # 클라이언트 훅
-lib/           # 도메인 모듈 (auth, location, weather, …)
+app/                              # 라우트, SSR, API Route
+app/(with-footer)/                # 푸터 있는 페이지 (홈, 뉴스, 마이, 인증)
+app/theme-maps/(map)/             # 지도 전체 화면
+app/theme-maps/(with-footer)/     # 테마 지도 목록·상세
+app/**/_components/               # *.content.server.tsx · *.client.tsx 조합기
+features/                         # 도메인 UI (home, weather, theme-maps, favorite-press-list, …)
+components/                       # 앱 전역 공통 UI
+contexts/                         # 앱 전역 Context (단위 표시 등)
+services/                         # service · loader · loader.cache.server
+hooks/                            # 클라이언트 훅
+lib/                              # 도메인 모듈 (auth, location, weather, …)
 ```
 
 ## 스타일 시스템
