@@ -7,7 +7,8 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "eslint",
-		"check-types": "tsc --noEmit"
+		"check-types": "tsc --noEmit",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@meteocons/svg-static": "^0.1.0",
@@ -36,6 +37,7 @@
 		"babel-plugin-react-compiler": "^1.0.0",
 		"eslint": "^9.39.4",
 		"tailwindcss": "^4.2.2",
-		"typescript": "6.0.3"
+		"typescript": "6.0.3",
+		"vitest": "^5.0.0"
 	}
 }
